@@ -29,6 +29,8 @@ export default function Footer() {
                 { href: "/", label: "Home" },
                 { href: "/deals", label: "Cruise Deals" },
                 { href: "/ships-from-galveston", label: "Ships from Galveston" },
+                { href: "/destinations", label: "Destinations" },
+                { href: "/sea-pay", label: "Sea Pay" },
                 { href: "/about", label: "About Us" },
                 { href: "/contact", label: "Contact" },
               ].map((link) => (
@@ -59,9 +61,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-blue-700 mt-8 pt-6 text-center text-blue-300 text-sm">
-          © {new Date().getFullYear()} Cruises from Galveston. All rights
-          reserved. | Galveston, Texas
+        <div className="border-t border-blue-700 mt-8 pt-6 flex items-center justify-between flex-wrap gap-2 text-blue-300 text-sm">
+          <span>© {new Date().getFullYear()} Cruises from Galveston. All rights reserved. | Galveston, Texas</span>
+          <Link href="/admin" className="text-blue-500 hover:text-blue-300 text-xs transition-colors">
+            Agent Login
+          </Link>
         </div>
       </div>
     </footer>
