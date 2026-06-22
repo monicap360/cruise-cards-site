@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+
 const cruiseLines = [
   {
     name: "Carnival Cruise Line",
@@ -14,6 +15,7 @@ const cruiseLines = [
         destinations: "7-Night Western Caribbean — Cozumel, Roatán, Belize & Costa Maya",
         desc:
           "Galveston's newest and most impressive ship. This Excel-class mega-ship debuted in December 2023 and features the BOLT roller coaster at sea, Summer Landing resort-style deck, 20+ dining options, and massive family entertainment zones. If you want the biggest, newest cruise experience leaving Texas — this is it.",
+        seaPay: true,
       },
       {
         ship: "Carnival Breeze",
@@ -21,6 +23,7 @@ const cruiseLines = [
         destinations: "Western Caribbean — Cozumel, Roatán & Belize",
         desc:
           "A Dream-class ship packed with outdoor fun. The WaterWorks aqua park features towering waterslides, and the Serenity adults-only retreat offers a peaceful escape. Guy's Burger Joint, BlueIguana Cantina, and a lively Red Frog Rum Bar round out the experience. Great all-around value.",
+        seaPay: true,
       },
       {
         ship: "Carnival Freedom",
@@ -28,6 +31,7 @@ const cruiseLines = [
         destinations: "3–4 Night Cozumel Getaways",
         desc:
           "Perfect for a quick escape. This Conquest-class ship is ideal for first-timers or anyone who wants a taste of the Caribbean without committing to a full week. The WaterWorks park, casino, comedy club, and multiple dining options make even short sailings feel complete.",
+        seaPay: false,
       },
       {
         ship: "Carnival Vista",
@@ -35,6 +39,7 @@ const cruiseLines = [
         destinations: "7–8 Night Extended Caribbean",
         desc:
           "The ship that redefined Carnival — the first at sea to feature an IMAX theater and the SkyRide aerial bicycle attraction suspended over the ocean. The Havana Bar & Pool brings a Cuban resort vibe, and Guy's Pig & Anchor Smokehouse is a crowd favorite. Excellent for longer voyages.",
+        seaPay: true,
       },
       {
         ship: "Carnival Dream",
@@ -42,6 +47,7 @@ const cruiseLines = [
         destinations: "Western Caribbean — Grand Cayman & Cozumel",
         desc:
           "One of Carnival's most beloved ships. The Dream-class design offers wide open spaces, the relaxing Serenity adults-only area, a full WaterWorks park, and a massive casino. Its warm, party-ready atmosphere makes it a top choice for groups and celebratory sailings.",
+        seaPay: true,
       },
       {
         ship: "Carnival Legend",
@@ -49,6 +55,7 @@ const cruiseLines = [
         destinations: "Mexico & Western Caribbean",
         desc:
           "A smaller, more intimate Spirit-class ship that delivers a classic cruise feel. With just over 2,100 guests, the Legend never feels overcrowded. Highlights include the Serenity adults-only retreat, the Golden Fleece steakhouse, a full spa, and a lively atrium that serves as the social hub of the ship.",
+        seaPay: true,
       },
     ],
   },
@@ -65,6 +72,7 @@ const cruiseLines = [
         destinations: "7-Night Caribbean — Perfect Day at CocoCay, Nassau & More",
         desc:
           "One of the largest cruise ships in the world and an absolute marvel at sea. Symphony of the Seas features 7 distinct neighborhood districts — including a living Central Park, a lively Boardwalk with a carousel, and the Royal Promenade. Thrill-seekers love the Ultimate Abyss (the tallest slide at sea), the Perfect Storm waterslides, an ice skating rink, a zip line, and the FlowRider surf simulator. Over 20 restaurants and 23 pool deck experiences. If you want to be blown away, this is your ship.",
+        seaPay: true,
       },
       {
         ship: "Liberty of the Seas",
@@ -72,6 +80,7 @@ const cruiseLines = [
         destinations: "5-Night Bahamas — Nassau & Perfect Day at CocoCay",
         desc:
           "A Freedom-class powerhouse loaded with activities. The FlowRider surf simulator, rock climbing wall, H2O Zone water park for kids, ice skating rink, and multiple pools keep the whole family busy. Royal Promenade shopping and dining, plus a full casino and live entertainment — all in a 5-night package that's easy on the budget.",
+        seaPay: true,
       },
       {
         ship: "Mariner of the Seas",
@@ -79,6 +88,7 @@ const cruiseLines = [
         destinations: "Eastern Caribbean — St. Thomas & Puerto Rico",
         desc:
           "A Voyager-class ship amplified and modernized in 2018. The Sky Pad VR bungee trampoline, laser tag arena, and Splashaway Bay aqua park for kids are standout additions. The Royal Promenade runs the length of the ship with cafes, bars, and entertainment. Mariner strikes a great balance between activity-packed fun and relaxed Caribbean cruising.",
+        seaPay: true,
       },
       {
         ship: "Voyager of the Seas",
@@ -86,6 +96,7 @@ const cruiseLines = [
         destinations: "Western Caribbean — Cozumel & Grand Cayman",
         desc:
           "The original adventure ship — Voyager of the Seas pioneered the concept of activities-at-sea when it launched. Inline skating, a full-size basketball court, rock climbing, and the iconic Royal Promenade are all on board. A timeless ship that still delivers a phenomenal experience, especially for Western Caribbean itineraries.",
+        seaPay: false,
       },
     ],
   },
@@ -102,6 +113,7 @@ const cruiseLines = [
         destinations: "7-Night Caribbean — Roatán, Belize & Cozumel",
         desc:
           "A Breakaway-Plus class ship built for non-stop excitement. Norwegian Joy features a two-level race track at sea, a laser tag arena, the Galaxy Pavilion virtual reality experience, and an Aqua Park with multi-story waterslides. With 28 dining options and The Waterfront outdoor promenade, Joy lives up to its name for every type of traveler.",
+        seaPay: true,
       },
       {
         ship: "Norwegian Breakaway",
@@ -109,6 +121,7 @@ const cruiseLines = [
         destinations: "4-Night Mexico — Cozumel & Progreso",
         desc:
           "A Breakaway-class ship that brought a new standard of entertainment to NCL. The Aqua Park boasts five waterslides including the Whip and Free Fall. The Waterfront is an outdoor promenade lined with restaurants and bars — a genuinely unique feature that lets you dine oceanside. Excellent for shorter Mexico getaways.",
+        seaPay: true,
       },
       {
         ship: "Norwegian Sky",
@@ -116,6 +129,7 @@ const cruiseLines = [
         destinations: "4-Night Gulf of Mexico Getaway",
         desc:
           "A more intimate classic NCL ship perfect for a relaxed long-weekend escape. Norwegian Sky's smaller size means easy navigation and a friendly atmosphere. Multiple dining options, a full spa and fitness center, and NCL's signature Freestyle freedom make it a great starter cruise or a low-key getaway for couples.",
+        seaPay: false,
       },
     ],
   },
@@ -132,6 +146,7 @@ const cruiseLines = [
         destinations: "7-Night Western Caribbean — Cozumel, Roatán & Grand Cayman",
         desc:
           "Caribbean Princess is a Grand-class ship purpose-built for exactly these Caribbean waters. With nearly 3,100 guests, she offers an intimate feel without sacrificing amenities. Highlights include the Movies Under the Stars poolside screen — a Princess signature — the Sanctuary adults-only retreat, a full spa, and an expansive casino. Multiple specialty dining rooms including Sabatini's Italian Trattoria make every evening feel special.",
+        seaPay: true,
       },
       {
         ship: "Ruby Princess",
@@ -139,6 +154,7 @@ const cruiseLines = [
         destinations: "Western Caribbean & Gulf of Mexico",
         desc:
           "Ruby Princess brings Princess Cruises' MedallionClass experience to Galveston — wearable technology that lets you unlock your stateroom, order food anywhere on the ship, and locate fellow travelers with ease. The ship features the beloved Movies Under the Stars deck, Crown Grill steakhouse, multiple pools, and the serene Sanctuary adults-only retreat. A great choice for couples and experienced cruisers looking for a step up in service.",
+        seaPay: true,
       },
     ],
   },
@@ -155,6 +171,7 @@ const cruiseLines = [
         destinations: "7-Night Western Caribbean — Cozumel, Roatán & Costa Maya",
         desc:
           "MSC Seashore is one of the most beautiful ships sailing from Galveston. Launched in 2021, her sleek modern design maximizes ocean views with a revolutionary hull that brings the sea closer to guests than any ship before it. The MSC Waterpark features thrilling slides, the Forest Aqua Park offers treetop-style water fun, and the indoor/outdoor promenade runs along the ship's edge over the water. With 12 dining venues, a world-class spa, and a lively casino, MSC Seashore delivers a sophisticated cruise experience at a remarkable price.",
+        seaPay: true,
       },
     ],
   },
@@ -171,6 +188,7 @@ const cruiseLines = [
         destinations: "Western Caribbean — Key West, Grand Cayman & Cozumel",
         desc:
           "Disney Wonder is the primary Disney ship homeported in Galveston — a classic ship that's been lovingly updated and remains one of the most beloved in the fleet. Signature rotational dining, a full lineup of Broadway-caliber shows, the thrilling AquaDunk waterslide, and dedicated spaces for every age group make Wonder the gold standard for family cruising from Texas.",
+        seaPay: true,
       },
       {
         ship: "Disney Magic",
@@ -178,6 +196,7 @@ const cruiseLines = [
         destinations: "Bahamas & Caribbean — Select Sailings",
         desc:
           "The original Disney cruise ship — the one that started it all — sails select seasonal itineraries from Galveston. Disney Magic features the AquaDunk waterslide, the adults-only District 97 lounge, and the Rapunzel-themed Royal Court restaurant. Same Disney magic, same impeccable service, same Broadway shows — in the ship that launched a legend.",
+        seaPay: false,
       },
     ],
     onBoard: [
@@ -395,9 +414,29 @@ export default function ShipsFromGalvestonPage() {
                           </div>
                         </div>
                       </div>
-                      <p className="text-gray-500 text-sm leading-relaxed">
+                      <p className="text-gray-500 text-sm leading-relaxed mb-4">
                         {s.desc}
                       </p>
+                      <div className="flex gap-2 flex-wrap">
+                        {s.seaPay ? (
+                          <Link
+                            href={`/sea-pay/plan?ship=${encodeURIComponent(s.ship)}`}
+                            className="inline-flex items-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                          >
+                            💳 Sea Pay Available
+                          </Link>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 bg-gray-200 text-gray-500 text-xs font-bold px-3 py-1.5 rounded-full cursor-default">
+                            Sea Pay N/A
+                          </span>
+                        )}
+                        <Link
+                          href={`/hold?ship=${encodeURIComponent(s.ship)}`}
+                          className="inline-flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                        >
+                          🔒 Hold a Room
+                        </Link>
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -8,7 +8,9 @@ const links = [
   { href: "/deals", label: "Cruise Deals" },
   { href: "/ships-from-galveston", label: "Ships" },
   { href: "/destinations", label: "Destinations" },
+  { href: "/specials", label: "Specials" },
   { href: "/sea-pay", label: "Sea Pay" },
+  { href: "/hold", label: "Hold a Room" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];

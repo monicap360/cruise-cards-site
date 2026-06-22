@@ -30,7 +30,9 @@ export default function Footer() {
                 { href: "/deals", label: "Cruise Deals" },
                 { href: "/ships-from-galveston", label: "Ships from Galveston" },
                 { href: "/destinations", label: "Destinations" },
+                { href: "/specials", label: "Cruise Specials" },
                 { href: "/sea-pay", label: "Sea Pay" },
+                { href: "/hold", label: "Hold a Room" },
                 { href: "/about", label: "About Us" },
                 { href: "/contact", label: "Contact" },
               ].map((link) => (

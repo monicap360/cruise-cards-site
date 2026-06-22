@@ -11,6 +11,8 @@ const deals = [
     badge: "🔥 Hot Deal",
     badgeColor: "bg-red-500",
     departs: "Every Sunday",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Bahamas Getaway",
@@ -22,6 +24,8 @@ const deals = [
     badge: "⭐ Popular",
     badgeColor: "bg-blue-600",
     departs: "Every Saturday",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Mexico Explorer",
@@ -33,6 +37,8 @@ const deals = [
     badge: "✈️ Best Value",
     badgeColor: "bg-teal-600",
     departs: "Every Thursday",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Western Caribbean",
@@ -44,6 +50,8 @@ const deals = [
     badge: "🌴 Extended",
     badgeColor: "bg-green-600",
     departs: "Select Saturdays",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Cozumel Quick Escape",
@@ -55,6 +63,8 @@ const deals = [
     badge: "⚡ Short Trip",
     badgeColor: "bg-orange-500",
     departs: "Every Monday",
+    seaPay: false,
+    hold: true,
   },
   {
     name: "Eastern Caribbean Adventure",
@@ -66,6 +76,8 @@ const deals = [
     badge: "🌊 Adventure",
     badgeColor: "bg-purple-600",
     departs: "Select Sundays",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Western Caribbean Deluxe",
@@ -77,6 +89,8 @@ const deals = [
     badge: "✨ Family Fave",
     badgeColor: "bg-yellow-500",
     departs: "Select Saturdays",
+    seaPay: true,
+    hold: true,
   },
   {
     name: "Gulf of Mexico Getaway",
@@ -88,6 +102,8 @@ const deals = [
     badge: "💙 Galveston Special",
     badgeColor: "bg-blue-700",
     departs: "Every Friday",
+    seaPay: false,
+    hold: true,
   },
 ];
 
@@ -105,6 +121,14 @@ export default function DealsPage() {
             Every cruise below departs directly from the Port of Galveston —
             no airports, no hassle, just set sail!
           </p>
+          <div className="mt-6 flex flex-wrap gap-3 justify-center text-sm font-semibold">
+            <span className="bg-green-600/20 text-green-300 border border-green-500/30 px-4 py-1.5 rounded-full">
+              💳 Sea Pay — Set your own payment schedule
+            </span>
+            <span className="bg-yellow-500/20 text-yellow-200 border border-yellow-400/30 px-4 py-1.5 rounded-full">
+              🔒 Hold a Room — 24, 48 or 72 hours
+            </span>
+          </div>
         </div>
       </section>
 
@@ -114,7 +138,7 @@ export default function DealsPage() {
           {deals.map((deal) => (
             <div
               key={deal.name}
-              className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all hover:-translate-y-1"
+              className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col"
             >
               <div className="bg-gradient-to-br from-blue-600 to-blue-900 h-44 flex flex-col items-center justify-center relative">
                 <span className="text-7xl">🚢</span>
@@ -130,7 +154,8 @@ export default function DealsPage() {
                   {deal.nights} Nights
                 </span>
               </div>
-              <div className="p-5">
+
+              <div className="p-5 flex flex-col flex-1">
                 <div className="text-xs font-bold text-blue-500 uppercase tracking-wide mb-1">
                   {deal.line}
                 </div>
@@ -143,7 +168,9 @@ export default function DealsPage() {
                 <p className="text-gray-400 text-xs mb-4">
                   🗓 Departs: {deal.departs} from Galveston
                 </p>
-                <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+
+                {/* Price + Book */}
+                <div className="flex items-center justify-between border-t border-gray-100 pt-4 mb-4">
                   <div>
                     <span className="text-gray-400 text-xs block">From</span>
                     <span className="text-red-600 font-extrabold text-2xl">
@@ -158,9 +185,65 @@ export default function DealsPage() {
                     Book Now
                   </Link>
                 </div>
+
+                {/* Sea Pay + Hold row */}
+                <div className="flex gap-2 flex-wrap mt-auto">
+                  {deal.seaPay ? (
+                    <Link
+                      href={`/sea-pay/plan?ship=${encodeURIComponent(deal.ship)}`}
+                      className="flex-1 text-center bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all"
+                    >
+                      💳 Sea Pay Available
+                    </Link>
+                  ) : (
+                    <span className="flex-1 text-center bg-gray-100 text-gray-400 text-xs font-bold px-3 py-2 rounded-xl cursor-default">
+                      Sea Pay N/A
+                    </span>
+                  )}
+                  {deal.hold ? (
+                    <Link
+                      href={`/hold?ship=${encodeURIComponent(deal.ship)}&name=${encodeURIComponent(deal.name)}`}
+                      className="flex-1 text-center bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition-all"
+                    >
+                      🔒 Hold a Room
+                    </Link>
+                  ) : (
+                    <span className="flex-1 text-center bg-gray-100 text-gray-400 text-xs font-bold px-3 py-2 rounded-xl cursor-default">
+                      Hold N/A
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Info bar */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
+            <div className="font-extrabold text-green-800 text-sm mb-1">
+              💳 What is Sea Pay?
+            </div>
+            <p className="text-green-700 text-sm leading-relaxed">
+              Sea Pay lets you set your own payment schedule — weekly, bi-weekly, or custom dates you choose. A one-time $49.99 Sea Pay fee applies. Miss a payment? A $35 late fee is charged.{" "}
+              <Link href="/sea-pay" className="font-bold underline">
+                Learn more →
+              </Link>
+            </p>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
+            <div className="font-extrabold text-yellow-800 text-sm mb-1">
+              🔒 What is a Room Hold?
+            </div>
+            <p className="text-yellow-700 text-sm leading-relaxed">
+              Not quite ready? Hold your cabin for 24, 48, or 72 hours while you finalize plans. Holds are not available for sailings within 30 days.{" "}
+              <Link href="/hold" className="font-bold underline">
+                Request a hold →
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
 

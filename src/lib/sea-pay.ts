@@ -191,6 +191,71 @@ export function fmtDateShort(dateStr: string): string {
   });
 }
 
+// ── Sea Pay fee structure ─────────────────────────────────────────────────────
+
+export const SEA_PAY_ENROLLMENT_FEE = 49.99;
+export const SEA_PAY_LATE_FEE = 35.0;
+
+export type PlanFrequency = "weekly" | "biweekly" | "monthly" | "custom";
+
+export function buildCustomPlan(
+  totalPrice: number,
+  depositAmount: number,
+  sailingDate: string,
+  frequency: PlanFrequency,
+  firstPaymentDate: string,
+  customDates?: string[]
+): PaymentInstallment[] {
+  const balance = Math.max(0, totalPrice - depositAmount);
+  if (balance === 0) return [];
+
+  const sailing = new Date(sailingDate + "T12:00:00");
+  const cutoff = new Date(sailing);
+  cutoff.setDate(cutoff.getDate() - 60);
+
+  let dates: Date[] = [];
+
+  if (frequency === "custom" && customDates && customDates.length > 0) {
+    dates = customDates
+      .map((d) => new Date(d + "T12:00:00"))
+      .filter((d) => d <= cutoff)
+      .sort((a, b) => a.getTime() - b.getTime());
+  } else {
+    const stepDays =
+      frequency === "weekly" ? 7 : frequency === "biweekly" ? 14 : 30;
+    const cur = new Date(firstPaymentDate + "T12:00:00");
+    while (cur <= cutoff) {
+      dates.push(new Date(cur));
+      if (frequency === "monthly") {
+        cur.setMonth(cur.getMonth() + 1);
+      } else {
+        cur.setDate(cur.getDate() + stepDays);
+      }
+    }
+  }
+
+  if (dates.length === 0) {
+    return [
+      {
+        id: generateId(),
+        dueDate: cutoff.toISOString().split("T")[0],
+        amount: balance,
+        paid: false,
+      },
+    ];
+  }
+
+  const base = Math.floor((balance / dates.length) * 100) / 100;
+  const last = Math.round((balance - base * (dates.length - 1)) * 100) / 100;
+
+  return dates.map((d, i) => ({
+    id: generateId(),
+    dueDate: d.toISOString().split("T")[0],
+    amount: i === dates.length - 1 ? last : base,
+    paid: false,
+  }));
+}
+
 export const CRUISE_LINES = [
   "Carnival Cruise Line",
   "Royal Caribbean",
