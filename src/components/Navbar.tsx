@@ -48,7 +48,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/contact"
+              href="/book"
               className="ml-3 bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2 rounded-full text-sm transition-all shadow"
             >
               Book Now
@@ -78,7 +78,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/contact"
+            href="/book"
             className="mt-2 bg-red-600 text-white font-bold px-4 py-2 rounded-full text-sm text-center"
             onClick={() => setOpen(false)}
           >
