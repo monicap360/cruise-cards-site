@@ -1,0 +1,69 @@
+import Link from "next/link";
+import Image from "next/image";
+
+export default function Footer() {
+  return (
+    <footer className="bg-blue-900 text-white mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <Image
+              src="/logo.png"
+              alt="Cruises from Galveston"
+              width={160}
+              height={64}
+              className="h-14 w-auto object-contain mb-3 brightness-0 invert"
+            />
+            <p className="text-blue-200 text-sm leading-relaxed">
+              Your trusted partner for unforgettable cruise vacations departing
+              from the Port of Galveston, Texas.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-red-400 mb-3 uppercase tracking-wide text-sm">
+              Quick Links
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {[
+                { href: "/", label: "Home" },
+                { href: "/deals", label: "Cruise Deals" },
+                { href: "/ships-from-galveston", label: "Ships from Galveston" },
+                { href: "/about", label: "About Us" },
+                { href: "/contact", label: "Contact" },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-blue-200 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-red-400 mb-3 uppercase tracking-wide text-sm">
+              Contact Us
+            </h3>
+            <ul className="space-y-2 text-sm text-blue-200">
+              <li>📍 Galveston, Texas</li>
+              <li>📞 (409) 555-CRUISE</li>
+              <li>✉️ cruisesfromgalveston.texas@gmail.com</li>
+              <li className="pt-2 font-semibold text-white">
+                Mon–Fri: 9am – 6pm CST
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-blue-700 mt-8 pt-6 text-center text-blue-300 text-sm">
+          © {new Date().getFullYear()} Cruises from Galveston. All rights
+          reserved. | Galveston, Texas
+        </div>
+      </div>
+    </footer>
+  );
+}
