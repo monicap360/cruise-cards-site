@@ -261,9 +261,14 @@ export default function ExperienceCenterPage() {
             ))}
           </div>
           <div className="text-center">
-            <Link href="/sea-you-on-deck" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg inline-block">
-              See All 30+ Crews &amp; Join
-            </Link>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg inline-block">
+                Join a Crew
+              </Link>
+              <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all inline-block">
+                🔍 Who&apos;s on My Sailing?
+              </Link>
+            </div>
           </div>
         </div>
       </section>

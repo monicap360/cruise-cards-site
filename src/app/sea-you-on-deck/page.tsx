@@ -94,11 +94,11 @@ export default function SeaYouOnDeckPage() {
             Cruise communities, meetups, tips, and onboard connections — powered by Cruise Experience Center.
           </p>
           <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <Link href="/contact?inquiry=sea-you-on-deck" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+            <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
               Join a Crew
             </Link>
-            <Link href="#crews" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
-              Browse All Crews
+            <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
+              🔍 Who&apos;s on My Sailing?
             </Link>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function SeaYouOnDeckPage() {
             {featuredCrews.map((crew) => (
               <Link
                 key={crew.name}
-                href={`/contact?crew=${encodeURIComponent(crew.name)}&inquiry=sea-you-on-deck`}
+                href={`/sea-you-on-deck/join?crew=${encodeURIComponent(crew.name)}`}
                 className={`${crew.color} ${crew.textColor} rounded-2xl p-3 text-center flex flex-col items-center gap-1 hover:opacity-90 transition-opacity shadow-sm`}
               >
                 <span className="text-2xl">{crew.icon}</span>
@@ -184,7 +184,7 @@ export default function SeaYouOnDeckPage() {
                     <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
                       <span className="text-xs text-gray-300 font-semibold">A Sea You On Deck Crew™<br/>Powered by Cruise Experience Center</span>
                       <Link
-                        href={`/contact?crew=${encodeURIComponent(crew.name)}&inquiry=sea-you-on-deck`}
+                        href={`/sea-you-on-deck/join?crew=${encodeURIComponent(crew.name)}`}
                         className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex-shrink-0"
                       >
                         Join →
@@ -206,11 +206,11 @@ export default function SeaYouOnDeckPage() {
             Let us know which ship, sail date, and crews you&apos;re interested in. We&apos;ll connect you with your crewmates before you ever step onboard.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/contact?inquiry=sea-you-on-deck" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
-              Join a Crew Now
+            <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+              Join a Crew
             </Link>
-            <Link href="/deals" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
-              Find a Sailing
+            <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
+              🔍 Who&apos;s on My Sailing?
             </Link>
           </div>
         </div>
