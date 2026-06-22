@@ -55,12 +55,20 @@ export default function AdminPage() {
               </div>
               <h1 className="text-3xl font-extrabold">Sea Pay Admin</h1>
             </div>
-            <Link
-              href="/admin/new-booking"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
-            >
-              + New Booking
-            </Link>
+            <div className="flex gap-3">
+              <Link
+                href="/admin/room-blocks"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                🛏️ Room Blocks
+              </Link>
+              <Link
+                href="/admin/new-booking"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
+              >
+                + New Booking
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}

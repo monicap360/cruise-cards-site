@@ -79,6 +79,7 @@ function PlanBuilder() {
       d.setDate(form.monthlyDay);
       set("startDate", d.toISOString().split("T")[0]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.frequency]);
 
   function addCustomDate() {
