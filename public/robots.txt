@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /api/
+Allow: /
+
+Sitemap: https://cruisesfromgalveston.com/sitemap.xml

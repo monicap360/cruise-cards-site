@@ -12,6 +12,11 @@ import {
   isOverdue,
 } from "@/lib/sea-pay";
 
+async function handleLogout() {
+  await fetch("/api/admin-auth", { method: "DELETE" });
+  window.location.href = "/admin/login";
+}
+
 export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
@@ -55,7 +60,7 @@ export default function AdminPage() {
               </div>
               <h1 className="text-3xl font-extrabold">Sea Pay Admin</h1>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               <Link
                 href="/admin/room-blocks"
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
@@ -68,6 +73,12 @@ export default function AdminPage() {
               >
                 + New Booking
               </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all text-sm"
+              >
+                🔒 Log Out
+              </button>
             </div>
           </div>
 
