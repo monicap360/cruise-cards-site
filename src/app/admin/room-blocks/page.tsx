@@ -16,12 +16,12 @@ export default function RoomBlocksAdminPage() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
 
   useEffect(() => {
-    setBlocks(getSailingBlocks());
+    getSailingBlocks().then((data) => setBlocks(data));
   }, []);
 
-  function handleDelete(id: string, ship: string) {
+  async function handleDelete(id: string, ship: string) {
     if (!confirm(`Delete the entire room block for ${ship}? This cannot be undone.`)) return;
-    deleteSailingBlock(id);
+    await deleteSailingBlock(id);
     setBlocks((prev) => prev.filter((b) => b.id !== id));
   }
 

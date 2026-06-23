@@ -34,15 +34,16 @@ export default function BookingDetailPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    const b = getBooking(id);
-    if (!b) router.push("/admin");
-    else setBooking(b);
+    getBooking(id).then((b) => {
+      if (!b) router.push("/admin");
+      else setBooking(b);
+    });
   }, [id, router]);
 
-  function update(patch: Partial<Booking>) {
+  async function update(patch: Partial<Booking>) {
     if (!booking) return;
     const updated = { ...booking, ...patch };
-    saveBooking(updated);
+    await saveBooking(updated);
     setBooking(updated);
   }
 
@@ -69,8 +70,8 @@ export default function BookingDetailPage() {
     });
   }
 
-  function handleDelete() {
-    deleteBooking(id);
+  async function handleDelete() {
+    await deleteBooking(id);
     router.push("/admin");
   }
 

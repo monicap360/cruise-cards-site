@@ -17,30 +17,47 @@ export function generateMemberId(): string {
   return "syod-" + Math.random().toString(36).substring(2, 10);
 }
 
-export function getMembers(): CommunityMember[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem("cfg-syod-members") ?? "[]");
-  } catch {
-    return [];
-  }
+import { supabase } from "./supabase";
+
+function toMember(row: Record<string, unknown>): CommunityMember {
+  return {
+    id: row.id as string,
+    displayName: row.display_name as string,
+    hometown: row.hometown as string | undefined,
+    bio: row.bio as string | undefined,
+    ship: row.ship as string,
+    sailingDate: row.sailing_date as string,
+    crews: (row.crews as string[]) ?? [],
+    privacy: (row.privacy as MemberPrivacy) ?? "public",
+    joinedAt: row.created_at as string,
+    emoji: (row.emoji as string) ?? "⚓",
+  };
 }
 
-export function saveMember(member: CommunityMember): void {
-  const all = getMembers();
-  const idx = all.findIndex((m) => m.id === member.id);
-  if (idx >= 0) all[idx] = member;
-  else all.unshift(member);
-  localStorage.setItem("cfg-syod-members", JSON.stringify(all));
+export async function saveMember(member: CommunityMember): Promise<void> {
+  await supabase.from("community_members").upsert({
+    id: member.id,
+    display_name: member.displayName,
+    hometown: member.hometown,
+    bio: member.bio,
+    ship: member.ship,
+    sailing_date: member.sailingDate,
+    crews: member.crews,
+    privacy: member.privacy,
+    emoji: member.emoji,
+  });
 }
 
-export function getMembersForSailing(ship: string, sailingDate: string): CommunityMember[] {
-  return getMembers().filter(
-    (m) =>
-      m.privacy === "public" &&
-      m.ship.toLowerCase() === ship.toLowerCase() &&
-      m.sailingDate === sailingDate
-  );
+export async function getMembersForSailing(ship: string, sailingDate: string): Promise<CommunityMember[]> {
+  const { data, error } = await supabase
+    .from("community_members")
+    .select("*")
+    .ilike("ship", ship)
+    .eq("sailing_date", sailingDate)
+    .eq("privacy", "public")
+    .order("created_at", { ascending: true });
+  if (error || !data) return [];
+  return data.map(toMember);
 }
 
 export function groupMembersByCrews(members: CommunityMember[]): Record<string, CommunityMember[]> {

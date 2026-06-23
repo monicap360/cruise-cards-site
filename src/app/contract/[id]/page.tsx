@@ -19,14 +19,15 @@ export default function ContractPage() {
   const [signed, setSigned] = useState(false);
 
   useEffect(() => {
-    const b = getBooking(id);
-    if (b) {
-      setBooking(b);
-      if (b.contractSigned) setSigned(true);
-    }
+    getBooking(id).then((b) => {
+      if (b) {
+        setBooking(b);
+        if (b.contractSigned) setSigned(true);
+      }
+    });
   }, [id]);
 
-  function handleSign() {
+  async function handleSign() {
     if (!booking || !sigName.trim() || !agreed) return;
     const updated: Booking = {
       ...booking,
@@ -35,7 +36,7 @@ export default function ContractPage() {
       contractSignedName: sigName.trim(),
       status: booking.status === "pending" ? "confirmed" : booking.status,
     };
-    saveBooking(updated);
+    await saveBooking(updated);
     setBooking(updated);
     setSigned(true);
   }

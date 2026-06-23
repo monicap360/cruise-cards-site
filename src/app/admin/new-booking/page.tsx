@@ -50,7 +50,7 @@ export default function NewBookingPage() {
       ? calculatePaymentPlan(total, deposit, form.sailingDate)
       : [];
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const booking: Booking = {
       id: generateId(),
@@ -80,7 +80,7 @@ export default function NewBookingPage() {
       agentName: form.agentName,
       notes: form.notes,
     };
-    saveBooking(booking);
+    await saveBooking(booking);
     router.push(`/admin/bookings/${booking.id}`);
   }
 

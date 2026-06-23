@@ -23,7 +23,7 @@ export default function AdminPage() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    setBookings(getBookings());
+    getBookings().then((data) => setBookings(data));
   }, []);
 
   const filtered = bookings.filter((b) => {
@@ -66,6 +66,12 @@ export default function AdminPage() {
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
               >
                 🛏️ Room Blocks
+              </Link>
+              <Link
+                href="/admin/waivers"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                ⚖️ Waivers
               </Link>
               <Link
                 href="/admin/new-booking"

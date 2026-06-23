@@ -42,11 +42,11 @@ export default function BlockDetailPage() {
   const [cabinForm, setCabinForm] = useState(blankCabin);
 
   useEffect(() => {
-    setBlock(getSailingBlock(id));
+    getSailingBlock(id).then((b) => setBlock(b));
   }, [id]);
 
-  function persist(updated: SailingBlock) {
-    saveSailingBlock(updated);
+  async function persist(updated: SailingBlock) {
+    await saveSailingBlock(updated);
     setBlock({ ...updated });
   }
 

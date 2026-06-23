@@ -57,14 +57,14 @@ function CommunityPageContent() {
     if (s && d) {
       setShip(s);
       setDate(d);
-      setMembers(getMembersForSailing(s, d));
+      getMembersForSailing(s, d).then((data) => setMembers(data));
       setSearched(true);
     }
   }, [params]);
 
   function handleSearch() {
     if (!ship || !date) return;
-    setMembers(getMembersForSailing(ship, date));
+    getMembersForSailing(ship, date).then((data) => setMembers(data));
     setSearched(true);
     // Update URL without navigation
     const url = new URL(window.location.href);

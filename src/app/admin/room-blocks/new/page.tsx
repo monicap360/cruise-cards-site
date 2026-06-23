@@ -72,9 +72,9 @@ export default function NewRoomBlockPage() {
     setCabins((prev) => prev.filter((c) => c.id !== id));
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!sailing.ship || !sailing.sailingDate || cabins.length === 0) return;
-    saveSailingBlock({
+    await saveSailingBlock({
       id: generateBlockId(),
       createdAt: new Date().toISOString(),
       ship: sailing.ship,

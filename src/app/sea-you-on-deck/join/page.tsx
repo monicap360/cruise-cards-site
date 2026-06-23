@@ -54,10 +54,10 @@ function JoinPageContent() {
     });
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!form.displayName || !form.ship || !form.sailingDate) return;
     const id = generateMemberId();
-    saveMember({
+    await saveMember({
       id,
       displayName: form.displayName,
       hometown: form.hometown || undefined,

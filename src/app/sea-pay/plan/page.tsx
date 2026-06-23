@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import {
   buildCustomPlan,
   SEA_PAY_ENROLLMENT_FEE,
@@ -92,24 +93,20 @@ function PlanBuilder() {
     set("customDates", form.customDates.filter((x) => x !== d));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const requests = JSON.parse(localStorage.getItem("cfg-seapay-requests") ?? "[]");
-    requests.unshift({
+    await supabase.from("sea_pay_requests").insert({
       id: Math.random().toString(36).substring(2),
-      createdAt: new Date().toISOString(),
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
+      customer_name: form.name,
+      customer_email: form.email,
       ship: form.ship,
-      sailingDate: form.sailingDate,
-      totalPrice: total,
-      depositAmount: deposit,
+      sailing_date: form.sailingDate,
+      total_price: total,
+      deposit_amount: deposit,
       frequency: form.frequency,
-      plan,
-      enrollmentFee: SEA_PAY_ENROLLMENT_FEE,
+      payment_schedule: plan,
+      enrollment_fee: SEA_PAY_ENROLLMENT_FEE,
     });
-    localStorage.setItem("cfg-seapay-requests", JSON.stringify(requests));
     setSubmitted(true);
   }
 

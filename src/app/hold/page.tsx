@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 const HOLD_OPTIONS = [
   { hours: 24, label: "24 Hours", desc: "Same-day decision", color: "bg-blue-600 border-blue-600" },
@@ -35,19 +36,21 @@ function HoldForm() {
     setWithinWindow(daysOut < 30);
   }, [form.sailingDate]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (withinWindow) return;
-    // In production this would POST to an API / Supabase
-    // For now we save a hold request to localStorage for admin review
-    const holds = JSON.parse(localStorage.getItem("cfg-holds") ?? "[]");
-    holds.unshift({
+    await supabase.from("holds").insert({
       id: Math.random().toString(36).substring(2),
-      createdAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + form.holdHours * 3600000).toISOString(),
-      ...form,
+      customer_name: form.name,
+      customer_email: form.email,
+      customer_phone: form.phone,
+      ship: form.ship,
+      sailing_date: form.sailingDate,
+      cabin_type: form.cabinType,
+      duration_hours: form.holdHours,
+      expires_at: new Date(Date.now() + form.holdHours * 3600000).toISOString(),
+      status: "active",
     });
-    localStorage.setItem("cfg-holds", JSON.stringify(holds));
     setSubmitted(true);
   }
 

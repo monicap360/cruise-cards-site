@@ -18,7 +18,7 @@ export default function InvoicePage() {
   const [booking, setBooking] = useState<Booking | null>(null);
 
   useEffect(() => {
-    setBooking(getBooking(id));
+    getBooking(id).then((b) => setBooking(b));
   }, [id]);
 
   if (!booking) {

@@ -41,8 +41,9 @@ export default function GroupBlocksPage() {
   const [expandedType, setExpandedType] = useState<string | null>(null);
 
   useEffect(() => {
-    const all = getSailingBlocks();
-    setBlocks(all.filter((b) => b.cabins.some((c) => c.status === "available")));
+    getSailingBlocks().then((all) =>
+      setBlocks(all.filter((b) => b.cabins.some((c) => c.status === "available")))
+    );
   }, []);
 
   return (

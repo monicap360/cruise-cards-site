@@ -138,32 +138,88 @@ export function isOverdue(inst: PaymentInstallment): boolean {
   return new Date(inst.dueDate + "T12:00:00") < new Date();
 }
 
-// ── localStorage data layer (replace with Supabase calls later) ──────────────
+// ── Supabase data layer ───────────────────────────────────────────────────────
 
-export function getBookings(): Booking[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem("cfg-bookings") ?? "[]");
-  } catch {
-    return [];
-  }
+import { supabase } from "./supabase";
+
+function toBooking(row: Record<string, unknown>): Booking {
+  return {
+    id: row.id as string,
+    bookingNumber: row.booking_number as string,
+    createdAt: row.created_at as string,
+    customerName: row.customer_name as string,
+    customerEmail: (row.customer_email as string) ?? "",
+    customerPhone: (row.customer_phone as string) ?? "",
+    cruiseLine: (row.cruise_line as string) ?? "",
+    ship: row.ship as string,
+    sailingDate: row.sailing_date as string,
+    returnDate: (row.return_date as string) ?? "",
+    nights: (row.nights as number) ?? 0,
+    itinerary: (row.itinerary as string) ?? "",
+    cabinType: (row.cabin_type as string) ?? "",
+    numberOfGuests: (row.guests as number) ?? 2,
+    guestNames: (row.guest_names as string) ?? "",
+    totalPrice: (row.total_price as number) ?? 0,
+    depositAmount: (row.deposit_amount as number) ?? 0,
+    depositPaid: (row.deposit_paid as boolean) ?? false,
+    paymentPlan: (row.payment_plan as PaymentInstallment[]) ?? [],
+    status: (row.status as BookingStatus) ?? "pending",
+    contractSigned: (row.contract_signed as boolean) ?? false,
+    agentName: row.agent_name as string | undefined,
+    notes: row.notes as string | undefined,
+  };
 }
 
-export function getBooking(id: string): Booking | null {
-  return getBookings().find((b) => b.id === id) ?? null;
+export async function getBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map(toBooking);
 }
 
-export function saveBooking(booking: Booking): void {
-  const all = getBookings();
-  const idx = all.findIndex((b) => b.id === booking.id);
-  if (idx >= 0) all[idx] = booking;
-  else all.unshift(booking);
-  localStorage.setItem("cfg-bookings", JSON.stringify(all));
+export async function getBooking(id: string): Promise<Booking | null> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return null;
+  return toBooking(data);
 }
 
-export function deleteBooking(id: string): void {
-  const all = getBookings().filter((b) => b.id !== id);
-  localStorage.setItem("cfg-bookings", JSON.stringify(all));
+export async function saveBooking(booking: Booking): Promise<void> {
+  await supabase.from("bookings").upsert({
+    id: booking.id,
+    booking_number: booking.bookingNumber,
+    customer_name: booking.customerName,
+    customer_email: booking.customerEmail,
+    customer_phone: booking.customerPhone,
+    cruise_line: booking.cruiseLine,
+    ship: booking.ship,
+    sailing_date: booking.sailingDate,
+    return_date: booking.returnDate,
+    nights: booking.nights,
+    itinerary: booking.itinerary,
+    cabin_type: booking.cabinType,
+    guests: booking.numberOfGuests,
+    guest_names: booking.guestNames,
+    total_price: booking.totalPrice,
+    deposit_amount: booking.depositAmount,
+    deposit_paid: booking.depositPaid,
+    payment_plan: booking.paymentPlan,
+    status: booking.status,
+    contract_signed: booking.contractSigned,
+    contract_signed_date: booking.contractSignedDate,
+    contract_signed_name: booking.contractSignedName,
+    agent_name: booking.agentName,
+    notes: booking.notes,
+  });
+}
+
+export async function deleteBooking(id: string): Promise<void> {
+  await supabase.from("bookings").delete().eq("id", id);
 }
 
 // ── Formatting helpers ────────────────────────────────────────────────────────

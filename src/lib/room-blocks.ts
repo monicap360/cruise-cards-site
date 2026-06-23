@@ -143,32 +143,103 @@ export function generateCabinId(): string {
   return "cab-" + Math.random().toString(36).substring(2, 9);
 }
 
-// ── localStorage data layer ───────────────────────────────────────────────────
+// ── Supabase data layer ───────────────────────────────────────────────────────
 
-export function getSailingBlocks(): SailingBlock[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem("cfg-room-blocks") ?? "[]");
-  } catch {
-    return [];
+import { supabase } from "./supabase";
+
+function toCabin(row: Record<string, unknown>): Cabin {
+  return {
+    id: row.id as string,
+    roomNumber: row.room_number as string,
+    deck: (row.deck as number) ?? 1,
+    location: (row.location as CabinLocation) ?? "Midship",
+    side: (row.side as CabinSide) ?? "Port",
+    type: (row.type as CabinCategory) ?? "Interior",
+    maxGuests: (row.max_guests as number) ?? 2,
+    sqft: (row.sqft as number) ?? 0,
+    price: (row.price as number) ?? 0,
+    status: (row.status as CabinStatus) ?? "available",
+    guestName: row.guest_name as string | undefined,
+    guestEmail: row.guest_email as string | undefined,
+    bookingId: row.booking_id as string | undefined,
+    heldUntil: row.held_until as string | undefined,
+    notes: row.notes as string | undefined,
+  };
+}
+
+function toBlock(row: Record<string, unknown>, cabins: Cabin[] = []): SailingBlock {
+  return {
+    id: row.id as string,
+    createdAt: row.created_at as string,
+    ship: row.ship as string,
+    cruiseLine: (row.cruise_line as string) ?? "",
+    sailingDate: row.sailing_date as string,
+    returnDate: (row.return_date as string) ?? "",
+    nights: (row.nights as number) ?? 0,
+    itinerary: (row.itinerary as string) ?? "",
+    cabins,
+    notes: row.notes as string | undefined,
+  };
+}
+
+export async function getSailingBlocks(): Promise<SailingBlock[]> {
+  const { data: blocks, error } = await supabase
+    .from("sailing_blocks")
+    .select("*, cabins(*)")
+    .order("sailing_date", { ascending: true });
+  if (error || !blocks) return [];
+  return blocks.map((b) => toBlock(b, (b.cabins as Record<string, unknown>[]).map(toCabin)));
+}
+
+export async function getSailingBlock(id: string): Promise<SailingBlock | null> {
+  const { data, error } = await supabase
+    .from("sailing_blocks")
+    .select("*, cabins(*)")
+    .eq("id", id)
+    .single();
+  if (error || !data) return null;
+  return toBlock(data, (data.cabins as Record<string, unknown>[]).map(toCabin));
+}
+
+export async function saveSailingBlock(block: SailingBlock): Promise<void> {
+  await supabase.from("sailing_blocks").upsert({
+    id: block.id,
+    ship: block.ship,
+    cruise_line: block.cruiseLine,
+    sailing_date: block.sailingDate,
+    return_date: block.returnDate,
+    nights: block.nights,
+    itinerary: block.itinerary,
+    notes: block.notes,
+  });
+  // Upsert all cabins
+  if (block.cabins.length > 0) {
+    await supabase.from("cabins").upsert(
+      block.cabins.map((c) => ({
+        id: c.id,
+        block_id: block.id,
+        room_number: c.roomNumber,
+        deck: c.deck,
+        location: c.location,
+        side: c.side,
+        type: c.type,
+        max_guests: c.maxGuests,
+        sqft: c.sqft,
+        price: c.price,
+        status: c.status,
+        guest_name: c.guestName,
+        guest_email: c.guestEmail,
+        booking_id: c.bookingId,
+        held_until: c.heldUntil,
+        notes: c.notes,
+      }))
+    );
   }
 }
 
-export function getSailingBlock(id: string): SailingBlock | null {
-  return getSailingBlocks().find((b) => b.id === id) ?? null;
-}
-
-export function saveSailingBlock(block: SailingBlock): void {
-  const all = getSailingBlocks();
-  const idx = all.findIndex((b) => b.id === block.id);
-  if (idx >= 0) all[idx] = block;
-  else all.unshift(block);
-  localStorage.setItem("cfg-room-blocks", JSON.stringify(all));
-}
-
-export function deleteSailingBlock(id: string): void {
-  const all = getSailingBlocks().filter((b) => b.id !== id);
-  localStorage.setItem("cfg-room-blocks", JSON.stringify(all));
+export async function deleteSailingBlock(id: string): Promise<void> {
+  // Cabins cascade-delete via FK
+  await supabase.from("sailing_blocks").delete().eq("id", id);
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

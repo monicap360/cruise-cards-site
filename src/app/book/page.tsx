@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 const OFFICE_EMAIL = "cruisesfromgalveston.texas@gmail.com";
 const OFFICE_PHONE = "(409) 555-CRUISE";
@@ -88,11 +89,24 @@ function generateConfirmNumber() {
   return "CFG-" + Math.random().toString(36).toUpperCase().substring(2, 8);
 }
 
-function saveInquiry(data: FormData & { confirmNumber: string; submittedAt: string }) {
-  if (typeof window === "undefined") return;
-  const all = JSON.parse(localStorage.getItem("cfg-inquiries") ?? "[]");
-  all.unshift(data);
-  localStorage.setItem("cfg-inquiries", JSON.stringify(all));
+async function saveInquiry(data: FormData & { confirmNumber: string; submittedAt: string }) {
+  await supabase.from("inquiries").insert({
+    confirm_number: data.confirmNumber,
+    first_name: data.firstName,
+    last_name: data.lastName,
+    email: data.email,
+    phone: data.phone,
+    ship: data.ship,
+    sail_date: data.sailDate,
+    rate_type: data.rateType,
+    guests: data.guests,
+    cabin_type: data.cabinType,
+    crew: data.crew,
+    message: data.message,
+    appt_date: data.apptDate,
+    appt_time: data.apptTime,
+    mode: data.apptDate ? "appointment" : "inquiry",
+  });
 }
 
 function BookPageContent() {
@@ -124,10 +138,10 @@ function BookPageContent() {
     }
   }, [params]);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const num = generateConfirmNumber();
     setConfirmNumber(num);
-    saveInquiry({ ...form, confirmNumber: num, submittedAt: new Date().toISOString() });
+    await saveInquiry({ ...form, confirmNumber: num, submittedAt: new Date().toISOString() });
     setStep("confirm");
   }
 

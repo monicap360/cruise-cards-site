@@ -36,6 +36,8 @@ export default function Footer() {
                 { href: "/sea-pay", label: "Sea Pay" },
                 { href: "/hold", label: "Hold a Room" },
                 { href: "/booking-options", label: "Booking Options" },
+                { href: "/cancellation-policy", label: "Cancellation Policy" },
+                { href: "/vacation-protection", label: "Vacation Protection" },
                 { href: "/experience-center", label: "Experience Center" },
                 { href: "/about", label: "About Us" },
                 { href: "/contact", label: "Contact" },
