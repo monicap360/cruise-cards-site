@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   title: "Cruises from Galveston | Cruise Experience Center",
   description:
     "Galveston's #1 cruise specialists. Book Caribbean, Mexico, and Bahamas cruises departing from the Port of Galveston, Texas. No flying required!",
+  other: {
+    copyright: `© ${new Date().getFullYear()} Cruises from Galveston™. All Rights Reserved.`,
+    "og:site_name": "Cruises from Galveston™",
+  },
 };
 
 export default function RootLayout({

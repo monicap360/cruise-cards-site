@@ -67,9 +67,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-blue-700 mt-8 pt-6 flex items-center justify-between flex-wrap gap-2 text-blue-300 text-sm">
-          <span>© {new Date().getFullYear()} Cruises from Galveston. All rights reserved. | Galveston, Texas</span>
-          <Link href="/admin" className="text-blue-500 hover:text-blue-300 text-xs transition-colors">
+        {/* Trademark strip */}
+        <div className="border-t border-blue-700 mt-8 pt-5 pb-2 text-blue-400 text-xs leading-relaxed">
+          Cruises from Galveston™ · Cruise Experience Center™ · Sea You On Deck Crews™ · Sea Duck Hunters™ · Sea Pay™ · &ldquo;Cruises Start Here.&rdquo;™ · &ldquo;Plan. Book. Sail.&rdquo;™ are trademarks of Cruises from Galveston™. All crew names, programs, and community systems are proprietary. Unauthorized use is prohibited.
+        </div>
+
+        <div className="pt-3 flex items-center justify-between flex-wrap gap-2 text-blue-300 text-xs">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span>© {new Date().getFullYear()} Cruises from Galveston™. All Rights Reserved. | Galveston, Texas</span>
+            <Link href="/legal" className="text-blue-400 hover:text-white transition-colors underline">
+              Legal &amp; IP Notice
+            </Link>
+          </div>
+          <Link href="/admin" className="text-blue-500 hover:text-blue-300 transition-colors">
             Agent Login
           </Link>
         </div>
