@@ -14,6 +14,7 @@ export default function CruiseTicket({
   fromPrice,
   fromPort = "Galveston",
   embarkStreet,
+  deposit = 100,
 }: {
   ship: string;
   cruiseLine: string;
@@ -24,8 +25,17 @@ export default function CruiseTicket({
   fromPrice?: number;
   fromPort?: string;
   embarkStreet?: string;
+  deposit?: number;
 }) {
   const dur = durationWord(cruiseLine);
+  // Cruise lines typically require final payment ~90 days before sailing.
+  const finalDue = (() => {
+    const d = new Date(sailingDate + "T12:00:00");
+    d.setDate(d.getDate() - 90);
+    return d.toISOString().slice(0, 10);
+  })();
+  const balance =
+    fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
 
   return (
     <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden border border-[#0a1f44]/15 bg-white text-[#0a1f44] shadow-xl">
@@ -101,6 +111,22 @@ export default function CruiseTicket({
             </div>
             <div className="text-[10px] text-[#0a1f44]/50 mt-1">
               Taxes &amp; port fees included
+            </div>
+            <div className="mt-3 pt-3 border-t border-[#0a1f44]/10 space-y-1 text-[11px]">
+              <div className="flex justify-between gap-2">
+                <span className="text-[#0a1f44]/55">Deposit today</span>
+                <span className="font-bold">{fmt$(deposit)} / person</span>
+              </div>
+              {balance && (
+                <div className="flex justify-between gap-2">
+                  <span className="text-[#0a1f44]/55">Balance</span>
+                  <span className="font-bold">{fmt$(balance)} / person</span>
+                </div>
+              )}
+              <div className="flex justify-between gap-2">
+                <span className="text-[#0a1f44]/55">Final payment due</span>
+                <span className="font-bold">{fmtDate(finalDue)}</span>
+              </div>
             </div>
           </>
         ) : (
