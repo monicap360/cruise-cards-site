@@ -194,3 +194,18 @@ body {
   }
   html { scroll-behavior: auto; }
 }
+
+/* Dark native form controls so dropdown menus and date pickers don't flash
+   white-on-white. Fixes the "big white line" when opening a <select>. */
+select,
+input[type="date"],
+input[type="month"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+select option,
+select optgroup {
+  background-color: #0b1020;
+  color: #ffffff;
+}
