@@ -14,6 +14,7 @@ import {
 } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
 import { getOffersForSailing } from "@/lib/offers";
+import { getRateMap, rateKey } from "@/lib/rates";
 import { fmtDate, durationWord } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -93,6 +94,7 @@ export default async function SailingOptionsPage({
     nights: block.nights,
   });
   const ports = portsFromItinerary(block.itinerary);
+  const rateMap = await getRateMap();
 
   return (
     <div className="bg-[#05070d] text-white">
@@ -183,7 +185,10 @@ export default async function SailingOptionsPage({
         {types.map((type) => {
           const cabins = byType[type];
           const prices = cabins.map((c) => c.price).filter((p) => p > 0);
-          const from = prices.length ? Math.min(...prices) : 0;
+          // Admin-set cruise-line rate (per ship + cabin type) overrides the
+          // seeded cabin price when present.
+          const rateOverride = rateMap[rateKey(block.ship, type)];
+          const from = rateOverride ?? (prices.length ? Math.min(...prices) : 0);
           const available = cabins.filter((c) => c.status === "available").length;
           const info = CATEGORY_INFO[type] ?? CATEGORY_INFO.Interior;
           const slug = type.toLowerCase().replace(/[^a-z0-9]+/g, "-");

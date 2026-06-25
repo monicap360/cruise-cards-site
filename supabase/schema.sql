@@ -405,5 +405,24 @@ drop policy if exists "offers anon write" on offers;
 create policy "offers anon write" on offers for all using (true) with check (true);
 
 -- ============================================================
+-- Cabin rates (admin-set cruise-line fares per ship + cabin type)
+-- ============================================================
+create table if not exists cabin_rates (
+  ship text not null,
+  cabin_type text not null,
+  rate numeric not null default 0, -- per person, double occupancy
+  updated_at timestamptz default now(),
+  primary key (ship, cabin_type)
+);
+
+alter table cabin_rates enable row level security;
+
+drop policy if exists "cabin_rates anon read" on cabin_rates;
+create policy "cabin_rates anon read" on cabin_rates for select using (true);
+
+drop policy if exists "cabin_rates anon write" on cabin_rates;
+create policy "cabin_rates anon write" on cabin_rates for all using (true) with check (true);
+
+-- ============================================================
 -- Done. All tables created.
 -- ============================================================
