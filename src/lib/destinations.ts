@@ -122,6 +122,54 @@ const TABLE: { match: RegExp; d: Destination }[] = [
     },
   },
   {
+    match: /key\s*west/i,
+    d: {
+      slug: "key-west",
+      name: "Key West",
+      country: "Florida, USA",
+      blurb:
+        "America's southernmost city — pastel streets, Duval Street nightlife, sunset celebrations, and reef snorkeling.",
+      gradient: "from-amber-300 to-rose-600",
+      highlights: ["Mallory Square sunset", "Duval Street", "Reef & glass-bottom boats"],
+    },
+  },
+  {
+    match: /montego|jamaica|ocho\s*rios|falmouth/i,
+    d: {
+      slug: "montego-bay",
+      name: "Montego Bay",
+      country: "Jamaica",
+      blurb:
+        "Jamaica's vibrant north coast — reggae rhythm, Dunn's River Falls, jerk cuisine, and warm turquoise bays.",
+      gradient: "from-green-400 to-emerald-800",
+      highlights: ["Dunn's River Falls", "Doctor's Cave Beach", "Bamboo rafting"],
+    },
+  },
+  {
+    match: /puerto\s*rico|san\s*juan/i,
+    d: {
+      slug: "puerto-rico",
+      name: "San Juan, Puerto Rico",
+      country: "Puerto Rico",
+      blurb:
+        "Old San Juan's blue-cobblestone streets, historic forts, rainforest, and lively Caribbean culture.",
+      gradient: "from-sky-400 to-indigo-800",
+      highlights: ["El Morro fort", "Old San Juan", "El Yunque rainforest"],
+    },
+  },
+  {
+    match: /st\.?\s*thomas|charlotte\s*amalie|virgin\s*islands/i,
+    d: {
+      slug: "st-thomas",
+      name: "St. Thomas",
+      country: "U.S. Virgin Islands",
+      blurb:
+        "Powder-white Magens Bay, duty-free shopping, and some of the clearest snorkeling water in the Caribbean.",
+      gradient: "from-cyan-400 to-blue-700",
+      highlights: ["Magens Bay beach", "Skyride to Paradise Point", "Duty-free shopping"],
+    },
+  },
+  {
     match: /nassau/i,
     d: {
       slug: "nassau",

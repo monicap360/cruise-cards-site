@@ -7,3 +7,6 @@ Images sourced from Wikimedia Commons.
 - **interior.jpg** — Disabled person's cabin, Grand Princess · CC BY 2.0 · Wikimedia Commons
 - **ocean-view.jpg** — Safari Endeavour - Captain Stateroom's window · CC BY-SA 3.0 · Wikimedia Commons
 - **mini-suite.jpg** — Rhodes suite (12280542504).jpg · CC BY 2.0 · Gaynor · https://commons.wikimedia.org/wiki/File:Rhodes_suite_(12280542504).jpg
+- **montego-bay.jpg** — Doctors-Cave-Beach.jpg · Public domain · Wikimedia Commons
+- **puerto-rico.jpg** — San Juan - Morro.jpg · Public domain · Wikimedia Commons
+- **st-thomas.jpg** — St. Thomas - Magens Bay.jpg · Public domain · Wikimedia Commons
