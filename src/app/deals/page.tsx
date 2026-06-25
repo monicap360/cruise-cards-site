@@ -1,5 +1,6 @@
 import Link from "next/link";
-import ShipImage from "@/components/ShipImage";
+import Photo from "@/components/Photo";
+import { destinationFor } from "@/lib/destinations";
 
 export const metadata = {
   title: "Cruise Deals from Galveston",
@@ -185,13 +186,29 @@ export default async function DealsPage({
           </div>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDeals.map((deal) => (
+          {filteredDeals.map((deal) => {
+            const dest = destinationFor(
+              deal.destination.split(/[,&]/)[0].trim()
+            );
+            const shipPhoto = `/ships/${deal.ship
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/(^-|-$)/g, "")}.jpg`;
+            return (
             <div
               key={deal.name}
               className="bg-[#0b1020] border border-white/10 rounded-2xl overflow-hidden hover:border-white/25 transition-all flex flex-col"
             >
               <div className="relative h-44 border-b border-white/10 overflow-hidden">
-                <ShipImage ship={deal.ship} className="absolute inset-0" />
+                <Photo
+                  src={`/destinations/${dest.slug}.jpg`}
+                  fallbackSrc={shipPhoto}
+                  alt={deal.destination}
+                  gradient={dest.gradient}
+                  overlay={false}
+                  className="absolute inset-0"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0b1020] via-[#0b1020]/15 to-transparent" />
                 <span className="absolute bottom-3 left-4 z-10 text-white/90 label-mono text-[11px] uppercase tracking-wide">
                   {deal.ship}
                 </span>
@@ -235,7 +252,8 @@ export default async function DealsPage({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
         )}
       </section>
