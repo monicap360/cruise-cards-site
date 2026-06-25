@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
+import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { getSailingBlocks, type SailingBlock } from "@/lib/room-blocks";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
@@ -210,9 +211,10 @@ function FindInner() {
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-1">
-                              {b.cruiseLine}
-                            </div>
+                            <CruiseLineLogo
+                              line={b.cruiseLine}
+                              className="h-4 max-w-[130px] mb-1.5"
+                            />
                             <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white">
                               {b.ship}
                             </div>

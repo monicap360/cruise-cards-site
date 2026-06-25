@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
+import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { getSailingBlocks } from "@/lib/room-blocks";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 
@@ -219,9 +220,10 @@ export default async function SailingsPage({
                       <span className="hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
                         {b.nights} {durationWord(b.cruiseLine)}
                       </span>
-                      <span className="label-mono text-[10px] uppercase text-sky-400/70 truncate">
-                        {b.cruiseLine}
-                      </span>
+                      <CruiseLineLogo
+                        line={b.cruiseLine}
+                        className="h-4 max-w-[130px]"
+                      />
                     </div>
                     <div className="text-2xl font-extrabold text-white mb-1">
                       {fmtDate(b.sailingDate)}
