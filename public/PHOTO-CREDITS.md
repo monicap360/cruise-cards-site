@@ -10,3 +10,9 @@ Images sourced from Wikimedia Commons.
 - **montego-bay.jpg** — Doctors-Cave-Beach.jpg · Public domain · Wikimedia Commons
 - **puerto-rico.jpg** — San Juan - Morro.jpg · Public domain · Wikimedia Commons
 - **st-thomas.jpg** — St. Thomas - Magens Bay.jpg · Public domain · Wikimedia Commons
+- **san-juan.jpg** — Castillo San Felipe del Morro aerial · CC BY 4.0 · Wikimedia Commons
+- **half-moon-cay.jpg** — Half Moon Cay · CC BY 2.0 · Wikimedia Commons
+- **castaway-cay.jpg** — Castaway Cay beach · CC BY 2.0 · Wikimedia Commons
+- **ocean-cay.jpg** — Lighthouse Bay, Ocean Cay MSC Marine Reserve · CC BY 2.0 · Wikimedia Commons
+- **celebration-key.jpg** — Port Lucaya / Grand Bahama beach (proxy) · CC BY 3.0 · Wikimedia Commons
+- **princess-cays.jpg** — Harbour Island, Eleuthera (proxy) · CC BY 3.0 · Wikimedia Commons
