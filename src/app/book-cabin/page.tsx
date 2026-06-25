@@ -33,7 +33,7 @@ const ACKS: { id: string; label: string }[] = [
   {
     id: "latepayment",
     label:
-      "I understand that if I pass my final payment date, the cruise line will automatically cancel my reservation. Re-booking is subject to the cruise line's current price and any cruise-line rebooking fees (these are cruise-line rules, not ours), plus a $250 service fee for us to rebuild the booking exactly as it was.",
+      "I understand that if I pass my final payment date, the cruise line will automatically cancel my reservation. Re-booking depends on the cabin and sailing still being available, and is subject to the cruise line's current price and any cruise-line rebooking fees (these are cruise-line rules, not ours), plus a $250 service fee for us to rebuild the booking — if it can still be put back the way it was.",
   },
   {
     id: "authorize",
