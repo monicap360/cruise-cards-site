@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
 import ShipImage from "@/components/ShipImage";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
-import { getSailingBlocks, type SailingBlock } from "@/lib/room-blocks";
+import { type SailingBlock } from "@/lib/room-blocks";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
@@ -56,10 +56,13 @@ function FindInner() {
   }, [searchParams]);
 
   useEffect(() => {
-    getSailingBlocks().then((b) => {
-      setBlocks(b);
-      setLoading(false);
-    });
+    fetch("/api/sailings")
+      .then((r) => r.json())
+      .then((b: SailingBlock[]) => {
+        setBlocks(Array.isArray(b) ? b : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   // reset visible count whenever the query/filters change
