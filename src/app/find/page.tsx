@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
+import ShipImage from "@/components/ShipImage";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { getSailingBlocks, type SailingBlock } from "@/lib/room-blocks";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
@@ -21,6 +22,19 @@ const TYPE_ICON: Record<string, string> = {
   Page: "⚓",
 };
 
+const SORTS = [
+  { key: "soonest", label: "Soonest" },
+  { key: "price", label: "Price: low to high" },
+  { key: "length", label: "Length" },
+];
+
+const PAGE_SIZE = 24;
+
+function priceOf(b: SailingBlock): number {
+  const p = b.cabins.map((c) => c.price).filter((n) => n > 0);
+  return p.length ? Math.min(...p) : Infinity;
+}
+
 function FindInner() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,12 +45,14 @@ function FindInner() {
   const [port, setPort] = useState("");
   const [month, setMonth] = useState("");
   const [nights, setNights] = useState("");
+  const [sort, setSort] = useState("soonest");
+  const [limit, setLimit] = useState(PAGE_SIZE);
 
-  // React to ?q= and ?ship= so searches/links always update results.
   const searchParams = useSearchParams();
   useEffect(() => {
     setQ(searchParams.get("q") ?? "");
     setShip(searchParams.get("ship") ?? "");
+    setLine(searchParams.get("line") ?? "");
   }, [searchParams]);
 
   useEffect(() => {
@@ -45,6 +61,11 @@ function FindInner() {
       setLoading(false);
     });
   }, []);
+
+  // reset visible count whenever the query/filters change
+  useEffect(() => {
+    setLimit(PAGE_SIZE);
+  }, [q, ship, line, port, month, nights, sort]);
 
   const shipsList = useMemo(
     () => Array.from(new Set(blocks.map((b) => b.ship))).sort(),
@@ -75,37 +96,57 @@ function FindInner() {
 
   const results = useMemo(() => {
     const ql = q.trim().toLowerCase();
-    return blocks
-      .filter((b) => {
-        if (ship && b.ship !== ship) return false;
-        if (line && b.cruiseLine !== line) return false;
-        if (port && !b.itinerary.toLowerCase().includes(port.toLowerCase()))
-          return false;
-        if (month && !b.sailingDate.startsWith(month)) return false;
-        if (nights && b.nights !== parseInt(nights)) return false;
-        if (ql) {
-          const hay = `${b.ship} ${b.cruiseLine} ${b.itinerary}`.toLowerCase();
-          if (!hay.includes(ql)) return false;
-        }
-        return true;
-      })
-      .sort((a, b) => a.sailingDate.localeCompare(b.sailingDate));
-  }, [blocks, q, ship, line, port, month, nights]);
+    const filtered = blocks.filter((b) => {
+      if (ship && b.ship !== ship) return false;
+      if (line && b.cruiseLine !== line) return false;
+      if (port && !b.itinerary.toLowerCase().includes(port.toLowerCase()))
+        return false;
+      if (month && !b.sailingDate.startsWith(month)) return false;
+      if (nights && b.nights !== parseInt(nights)) return false;
+      if (ql) {
+        const hay = `${b.ship} ${b.cruiseLine} ${b.itinerary}`.toLowerCase();
+        if (!hay.includes(ql)) return false;
+      }
+      return true;
+    });
+    filtered.sort((a, b) => {
+      if (sort === "price") return priceOf(a) - priceOf(b);
+      if (sort === "length")
+        return a.nights - b.nights || a.sailingDate.localeCompare(b.sailingDate);
+      return a.sailingDate.localeCompare(b.sailingDate);
+    });
+    return filtered;
+  }, [blocks, q, ship, line, port, month, nights, sort]);
 
   const contentResults = useMemo(() => {
     const ql = q.trim().toLowerCase();
-    return ql
-      ? SEARCH_CONTENT.filter((i) => i.keywords.includes(ql))
-      : SEARCH_CONTENT;
+    return ql ? SEARCH_CONTENT.filter((i) => i.keywords.includes(ql)) : [];
   }, [q]);
 
-  const hasFilters = q || ship || line || port || month || nights;
+  const activePills = [
+    q && { label: `“${q}”`, clear: () => setQ("") },
+    ship && { label: ship, clear: () => setShip("") },
+    line && { label: line, clear: () => setLine("") },
+    port && { label: port, clear: () => setPort("") },
+    month && { label: monthLabel(month), clear: () => setMonth("") },
+    nights && { label: `${nights} nights`, clear: () => setNights("") },
+  ].filter(Boolean) as { label: string; clear: () => void }[];
+
+  const clearAll = () => {
+    setQ("");
+    setShip("");
+    setLine("");
+    setPort("");
+    setMonth("");
+    setNights("");
+  };
+
   const selectCls =
     "bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sky-400/60";
 
   return (
     <div className="bg-[#05070d] text-white min-h-screen">
-      {/* Hero banner + search */}
+      {/* ── Hero banner + search ── */}
       <section className="relative overflow-hidden border-b border-white/10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -123,28 +164,61 @@ function FindInner() {
           <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
             {"// Find a Cruise"}
           </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mb-7">
+          <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mb-3">
             Search Every <span className="text-holo">Galveston</span> Sailing
           </h1>
+          <p className="text-white/55 text-base sm:text-lg max-w-2xl mb-7">
+            Every cruise below is a round-trip, closed-loop sailing from the Port
+            of Galveston. Pricing is per person, double occupancy — taxes &amp;
+            port fees included.
+          </p>
 
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search ship, destination, or cruise line…"
-            className="w-full bg-white/5 border border-white/15 rounded-2xl px-5 py-4 text-white text-lg placeholder-white/40 focus:outline-none focus:border-sky-400/60 mb-4"
-          />
+          <div className="relative mb-4">
+            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 text-lg">
+              ⌕
+            </span>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search ship, destination, or cruise line…"
+              className="w-full bg-white/5 border border-white/15 rounded-2xl pl-12 pr-5 py-4 text-white text-lg placeholder-white/40 focus:outline-none focus:border-sky-400/60"
+            />
+          </div>
 
+          {/* Cruise-line quick chips */}
+          {lines.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              {lines.map((l) => {
+                const active = line === l;
+                return (
+                  <button
+                    key={l}
+                    onClick={() => setLine(active ? "" : l)}
+                    className={`flex items-center gap-2 rounded-full border px-3.5 py-2 transition-colors ${
+                      active
+                        ? "bg-white border-white"
+                        : "bg-white/5 border-white/15 hover:border-white/40"
+                    }`}
+                  >
+                    {active ? (
+                      <span className="label-mono text-[10px] uppercase tracking-wider text-black">
+                        {l}
+                      </span>
+                    ) : (
+                      <CruiseLineLogo line={l} className="h-3.5 max-w-[110px]" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Filters */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <select className={selectCls} value={ship} onChange={(e) => setShip(e.target.value)}>
               <option value="" className="bg-[#0b1020]">Any ship</option>
               {shipsList.map((s) => (
                 <option key={s} value={s} className="bg-[#0b1020]">{s}</option>
-              ))}
-            </select>
-            <select className={selectCls} value={line} onChange={(e) => setLine(e.target.value)}>
-              <option value="" className="bg-[#0b1020]">Any cruise line</option>
-              {lines.map((l) => (
-                <option key={l} value={l} className="bg-[#0b1020]">{l}</option>
               ))}
             </select>
             <select className={selectCls} value={port} onChange={(e) => setPort(e.target.value)}>
@@ -165,94 +239,164 @@ function FindInner() {
                 <option key={n} value={n} className="bg-[#0b1020]">{n} nights</option>
               ))}
             </select>
+            <select className={selectCls} value={sort} onChange={(e) => setSort(e.target.value)}>
+              {SORTS.map((s) => (
+                <option key={s.key} value={s.key} className="bg-[#0b1020]">
+                  Sort: {s.label}
+                </option>
+              ))}
+            </select>
           </div>
-          {hasFilters && (
-            <button
-              onClick={() => {
-                setQ("");
-                setShip("");
-                setLine("");
-                setPort("");
-                setMonth("");
-                setNights("");
-              }}
-              className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white transition-colors mt-4"
-            >
-              Clear all filters
-            </button>
+
+          {/* Active filter pills */}
+          {activePills.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mt-4">
+              {activePills.map((p) => (
+                <button
+                  key={p.label}
+                  onClick={p.clear}
+                  className="group flex items-center gap-1.5 rounded-full bg-sky-500/15 border border-sky-400/30 px-3 py-1.5 text-xs text-white hover:bg-sky-500/25 transition-colors"
+                >
+                  {p.label}
+                  <span className="text-white/50 group-hover:text-white">×</span>
+                </button>
+              ))}
+              <button
+                onClick={clearAll}
+                className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white transition-colors ml-1"
+              >
+                Clear all
+              </button>
+            </div>
           )}
         </div>
       </section>
 
-      {/* Results */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* ── Results ── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {loading ? (
           <p className="text-white/45 label-mono text-sm uppercase">Searching…</p>
         ) : (
           <>
-            {results.length > 0 && (
-              <div className="mb-14">
-                <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
-                  {`// ${results.length} Sailing${
-                    results.length === 1 ? "" : "s"
-                  } Found`}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {results.map((b) => {
-                    const prices = b.cabins
-                      .map((c) => c.price)
-                      .filter((p) => p > 0);
-                    const from = prices.length ? Math.min(...prices) : 0;
+            <div className="flex items-end justify-between gap-3 mb-6">
+              <div className="label-mono text-[11px] uppercase text-sky-400/80">
+                {`// ${results.length} Sailing${
+                  results.length === 1 ? "" : "s"
+                } Found`}
+              </div>
+            </div>
+
+            {results.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {results.slice(0, limit).map((b) => {
+                    const from = priceOf(b);
+                    const available = b.cabins.filter(
+                      (c) => c.status === "available"
+                    ).length;
                     return (
                       <Link
                         key={b.id}
                         href={`/sailings/${b.id}`}
-                        className="group bg-[#0b1020] border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-colors"
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-sky-400/40 transition-colors flex flex-col sm:flex-row"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <CruiseLineLogo
-                              line={b.cruiseLine}
-                              className="h-4 max-w-[130px] mb-1.5"
-                            />
-                            <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white">
-                              {b.ship}
-                            </div>
-                            <div className="text-white/55 text-sm mt-1">
-                              {fmtDate(b.sailingDate)} · {b.nights}{" "}
-                              {durationWord(b.cruiseLine)}
-                            </div>
-                            <p className="text-white/45 text-sm mt-1">
-                              <span className="text-sky-400/80">Galveston</span> →{" "}
-                              {b.itinerary} →{" "}
-                              <span className="text-sky-400/80">Galveston</span>
-                            </p>
+                        {/* Ship photo */}
+                        <div className="relative sm:w-52 h-40 sm:h-auto flex-shrink-0">
+                          <ShipImage ship={b.ship} className="absolute inset-0" />
+                          <span className="absolute top-3 left-3 hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
+                            {b.nights} {durationWord(b.cruiseLine)}
+                          </span>
+                        </div>
+                        {/* Details */}
+                        <div className="flex-1 p-5 flex flex-col">
+                          <CruiseLineLogo
+                            line={b.cruiseLine}
+                            className="h-4 max-w-[130px] mb-1.5"
+                          />
+                          <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white leading-tight">
+                            {b.ship}
                           </div>
-                          {from > 0 && (
-                            <div className="text-right flex-shrink-0">
-                              <span className="text-white/40 label-mono text-[10px] uppercase">
-                                From
-                              </span>
-                              <div className="text-white font-bold text-xl">
-                                {fmt$(from)}
-                              </div>
-                              <div className="text-white/40 text-[10px] leading-tight">
-                                / person · dbl occ
+                          <div className="text-white/55 text-sm mt-1">
+                            {fmtDate(b.sailingDate)} → returns{" "}
+                            {fmtDate(b.returnDate)}
+                          </div>
+                          <p className="text-white/45 text-sm mt-1 flex-1">
+                            <span className="text-sky-400/80">Galveston</span> →{" "}
+                            {b.itinerary} →{" "}
+                            <span className="text-sky-400/80">Galveston</span>
+                          </p>
+                          <div className="flex items-end justify-between border-t border-white/10 pt-3 mt-3">
+                            <div>
+                              {from < Infinity && (
+                                <>
+                                  <span className="text-white/40 label-mono text-[10px] uppercase">
+                                    From
+                                  </span>
+                                  <div className="text-holo font-extrabold text-2xl leading-none">
+                                    {fmt$(from)}
+                                    <span className="text-white/40 text-xs font-normal">
+                                      {" "}
+                                      / person
+                                    </span>
+                                  </div>
+                                </>
+                              )}
+                              <div className="text-white/35 text-[10px] mt-1">
+                                dbl occ · {available} cabins open
                               </div>
                             </div>
-                          )}
+                            <span className="bg-white text-black group-hover:bg-white/90 font-semibold uppercase tracking-wider text-[11px] px-5 py-2.5 rounded-full transition-all">
+                              See options →
+                            </span>
+                          </div>
                         </div>
                       </Link>
                     );
                   })}
                 </div>
+
+                {results.length > limit && (
+                  <div className="text-center mt-8">
+                    <button
+                      onClick={() => setLimit((n) => n + PAGE_SIZE)}
+                      className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-8 py-3.5 rounded-full transition-all"
+                    >
+                      Show more ({results.length - limit} more)
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-12 max-w-xl mx-auto">
+                <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] mb-3">
+                  No sailings match
+                </h2>
+                <p className="text-white/55 mb-7">
+                  Try fewer filters — or tell us what you want and we&apos;ll find
+                  it from our full Galveston inventory.
+                </p>
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <button
+                    onClick={clearAll}
+                    className="border border-white/25 hover:border-white/70 text-white font-semibold uppercase tracking-wider text-sm px-6 py-3.5 rounded-full transition-all"
+                  >
+                    Clear filters
+                  </button>
+                  <Link
+                    href="/contact"
+                    className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-3.5 rounded-full transition-all"
+                  >
+                    Ask a Specialist
+                  </Link>
+                </div>
               </div>
             )}
 
+            {/* Contextual content matches (only when searching text) */}
             {contentResults.length > 0 && (
-              <div>
+              <div className="mt-16">
                 <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
-                  {"// Cruises, Ships & Destinations"}
+                  {"// Ships, Destinations & Pages"}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {contentResults.map((i) => (
@@ -294,23 +438,6 @@ function FindInner() {
                     </Link>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {results.length === 0 && contentResults.length === 0 && (
-              <div className="text-center py-12 max-w-xl mx-auto">
-                <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] mb-3">
-                  No matches
-                </h2>
-                <p className="text-white/55 mb-7">
-                  Try fewer words — or tell us what you want and we&apos;ll find it.
-                </p>
-                <Link
-                  href="/contact"
-                  className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
-                >
-                  Ask a Specialist
-                </Link>
               </div>
             )}
           </>

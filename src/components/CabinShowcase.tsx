@@ -110,7 +110,7 @@ export default function CabinShowcase({
               href={reserveHref}
               className="bg-[#0a1f44] text-white hover:bg-[#0a1f44]/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
             >
-              Reserve
+              Book Now
             </Link>
             <Link
               href={holdHref}
