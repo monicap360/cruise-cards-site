@@ -31,6 +31,11 @@ const ACKS: { id: string; label: string }[] = [
       "I understand the balance (final payment) is due roughly 90 days before the sail date.",
   },
   {
+    id: "latepayment",
+    label:
+      "I understand that if I pass my final payment date, the cruise line will automatically cancel my reservation. Re-booking is subject to the cruise line's current price and any cruise-line rebooking fees (these are cruise-line rules, not ours), plus a $250 service fee for us to rebuild the booking exactly as it was.",
+  },
+  {
     id: "authorize",
     label:
       "I authorize Cruises from Galveston to hold this cabin and contact me to arrange my deposit. No card is charged on this website.",
