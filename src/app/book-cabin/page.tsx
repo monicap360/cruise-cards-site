@@ -83,6 +83,8 @@ function BookCabinContent() {
     setCruiseLine(params.get("line") ?? "");
     const p = Number(params.get("price"));
     if (!Number.isNaN(p)) setPricePP(p);
+    const g = params.get("guests");
+    if (g) setGuests(g);
   }, [params]);
 
   const grossTotal = pricePP > 0 ? pricePP * 2 : 0;

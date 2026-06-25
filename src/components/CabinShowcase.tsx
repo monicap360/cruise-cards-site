@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Photo from "@/components/Photo";
-import { fmt$ } from "@/lib/sea-pay";
+import OccupancyTiers from "@/components/OccupancyTiers";
 
 function shipSlug(s: string): string {
   return s
@@ -50,7 +50,6 @@ export default function CabinShowcase({
   fromPort?: string;
 }) {
   const title = /suite/i.test(type) ? type : `${type} Cabin`;
-  const grossTotal = fromPerson > 0 ? fromPerson * 2 : 0;
 
   return (
     <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020] hover:border-white/25 transition-colors flex flex-col lg:flex-row">
@@ -96,38 +95,19 @@ export default function CabinShowcase({
           </div>
         )}
 
-        {/* Price + actions */}
-        <div className="mt-auto border-t border-white/10 pt-4 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            {fromPerson > 0 && (
-              <>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-holo font-extrabold text-3xl leading-none">
-                    {fmt$(fromPerson)}
-                  </span>
-                  <span className="text-white/50 text-sm">/ person</span>
-                </div>
-                <div className="text-white/45 text-xs mt-1.5">
-                  Gross total {fmt$(grossTotal)} · 2 guests · taxes &amp; fees
-                  included
-                </div>
-                <div className="text-white/35 text-[11px] mt-0.5">
-                  Double occupancy
-                  {maxGuests && maxGuests > 2
-                    ? ` · sleeps up to ${maxGuests}, add-a-guest rates available`
-                    : ""}
-                </div>
-              </>
-            )}
-          </div>
+        {/* Occupancy pricing + actions */}
+        <div className="mt-auto border-t border-white/10 pt-4">
+          {fromPerson > 0 ? (
+            <OccupancyTiers
+              pricePerPerson={fromPerson}
+              maxGuests={maxGuests ?? 4}
+              reserveBase={reserveHref}
+            />
+          ) : (
+            <div className="text-white/55 text-sm">Call for pricing</div>
+          )}
 
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={reserveHref}
-              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
-            >
-              Book Now
-            </Link>
+          <div className="flex flex-wrap gap-2 mt-4">
             <Link
               href={holdHref}
               className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
