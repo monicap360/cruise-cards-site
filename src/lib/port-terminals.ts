@@ -23,11 +23,22 @@ export const SHIP_TERMINAL: Record<string, TerminalInfo> = {
     terminal: "Carnival Terminal",
     address: PORT_ADDRESS,
   },
-  // Add the rest as confirmed, e.g.:
-  // "Carnival Dream": { entryStreet: "…", address: PORT_ADDRESS },
-  // "Mariner of the Seas": { entryStreet: "…", address: PORT_ADDRESS },
-  // "Symphony of the Seas": { entryStreet: "…", address: PORT_ADDRESS },
-  // "MSC Seascape": { entryStreet: "…", address: PORT_ADDRESS },
+  // Royal Caribbean — Galveston Terminal at 1401 Harborside Drive
+  "Mariner of the Seas": {
+    entryStreet: "14th Street (Christopher Columbus Blvd)",
+    terminal: "Royal Caribbean Terminal",
+    address: "1401 Harborside Drive, Galveston, TX 77550",
+  },
+  "Symphony of the Seas": {
+    entryStreet: "14th Street (Christopher Columbus Blvd)",
+    terminal: "Royal Caribbean Terminal",
+    address: "1401 Harborside Drive, Galveston, TX 77550",
+  },
+  "Liberty of the Seas": {
+    entryStreet: "14th Street (Christopher Columbus Blvd)",
+    terminal: "Royal Caribbean Terminal",
+    address: "1401 Harborside Drive, Galveston, TX 77550",
+  },
 };
 
 export function getTerminal(ship: string): TerminalInfo | undefined {

@@ -4,7 +4,7 @@ const features = [
   {
     icon: "🚢",
     title: "Galveston Departures",
-    desc: "Every sailing leaves from the Port of Galveston — drive up, park, and step aboard. No flights, no stress.",
+    desc: "Every sailing leaves from the Port of Galveston — drive up and park, or fly into Houston and we'll book your flights, hotel, and transfers.",
   },
   {
     icon: "💎",
@@ -57,7 +57,7 @@ const stats = [
   { value: "5", label: "Cruise lines from Galveston" },
   { value: "900+", label: "Sailings to choose from" },
   { value: "1", label: "Experience Center, on the island" },
-  { value: "0", label: "Flights required" },
+  { value: "2", label: "Houston airports for Fly & Cruise" },
 ];
 
 const journey = [
@@ -248,6 +248,20 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Texas hospitality band ───────────────────────────────────────── */}
+      <section className="bg-[#0b1020] border-y border-white/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-7 text-center">
+          <div className="label-mono text-[10px] uppercase tracking-[0.2em] text-sky-400/80 mb-2">
+            ★ Lone Star Service
+          </div>
+          <p className="text-white/75 text-base sm:text-lg leading-relaxed">
+            A genuine <span className="text-white font-semibold">Texas welcome</span> —
+            honest advice, no pressure, and a local Galveston team that treats you
+            like a neighbor, from our island to your stateroom.
+          </p>
         </div>
       </section>
 

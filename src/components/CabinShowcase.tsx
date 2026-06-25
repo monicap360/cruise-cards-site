@@ -58,7 +58,7 @@ export default function CabinShowcase({
   return (
     <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020]">
       {/* ── Hero: representative stateroom photo + frosted info panel ── */}
-      <div className="relative min-h-[380px] flex p-4 sm:p-6">
+      <div className="relative min-h-[460px] sm:min-h-[520px] flex p-4 sm:p-6">
         <Photo
           src={`/cabins/${slug}.jpg`}
           fallbackSrc={`/ships/${shipSlug(ship)}.jpg`}
