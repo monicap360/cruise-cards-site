@@ -14,7 +14,7 @@ export default function CruiseTicket({
   fromPrice,
   fromPort = "Galveston",
   embarkStreet,
-  deposit = 100,
+  deposit = 50,
 }: {
   ship: string;
   cruiseLine: string;
@@ -37,6 +37,7 @@ export default function CruiseTicket({
     d.setDate(d.getDate() - 90);
     return d.toISOString().slice(0, 10);
   })();
+  const today = new Date().toISOString().slice(0, 10);
   const balance =
     fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
   // Gross total = the full cabin fare at double occupancy (2 guests).
@@ -152,17 +153,24 @@ export default function CruiseTicket({
             </div>
 
             <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-[12px]">
+              <div className="label-mono text-[9px] uppercase tracking-wider text-white/35">
+                Per person
+              </div>
               <div className="flex justify-between gap-2">
-                <span className="text-white/45">Deposit today</span>
-                <span className="font-bold text-white">
-                  {fmt$(deposit)} / person
+                <span className="text-white/45">Fare</span>
+                <span className="font-bold text-white">{fmt$(fromPrice)}</span>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-white/45">
+                  − Deposit (due {fmtDateDow(today)})
                 </span>
+                <span className="font-bold text-white">{fmt$(deposit)}</span>
               </div>
               {balance && (
-                <div className="flex justify-between gap-2">
-                  <span className="text-white/45">Balance after deposit</span>
-                  <span className="font-bold text-white">
-                    {fmt$(balance)} / person
+                <div className="flex justify-between gap-2 border-t border-white/10 pt-1.5 mt-1">
+                  <span className="text-white/60">Balance once deposit paid</span>
+                  <span className="font-extrabold text-sky-300">
+                    {fmt$(balance)}
                   </span>
                 </div>
               )}
@@ -172,7 +180,8 @@ export default function CruiseTicket({
               </div>
             </div>
             <div className="text-[10px] text-white/35 mt-2 leading-snug">
-              Your deposit is applied to your fare — the balance is what remains.
+              {fmt$(fromPrice)} − {fmt$(deposit)} deposit = {balance ? fmt$(balance) : "—"}{" "}
+              balance per person, due once your deposit is paid.
             </div>
           </>
         ) : (
