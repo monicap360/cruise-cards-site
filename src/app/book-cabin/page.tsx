@@ -28,7 +28,7 @@ const ACKS: { id: string; label: string }[] = [
   {
     id: "final",
     label:
-      "I understand the balance (final payment) is due roughly 90 days before the sail date.",
+      "I understand I must pay my balance in full by my final payment date (roughly 90 days before the sail date) — if I do not, the cruise line's system will automatically cancel my reservation.",
   },
   {
     id: "latepayment",
