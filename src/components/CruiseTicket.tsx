@@ -39,6 +39,11 @@ export default function CruiseTicket({
   })();
   const balance =
     fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
+  const stops = [
+    { name: fromPort, sub: fmtDateDow(sailingDate), role: "Depart", home: true },
+    ...ports.map((p) => ({ name: p, sub: "", role: "Port", home: false })),
+    { name: fromPort, sub: fmtDateDow(returnDate), role: "Return", home: true },
+  ];
 
   return (
     <div className="relative flex flex-col sm:flex-row rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020]">
@@ -63,43 +68,37 @@ export default function CruiseTicket({
           {cruiseLine}
         </div>
 
-        {/* Route */}
-        <div className="mt-7 flex items-start gap-4">
-          <div className="text-left flex-shrink-0">
-            <div className="label-mono text-[10px] uppercase tracking-wider text-white/40">
-              Depart
-            </div>
-            <div className="font-extrabold text-sm uppercase text-white">
-              {fromPort}
-            </div>
-            <div className="text-xs text-white/55">{fmtDateDow(sailingDate)}</div>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center pt-1 min-w-0">
-            <div className="text-sky-400 text-base leading-none">
-              ⚓
-              <span className="mx-1 text-white/25">— — —</span>🚢
-            </div>
-            <div className="flex flex-wrap justify-center gap-1.5 mt-2.5">
-              {ports.map((p) => (
-                <span
-                  key={p}
-                  className="bg-white/5 border border-white/15 rounded-full px-2.5 py-1 text-[11px] font-semibold text-sky-300"
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-right flex-shrink-0">
-            <div className="label-mono text-[10px] uppercase tracking-wider text-white/40">
-              Return
-            </div>
-            <div className="font-extrabold text-sm uppercase text-white">
-              {fromPort}
-            </div>
-            <div className="text-xs text-white/55">{fmtDateDow(returnDate)}</div>
+        {/* Route timeline */}
+        <div className="mt-7 overflow-x-auto pb-1">
+          <div className="flex items-start min-w-max">
+            {stops.map((s, i) => (
+              <div key={i} className="flex items-start">
+                <div className="flex flex-col items-center text-center px-1 w-[5.5rem]">
+                  <span
+                    className={
+                      s.home
+                        ? "w-3.5 h-3.5 rounded-full bg-gradient-to-br from-sky-300 to-sky-600 ring-2 ring-sky-400/25"
+                        : "w-2.5 h-2.5 rounded-full bg-sky-400/70 mt-0.5"
+                    }
+                  />
+                  <span className="text-white text-[11px] font-bold mt-2 leading-tight">
+                    {s.name}
+                  </span>
+                  {s.sub ? (
+                    <span className="text-white/55 text-[10px] mt-0.5">
+                      {s.sub}
+                    </span>
+                  ) : (
+                    <span className="label-mono text-[9px] uppercase tracking-wider text-white/35 mt-0.5">
+                      {s.role}
+                    </span>
+                  )}
+                </div>
+                {i < stops.length - 1 && (
+                  <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-sky-400/50 to-sky-400/50 mt-[7px] flex-shrink-0" />
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
