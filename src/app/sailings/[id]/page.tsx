@@ -220,8 +220,8 @@ export default async function SailingOptionsPage({
               )}&price=${from}&line=${encodeURIComponent(block.cruiseLine)}&dest=${encodeURIComponent(
                 ports[0] ?? ""
               )}`}
-              holdHref={`/hold?ship=${shipParam}&name=${encodeURIComponent(
-                block.ship + " " + type
+              holdHref={`/hold?ship=${shipParam}&date=${block.sailingDate}&type=${encodeURIComponent(
+                type
               )}`}
               seaPayHref={`/sea-pay/plan?ship=${shipParam}`}
               maxGuests={maxGuests}

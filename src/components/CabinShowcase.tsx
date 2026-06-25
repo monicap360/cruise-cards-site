@@ -112,7 +112,7 @@ export default function CabinShowcase({
               href={holdHref}
               className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
             >
-              Hold a Room
+              Hold This Room
             </Link>
             <Link
               href={seaPayHref}

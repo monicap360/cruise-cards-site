@@ -18,8 +18,8 @@ function HoldForm() {
     email: "",
     phone: "",
     ship: params.get("ship") ?? "",
-    sailingDate: "",
-    cabinType: "",
+    sailingDate: params.get("date") ?? "",
+    cabinType: params.get("type") ?? "",
     holdHours: 48,
     notes: "",
   });
