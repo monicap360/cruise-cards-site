@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShipImage from "@/components/ShipImage";
 import ScheduleGrid from "@/components/ScheduleGrid";
+import ItineraryRoute from "@/components/ItineraryRoute";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { getSailingBlocks } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
@@ -204,6 +205,16 @@ export default async function ShipLandingPage({
           help, terminal know-how, parking and luggage service, and a team that
           treats you like a neighbor.
         </p>
+      </section>
+
+      {/* Itinerary route */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
+          {"// Itinerary"}
+        </div>
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 sm:p-8 overflow-x-auto">
+          <ItineraryRoute itinerary={f.itinerary} />
+        </div>
       </section>
 
       {/* Full live sailing schedule */}
