@@ -6,7 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 const OFFICE_EMAIL = "cruisesfromgalveston.texas@gmail.com";
-const OFFICE_PHONE = "(409) 555-CRUISE";
+const OFFICE_PHONE = "(409) 632-2106";
 
 // Mon=1 Tue=2 Wed=3 Thu=4 Fri=5 Sat=6 Sun=0
 const CLOSED_DAYS = [2, 3]; // Tuesday and Wednesday
@@ -203,7 +203,7 @@ function BookPageContent() {
               </div>
             </div>
             <div className="flex flex-col gap-2 text-sm">
-              <a href={`tel:+14095551-cruise`} className="text-sky-400 font-bold hover:underline">{OFFICE_PHONE}</a>
+              <a href="tel:+14096322106" className="text-sky-400 font-bold hover:underline">{OFFICE_PHONE}</a>
               <a href={`mailto:${OFFICE_EMAIL}`} className="text-sky-400 font-bold hover:underline truncate">{OFFICE_EMAIL}</a>
             </div>
           </div>

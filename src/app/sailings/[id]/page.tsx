@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Photo from "@/components/Photo";
 import ShipImage from "@/components/ShipImage";
+import CabinShowcase from "@/components/CabinShowcase";
 import {
   getSailingBlock,
   groupByType,
@@ -8,7 +8,7 @@ import {
   type CabinCategory,
 } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
-import { fmt$, fmtDate } from "@/lib/sea-pay";
+import { fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +19,34 @@ const ORDER: CabinCategory[] = [
   "Mini-Suite",
   "Suite",
 ];
+
+function regionOf(itinerary: string): string {
+  const t = itinerary.toLowerCase();
+  if (
+    t.includes("nassau") ||
+    t.includes("cococay") ||
+    t.includes("bahamas") ||
+    t.includes("ocean cay")
+  )
+    return "Bahamas";
+  return "Western Caribbean";
+}
+
+function addDays(iso: string, n: number): string {
+  const d = new Date(iso + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+function dateRangeLabel(start: string, end: string): string {
+  const opts = { weekday: "short", month: "short", day: "2-digit" } as const;
+  const s = new Date(start + "T12:00:00").toLocaleDateString("en-US", opts);
+  const e = new Date(end + "T12:00:00").toLocaleDateString("en-US", {
+    ...opts,
+    year: "numeric",
+  });
+  return `${s} – ${e}`;
+}
 
 export default async function SailingOptionsPage({
   params,
@@ -95,68 +123,29 @@ export default async function SailingOptionsPage({
           const slug = type.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
           return (
-            <div
+            <CabinShowcase
               key={type}
-              className="bg-[#0b1020] border border-white/10 rounded-2xl overflow-hidden flex flex-col sm:flex-row"
-            >
-              <Photo
-                src={`/cabins/${slug}.jpg`}
-                alt={`${type} stateroom`}
-                gradient={info.gradient}
-                className="sm:w-64 h-44 sm:h-auto flex-shrink-0"
-              />
-              <div className="p-6 flex-1">
-                <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
-                  <div>
-                    <h3 className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white">
-                      {type}
-                    </h3>
-                    <div className="label-mono text-[10px] uppercase text-sky-400/70">
-                      {info.sqftRange} · {available} open
-                    </div>
-                  </div>
-                  {from > 0 && (
-                    <div className="text-right">
-                      <span className="text-white/40 label-mono text-[10px] uppercase">
-                        From
-                      </span>
-                      <div className="text-white font-extrabold text-2xl leading-none">
-                        {fmt$(from)}
-                        <span className="text-white/40 text-xs font-normal">
-                          {" "}
-                          / person
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <p className="text-white/55 text-sm leading-relaxed mb-4">
-                  {info.desc}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Link
-                    href={`/book?ship=${shipParam}&date=${block.sailingDate}`}
-                    className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
-                  >
-                    Reserve
-                  </Link>
-                  <Link
-                    href={`/hold?ship=${shipParam}&name=${encodeURIComponent(
-                      block.ship + " " + type
-                    )}`}
-                    className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
-                  >
-                    Hold a Room
-                  </Link>
-                  <Link
-                    href={`/sea-pay/plan?ship=${shipParam}`}
-                    className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
-                  >
-                    Sea Pay™
-                  </Link>
-                </div>
-              </div>
-            </div>
+              type={type}
+              durationRegion={`${block.nights}-Night ${regionOf(
+                block.itinerary
+              )}`}
+              ship={block.ship}
+              cruiseLine={block.cruiseLine}
+              dateRangeLabel={dateRangeLabel(
+                block.sailingDate,
+                addDays(block.sailingDate, block.nights)
+              )}
+              fromPort="Galveston"
+              fromPerson={from}
+              available={available}
+              slug={slug}
+              gradient={info.gradient}
+              reserveHref={`/book?ship=${shipParam}&date=${block.sailingDate}`}
+              holdHref={`/hold?ship=${shipParam}&name=${encodeURIComponent(
+                block.ship + " " + type
+              )}`}
+              seaPayHref={`/sea-pay/plan?ship=${shipParam}`}
+            />
           );
         })}
 

@@ -181,7 +181,11 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="font-bold text-white">Phone</div>
-                  <div className="text-sm">(409) 555-CRUISE</div>
+                  <div className="text-sm">
+                    <a href="tel:+14096322106" className="hover:text-white transition-colors">
+                      (409) 632-2106
+                    </a>
+                  </div>
                 </div>
                 <div>
                   <div className="font-bold text-white">Email</div>

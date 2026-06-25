@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Photo from "@/components/Photo";
 import { getSailingBlocks, type SailingBlock } from "@/lib/room-blocks";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
@@ -13,21 +14,28 @@ function monthLabel(ym: string): string {
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
 
+const TYPE_ICON: Record<string, string> = {
+  Ship: "🚢",
+  Destination: "🏝️",
+  Page: "⚓",
+};
+
 function FindInner() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [q, setQ] = useState("");
+  const [ship, setShip] = useState("");
   const [line, setLine] = useState("");
   const [port, setPort] = useState("");
   const [month, setMonth] = useState("");
   const [nights, setNights] = useState("");
 
-  // React to the ?q= param so searching again (from the navbar or a link)
-  // always updates results, even when already on /find.
+  // React to ?q= and ?ship= so searches/links always update results.
   const searchParams = useSearchParams();
   useEffect(() => {
     setQ(searchParams.get("q") ?? "");
+    setShip(searchParams.get("ship") ?? "");
   }, [searchParams]);
 
   useEffect(() => {
@@ -37,6 +45,10 @@ function FindInner() {
     });
   }, []);
 
+  const shipsList = useMemo(
+    () => Array.from(new Set(blocks.map((b) => b.ship))).sort(),
+    [blocks]
+  );
   const lines = useMemo(
     () => Array.from(new Set(blocks.map((b) => b.cruiseLine))).sort(),
     [blocks]
@@ -64,6 +76,7 @@ function FindInner() {
     const ql = q.trim().toLowerCase();
     return blocks
       .filter((b) => {
+        if (ship && b.ship !== ship) return false;
         if (line && b.cruiseLine !== line) return false;
         if (port && !b.itinerary.toLowerCase().includes(port.toLowerCase()))
           return false;
@@ -76,7 +89,7 @@ function FindInner() {
         return true;
       })
       .sort((a, b) => a.sailingDate.localeCompare(b.sailingDate));
-  }, [blocks, q, line, port, month, nights]);
+  }, [blocks, q, ship, line, port, month, nights]);
 
   const contentResults = useMemo(() => {
     const ql = q.trim().toLowerCase();
@@ -85,17 +98,25 @@ function FindInner() {
       : SEARCH_CONTENT;
   }, [q]);
 
-  const hasFilters = q || line || port || month || nights;
+  const hasFilters = q || ship || line || port || month || nights;
   const selectCls =
     "bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-sky-400/60";
 
   return (
     <div className="bg-[#05070d] text-white min-h-screen">
-      {/* Hero + search */}
+      {/* Hero banner + search */}
       <section className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 grid-bg" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/ships/carnival-breeze.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-[#05070d]/55" />
+        <div className="absolute inset-0 grid-bg opacity-50" />
         <div className="absolute inset-0 overflow-hidden">
-          <div className="aurora bg-sky-500 w-[46rem] h-[46rem] -top-60 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+          <div className="aurora bg-sky-500 w-[46rem] h-[46rem] -top-60 left-1/2 -translate-x-1/2 opacity-[0.12]" />
         </div>
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
           <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
@@ -112,7 +133,13 @@ function FindInner() {
             className="w-full bg-white/5 border border-white/15 rounded-2xl px-5 py-4 text-white text-lg placeholder-white/40 focus:outline-none focus:border-sky-400/60 mb-4"
           />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <select className={selectCls} value={ship} onChange={(e) => setShip(e.target.value)}>
+              <option value="" className="bg-[#0b1020]">Any ship</option>
+              {shipsList.map((s) => (
+                <option key={s} value={s} className="bg-[#0b1020]">{s}</option>
+              ))}
+            </select>
             <select className={selectCls} value={line} onChange={(e) => setLine(e.target.value)}>
               <option value="" className="bg-[#0b1020]">Any cruise line</option>
               {lines.map((l) => (
@@ -142,6 +169,7 @@ function FindInner() {
             <button
               onClick={() => {
                 setQ("");
+                setShip("");
                 setLine("");
                 setPort("");
                 setMonth("");
@@ -223,20 +251,38 @@ function FindInner() {
                     <Link
                       key={i.type + i.title}
                       href={i.href}
-                      className="group bg-[#0b1020] border border-white/10 rounded-2xl p-5 hover:border-white/30 transition-colors flex items-center justify-between gap-3"
+                      className="group bg-[#0b1020] border border-white/10 rounded-2xl overflow-hidden hover:border-white/30 transition-colors flex items-stretch"
                     >
-                      <div>
-                        <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-1">
-                          {i.type}
-                        </div>
-                        <div className="font-bold text-white uppercase tracking-tight">
-                          {i.title}
-                        </div>
-                        <div className="text-white/50 text-sm">{i.subtitle}</div>
+                      <div className="w-28 sm:w-32 flex-shrink-0 relative min-h-[6rem]">
+                        {i.image ? (
+                          <Photo
+                            src={i.image}
+                            alt={i.title}
+                            overlay={false}
+                            className="absolute inset-0"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-sky-600/30 to-[#0a1f44] flex items-center justify-center text-2xl">
+                            {TYPE_ICON[i.type] ?? "⚓"}
+                          </div>
+                        )}
                       </div>
-                      <span className="text-white/30 group-hover:text-sky-400 transition-colors text-lg">
-                        →
-                      </span>
+                      <div className="flex-1 min-w-0 p-5 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-1">
+                            {i.type}
+                          </div>
+                          <div className="font-bold text-white uppercase tracking-tight truncate">
+                            {i.title}
+                          </div>
+                          <div className="text-white/50 text-sm line-clamp-2">
+                            {i.subtitle}
+                          </div>
+                        </div>
+                        <span className="text-white/30 group-hover:text-sky-400 transition-colors text-lg flex-shrink-0">
+                          →
+                        </span>
+                      </div>
                     </Link>
                   ))}
                 </div>

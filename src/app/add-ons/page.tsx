@@ -108,7 +108,84 @@ const categories: Category[] = [
       { name: "Port Terminal Parking", desc: "Reserved covered or uncovered parking by the terminal.", price: "from $15 / day" },
       { name: "Mobility Scooter Rental", desc: "Delivered to and collected from your stateroom.", price: "from $40 / day" },
       { name: "Wheelchair Rental", desc: "Standard and bariatric chairs available.", price: "from $25 / cruise" },
-      { name: "Luggage Valet & Tags", desc: "Printed tags and porter assistance at drop-off.", price: "included" },
+      { name: "Bag Tags & Porter Assist", desc: "Printed luggage tags and porter help at terminal drop-off.", price: "included" },
+    ],
+  },
+  {
+    id: "luggage-service",
+    kicker: "// Bag Storage & Coordination",
+    title: "Luggage Service",
+    blurb:
+      "Need a simple place to store your bags? Standard storage is $6 / bag — booking clients and Portside Priority members get preferred rates. Want more help? Upgrade to a Cruise-Ready Concierge package for luggage coordination, printed travel documents, and sailing-day support.",
+    items: [
+      {
+        name: "Standard Sail-Day Luggage Storage",
+        desc: "Secure, monitored storage during posted hours — drop your bags and go explore downtown Galveston before check-in or after debarkation.",
+        price: "$6 / bag",
+      },
+      {
+        name: "Portside Priority Guest Rate",
+        desc: "Preferred storage rate for Cruise Experience Center booking clients and Portside Priority members.",
+        price: "$5 / bag",
+      },
+      {
+        name: "Premium Storage + Concierge Check-In",
+        desc: "Luggage storage plus printed boarding documents, a sailing-day checklist, terminal directions, and priority support.",
+        price: "$12 / bag",
+      },
+      {
+        name: "Hotel-to-Port / Port-to-Hotel Luggage Coordination",
+        desc: "When a partner is physically handling pickup, delivery, or transport, we coordinate your luggage between your Galveston hotel and the terminal.",
+        price: "from $20 / bag",
+      },
+    ],
+  },
+  {
+    id: "baby-gear",
+    kicker: "// Travel Light With Kids",
+    title: "Little Sailors Gear Rental",
+    blurb:
+      "Flying in? Don't haul the bulky stuff — and don't count on limited ship supply. We deliver clean, quality baby gear to your hotel, cabin, or the terminal, then pick it up when you're done.",
+    items: [
+      { name: "Baby Essentials", desc: "Bottle warmer, sanitizer, monitor, and the day-to-day items you'd rather not pack.", price: "from $10 / day" },
+      { name: "Premium Stroller", desc: "Lightweight single or double strollers — port-ready and easy to fold.", price: "from $15 / day" },
+      { name: "Crib / Pack-'n-Play", desc: "Sanitized cribs and play yards with fresh linens, delivered and collected.", price: "from $20 / day" },
+      { name: "Car Seat & Booster", desc: "Infant, convertible, and booster seats for transfers and shore days.", price: "from $20 / day" },
+      { name: "Family Bundle", desc: "Crib + stroller + essentials, delivered ready to go.", price: "from $39 / day" },
+    ],
+  },
+  {
+    id: "cruise-ready-arrival",
+    kicker: "// Plan It From Our Office",
+    title: "Cruise Ready Arrival Plan",
+    blurb:
+      "Everything you need for a smooth, confident arrival — prepared from our office and sent to you before you ever reach the terminal. No guesswork on sail day.",
+    items: [
+      { name: "Cruise Ready Arrival Plan", desc: "Personalized terminal arrival time, parking & drop-off instructions, a printed boarding packet, luggage-tag check, document checklist, and dining / stateroom / embarkation-day reminders — plus text support before you arrive.", price: "$19–$29 / party" },
+      { name: "Custom In-Person Coordination", desc: "Hands-on help for large groups, elderly or mobility-needs travelers, or hotel-transfer packages — arranged and quoted privately as a custom coordination service.", price: "quoted privately" },
+    ],
+  },
+  {
+    id: "sail-day-support",
+    kicker: "// Standby Problem-Fixer",
+    title: "Sail-Day Support",
+    blurb:
+      "Your sail-day safety net. Priority support from early morning through departure so a missed shuttle, lost document, or wrong terminal doesn't ruin your vacation before it starts.",
+    items: [
+      { name: "Sail-Day Support", desc: "Priority phone & text support, a preparation review, and transportation-coordination help on your sailing day.", price: "$49 / party" },
+      { name: "Sail-Day Concierge", desc: "Includes White-Glove Check-In, a printed travel portfolio, priority support, and a confirmed sailing-day plan.", price: "$79 / party" },
+    ],
+  },
+  {
+    id: "return-refresh",
+    kicker: "// After You Sail",
+    title: "Return & Refresh Arrival Service",
+    blurb:
+      "A post-cruise convenience package that smooths the chaotic debarkation morning — coordination, recommendations, and a clear plan for getting home.",
+    items: [
+      { name: "Return & Refresh Package", desc: "Post-cruise transportation coordination, luggage-storage coordination, Galveston activity & dining picks, and your hotel / airport / vehicle-pickup itinerary.", price: "from $29 / person · $79 / family of 4" },
+      { name: "Car Pickup Hand-Off", desc: "We had your car parked and ready — collect it from us with no terminal scramble.", price: "with parking" },
+      { name: "Optional Add-Ons", desc: "Porter help, lounge time, or priority exit can be arranged only when a contracted provider supplies them — quoted separately.", price: "quoted separately" },
     ],
   },
   {
@@ -122,11 +199,6 @@ const categories: Category[] = [
         name: "Anchors Essentials™",
         desc: "Reef-safe sunscreen, key-card lanyards, magnetic cabin hooks, cruise-safe power strips, motion-sickness relief, and door-decoration kits.",
         price: "shop in-center",
-      },
-      {
-        name: "Bag Drop & Stow™ · Galveston Luggage Storage",
-        desc: "Late flight, shuttle pickup, or a late hotel or Airbnb check-in? We babysit bags! Leave your luggage with us and go explore downtown Galveston's shops, restaurants, bars, and galleries. Space is limited — please make a reservation.",
-        price: "from $10 / bag · reservation required",
       },
       {
         name: "Port Cash & Tips™",
@@ -301,6 +373,16 @@ export default function AddOnsPage() {
               Browse Cruises
             </Link>
           </div>
+
+          <p className="text-white/40 text-xs leading-relaxed mt-10 max-w-2xl mx-auto">
+            Cruises from Galveston™ arranges these add-ons as your travel agent
+            and package booking agent. Hotels, ground transfers, shuttles, tours,
+            and parking are provided by independent, licensed third-party
+            operators under their own terms and pricing. We bundle and book them
+            for your convenience — each service is delivered by its provider, not
+            by Cruises from Galveston. Pricing is shown per component; any package
+            price is the sum of separately contracted services.
+          </p>
         </div>
       </section>
     </div>
