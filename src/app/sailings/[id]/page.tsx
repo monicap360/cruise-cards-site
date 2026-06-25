@@ -11,6 +11,7 @@ import {
   type CabinCategory,
 } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
+import { getOffersForSailing } from "@/lib/offers";
 import { fmtDate, durationWord } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +85,11 @@ export default async function SailingOptionsPage({
   const types = ORDER.filter((t) => byType[t]?.length);
   const terminal = getTerminal(block.ship);
   const shipParam = encodeURIComponent(block.ship);
+  const offers = await getOffersForSailing({
+    cruiseLine: block.cruiseLine,
+    sailingDate: block.sailingDate,
+    nights: block.nights,
+  });
 
   return (
     <div className="bg-[#05070d] text-white">
@@ -140,12 +146,17 @@ export default async function SailingOptionsPage({
       </section>
 
       {/* Promotions / offers */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
-        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
-          {"// Add an Offer to Your Cruise"}
-        </div>
-        <CruiseOffers contextHref={`/contact?ship=${shipParam}`} />
-      </section>
+      {offers.length > 0 && (
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
+            {"// Add an Offer to Your Cruise"}
+          </div>
+          <CruiseOffers
+            offers={offers}
+            contextHref={`/contact?ship=${shipParam}&date=${block.sailingDate}`}
+          />
+        </section>
+      )}
 
       {/* Cabin options */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-5">
@@ -195,7 +206,7 @@ export default async function SailingOptionsPage({
               This sailing has no cabins loaded yet.
             </p>
             <Link
-              href={`/contact?ship=${shipParam}`}
+              href={`/contact?ship=${shipParam}&date=${block.sailingDate}`}
               className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
             >
               Ask About This Sailing

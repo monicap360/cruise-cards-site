@@ -378,5 +378,32 @@ left join cabins c on c.block_id = b.id
 group by b.id, b.ship, b.sailing_date, b.nights;
 
 -- ============================================================
+-- Promotions / offers (admin-managed, shown on sailing pages)
+-- ============================================================
+create table if not exists offers (
+  id text primary key,
+  title text not null,
+  description text,
+  badge text,
+  icon text default '🎁',
+  active boolean default true,
+  sort_order int default 0,
+  -- optional targeting rules (blank/null = applies to all sailings)
+  cruise_line text,
+  nights int,
+  date_start text,
+  date_end text,
+  created_at timestamptz default now()
+);
+
+alter table offers enable row level security;
+
+drop policy if exists "offers anon read" on offers;
+create policy "offers anon read" on offers for select using (true);
+
+drop policy if exists "offers anon write" on offers;
+create policy "offers anon write" on offers for all using (true) with check (true);
+
+-- ============================================================
 -- Done. All tables created.
 -- ============================================================

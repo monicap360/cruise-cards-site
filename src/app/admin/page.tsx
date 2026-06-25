@@ -86,6 +86,12 @@ export default function AdminPage() {
                 ⚖️ Waivers
               </Link>
               <Link
+                href="/admin/offers"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                🎁 Offers
+              </Link>
+              <Link
                 href="/admin/new-booking"
                 className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
               >

@@ -1,8 +1,38 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+function fmtSail(d: string): string {
+  return new Date(d + "T12:00:00").toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [shipName, setShipName] = useState("");
+  const [sailDate, setSailDate] = useState("");
+  const [offer, setOffer] = useState("");
+  const [travelMonth, setTravelMonth] = useState("");
+  const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const ship = p.get("ship") || "";
+    const date = p.get("date") || "";
+    const off = p.get("offer") || "";
+    if (ship) setShipName(ship);
+    if (date) {
+      setSailDate(date);
+      setTravelMonth(date.slice(0, 7));
+    }
+    if (off) {
+      setOffer(off);
+      setNotes(`I'm interested in the "${off}" offer.`);
+    }
+  }, []);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,6 +76,33 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {(shipName || sailDate) && (
+                  <div className="bg-sky-500/10 border border-sky-400/30 rounded-xl p-4">
+                    <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-1">
+                      Your sailing
+                    </div>
+                    <div className="text-white font-bold">
+                      {shipName || "Galveston cruise"}
+                    </div>
+                    {sailDate && (
+                      <div className="text-white/60 text-sm">
+                        Sails {fmtSail(sailDate)}
+                      </div>
+                    )}
+                    {offer && (
+                      <div className="text-sky-300 text-sm mt-1">
+                        Offer: {offer}
+                      </div>
+                    )}
+                    <input type="hidden" name="ship" value={shipName} readOnly />
+                    <input
+                      type="hidden"
+                      name="sailDate"
+                      value={sailDate}
+                      readOnly
+                    />
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white/70 text-sm font-medium mb-1">
@@ -144,6 +201,8 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="month"
+                    value={travelMonth}
+                    onChange={(e) => setTravelMonth(e.target.value)}
                     className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
                   />
                 </div>
@@ -154,6 +213,8 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     rows={3}
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
                     placeholder="Celebrating a birthday? Need accessible cabins? Let us know..."
                     className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 resize-none"
                   />

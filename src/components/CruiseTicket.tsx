@@ -40,8 +40,6 @@ export default function CruiseTicket({
   const today = new Date().toISOString().slice(0, 10);
   const balance =
     fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
-  // Gross total = the full cabin fare at double occupancy (2 guests).
-  const grossTotal = fromPrice ? fromPrice * 2 : undefined;
   const stops = [
     { name: fromPort, sub: fmtDateDow(sailingDate), role: "Depart", home: true },
     ...ports.map((p) => ({ name: p, sub: "", role: "Port", home: false })),
@@ -126,30 +124,21 @@ export default function CruiseTicket({
 
         {fromPrice && fromPrice > 0 ? (
           <>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <div className="label-mono text-[10px] uppercase text-white/40 mb-0.5">
-                  Guest 1
-                </div>
-                <div className="text-white font-bold">{fmt$(fromPrice)}</div>
-              </div>
-              <div>
-                <div className="label-mono text-[10px] uppercase text-white/40 mb-0.5">
-                  Guest 2
-                </div>
-                <div className="text-white font-bold">{fmt$(fromPrice)}</div>
-              </div>
+            <div className="label-mono text-[10px] uppercase text-white/40">
+              Starting Rate
             </div>
-            <div className="mt-3 pt-3 border-t border-white/10 flex items-end justify-between gap-2">
-              <span className="label-mono text-[10px] uppercase text-white/40">
-                Gross Total
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-white/50 text-xs">from</span>
+              <span className="text-holo text-3xl font-extrabold leading-none">
+                {fmt$(fromPrice)}
               </span>
-              <span className="text-holo font-extrabold text-2xl leading-none">
-                {grossTotal ? fmt$(grossTotal) : fmt$(fromPrice)}
-              </span>
+              <span className="text-white/50 text-xs">/ person</span>
             </div>
-            <div className="text-[10px] text-white/50 mt-1 leading-snug">
-              per person · double occ · taxes &amp; port fees included
+            <div className="text-[11px] text-white/50 mt-1 leading-snug">
+              lowest cabin · double occupancy · taxes &amp; port fees included
+            </div>
+            <div className="text-[10px] text-sky-300/70 mt-1.5">
+              ↓ See room types below for every cabin&rsquo;s price
             </div>
 
             <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-[12px]">
