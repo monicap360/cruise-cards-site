@@ -8,7 +8,7 @@ import {
   type CabinCategory,
 } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
-import { fmtDate } from "@/lib/sea-pay";
+import { fmtDate, durationWord } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
 
@@ -103,11 +103,15 @@ export default async function SailingOptionsPage({
             {block.ship}
           </h1>
           <p className="text-white/70 text-lg">
-            {fmtDate(block.sailingDate)} · {block.nights} nights · {block.itinerary}
+            {fmtDate(block.sailingDate)} · {block.nights}{" "}
+            {durationWord(block.cruiseLine)} · {block.itinerary}
           </p>
           <p className="text-white/45 text-sm mt-1">
             {block.cruiseLine}
             {terminal ? ` · enter at ${terminal.entryStreet}` : ""}
+          </p>
+          <p className="label-mono text-[11px] uppercase tracking-wider text-sky-400/70 mt-2">
+            Round-trip from Galveston · Closed-loop sailing · Returns to Galveston
           </p>
         </div>
       </section>
@@ -121,14 +125,15 @@ export default async function SailingOptionsPage({
           const available = cabins.filter((c) => c.status === "available").length;
           const info = CATEGORY_INFO[type] ?? CATEGORY_INFO.Interior;
           const slug = type.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          const maxGuests = Math.max(...cabins.map((c) => c.maxGuests));
 
           return (
             <CabinShowcase
               key={type}
               type={type}
-              durationRegion={`${block.nights}-Night ${regionOf(
-                block.itinerary
-              )}`}
+              durationRegion={`${block.nights}-${
+                /carnival/i.test(block.cruiseLine) ? "Day" : "Night"
+              } ${regionOf(block.itinerary)}`}
               ship={block.ship}
               cruiseLine={block.cruiseLine}
               dateRangeLabel={dateRangeLabel(
@@ -140,11 +145,15 @@ export default async function SailingOptionsPage({
               available={available}
               slug={slug}
               gradient={info.gradient}
+              sqftRange={info.sqftRange}
+              desc={info.desc}
+              features={info.features}
               reserveHref={`/book?ship=${shipParam}&date=${block.sailingDate}`}
               holdHref={`/hold?ship=${shipParam}&name=${encodeURIComponent(
                 block.ship + " " + type
               )}`}
               seaPayHref={`/sea-pay/plan?ship=${shipParam}`}
+              maxGuests={maxGuests}
             />
           );
         })}

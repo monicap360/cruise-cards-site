@@ -410,3 +410,13 @@ export const CABIN_TYPES = [
   "Family Suite",
   "Haven Suite",
 ];
+
+// Carnival markets its sailings in "days" (a 5-night cruise = "5-Day").
+// Other lines use "nights". Same number, different word.
+export function durationWord(cruiseLine?: string): string {
+  return cruiseLine && /carnival/i.test(cruiseLine) ? "days" : "nights";
+}
+
+export function durationLabel(nights: number, cruiseLine?: string): string {
+  return `${nights} ${durationWord(cruiseLine)}`;
+}

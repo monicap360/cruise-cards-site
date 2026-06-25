@@ -3,24 +3,27 @@
 import { useState } from "react";
 
 /**
- * Generic photo with a graceful gradient fallback. Renders the image at `src`
- * (typically a file under /public) and falls back to a clean gradient if the
- * file is missing — so layouts always look intentional even before real photos
- * are dropped in.
+ * Generic photo with graceful fallbacks. Renders `src`; if it's missing it tries
+ * `fallbackSrc` (e.g. the ship photo for a cabin card); if that's missing too it
+ * shows a clean gradient — so layouts always look intentional even before real
+ * photos are dropped in.
  */
 export default function Photo({
   src,
+  fallbackSrc,
   alt,
   gradient = "from-blue-700 to-[#0a1f44]",
   className = "",
   overlay = true,
 }: {
   src: string;
+  fallbackSrc?: string;
   alt: string;
   gradient?: string;
   className?: string;
   overlay?: boolean;
 }) {
+  const [current, setCurrent] = useState(src);
   const [failed, setFailed] = useState(false);
 
   return (
@@ -30,10 +33,13 @@ export default function Photo({
       {!failed && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={src}
+          src={current}
           alt={alt}
           loading="lazy"
-          onError={() => setFailed(true)}
+          onError={() => {
+            if (fallbackSrc && current !== fallbackSrc) setCurrent(fallbackSrc);
+            else setFailed(true);
+          }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}

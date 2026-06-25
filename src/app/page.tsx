@@ -60,6 +60,44 @@ const stats = [
   { value: "0", label: "Flights required" },
 ];
 
+const journey = [
+  {
+    icon: "🧭",
+    title: "Plan",
+    desc: "Search every Galveston sailing, compare ships, and map your perfect cabin — with a real specialist or our AI concierge.",
+    href: "/find",
+    cta: "Find a cruise",
+  },
+  {
+    icon: "🚢",
+    title: "Book",
+    desc: "Lock your cabin with a low deposit, hold a room, or split it into easy payments with Sea Pay™.",
+    href: "/select",
+    cta: "Select a cruise",
+  },
+  {
+    icon: "🛡️",
+    title: "Protect",
+    desc: "Add vacation protection so an unexpected change doesn't cost your trip investment.",
+    href: "/vacation-protection",
+    cta: "Protect your booking",
+  },
+  {
+    icon: "⚓",
+    title: "Sail",
+    desc: "Count down the days, prep with our checklist, and step aboard right from the island.",
+    href: "/countdown",
+    cta: "Cruise countdown",
+  },
+  {
+    icon: "☕",
+    title: "Return",
+    desc: "Beat the debarkation chaos — our Return & Refresh service smooths the morning you get back.",
+    href: "/add-ons",
+    cta: "Return & Refresh",
+  },
+];
+
 export default function Home() {
   return (
     <div className="overflow-hidden">
@@ -208,6 +246,49 @@ export default function Home() {
                   {s.label}
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The journey: Plan. Book. Protect. Sail. Return. ──────────────── */}
+      <section className="bg-[#05070d] text-white border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+              {"// How It Works"}
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] leading-[0.95]">
+              Plan. <span className="text-holo">Book.</span> Protect. Sail.
+              Return.
+            </h2>
+            <p className="text-white/55 text-lg mt-4">
+              One team for the whole journey — from first idea to the morning you
+              get back.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {journey.map((s, i) => (
+              <Link
+                key={s.title}
+                href={s.href}
+                className="group bg-[#0b1020] border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-colors flex flex-col"
+              >
+                <div className="label-mono text-sky-400/70 text-sm mb-4">
+                  0{i + 1}
+                </div>
+                <div className="text-3xl mb-3">{s.icon}</div>
+                <h3 className="font-extrabold uppercase tracking-tight text-lg mb-2">
+                  {s.title}
+                </h3>
+                <p className="text-white/55 text-sm leading-relaxed flex-1">
+                  {s.desc}
+                </p>
+                <span className="label-mono text-[10px] uppercase tracking-wider text-sky-400/70 group-hover:text-sky-300 transition-colors mt-4">
+                  {s.cta} →
+                </span>
+              </Link>
             ))}
           </div>
         </div>

@@ -69,7 +69,9 @@ export default function BoardingPass(props: BoardingPassProps) {
           <div className="flex items-center justify-between gap-3 mb-5">
             <div className="flex items-center gap-3">
               <span className="hud label-mono text-[11px] uppercase tracking-wider text-white px-3 py-1.5 rounded-full">
-                {props.nights} Night{props.nights === 1 ? "" : "s"}
+                {props.nights}{" "}
+                {/carnival/i.test(props.cruiseLine) ? "Day" : "Night"}
+                {props.nights === 1 ? "" : "s"}
               </span>
               {props.badge && (
                 <span className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80">

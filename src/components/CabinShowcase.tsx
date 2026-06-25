@@ -2,10 +2,18 @@ import Link from "next/link";
 import Photo from "@/components/Photo";
 import { fmt$ } from "@/lib/sea-pay";
 
+function shipSlug(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 /**
  * Representative-stateroom showcase: a full cabin photo with a frosted glass
  * info panel (category, ship, dates, from-price per person, fees-included note,
- * and the "layout & décor may vary" disclaimer). Drop a real photo in at
+ * double-occupancy note, disclaimer) plus a cabin-details section (size, who it
+ * sleeps, description, and features). Drop a real photo in at
  * /public/cabins/<slug>.jpg; a clean gradient shows until then.
  */
 export default function CabinShowcase({
@@ -22,6 +30,10 @@ export default function CabinShowcase({
   reserveHref,
   holdHref,
   seaPayHref,
+  maxGuests,
+  sqftRange,
+  desc,
+  features,
 }: {
   type: string;
   durationRegion: string;
@@ -36,25 +48,28 @@ export default function CabinShowcase({
   reserveHref: string;
   holdHref: string;
   seaPayHref: string;
+  maxGuests?: number;
+  sqftRange?: string;
+  desc?: string;
+  features?: string[];
 }) {
   const title = /suite/i.test(type) ? type : `${type} Cabin`;
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10">
-      {/* Representative stateroom photo */}
-      <Photo
-        src={`/cabins/${slug}.jpg`}
-        alt={`Representative ${type} stateroom`}
-        gradient={gradient}
-        overlay={false}
-        className="absolute inset-0"
-      />
-      {/* Readability wash behind the panel (left → right) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/70 via-[#05070d]/15 to-transparent" />
+    <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020]">
+      {/* ── Hero: representative stateroom photo + frosted info panel ── */}
+      <div className="relative min-h-[380px] flex p-4 sm:p-6">
+        <Photo
+          src={`/cabins/${slug}.jpg`}
+          fallbackSrc={`/ships/${shipSlug(ship)}.jpg`}
+          alt={`Representative ${type} stateroom`}
+          gradient={gradient}
+          overlay={false}
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/70 via-[#05070d]/15 to-transparent" />
 
-      <div className="relative z-10 p-4 sm:p-6 min-h-[380px] flex">
-        {/* Frosted info panel */}
-        <div className="w-full sm:max-w-sm rounded-2xl bg-white/90 backdrop-blur-md ring-1 ring-white/70 shadow-2xl p-6 text-[#0a1f44] flex flex-col">
+        <div className="relative z-10 w-full sm:max-w-sm rounded-2xl bg-white/90 backdrop-blur-md ring-1 ring-white/70 shadow-2xl p-6 text-[#0a1f44] flex flex-col">
           <h3 className="text-2xl sm:text-3xl font-extrabold leading-tight">
             {title}
           </h3>
@@ -78,6 +93,14 @@ export default function CabinShowcase({
               </div>
               <div className="text-xs text-[#0a1f44]/70 mt-0.5">
                 Port fees &amp; taxes included
+              </div>
+              <div className="text-[11px] leading-snug text-[#0a1f44]/60 mt-1.5">
+                Per person, based on double occupancy (2-guest stateroom).
+                {maxGuests && maxGuests > 2
+                  ? ` Sleeps up to ${maxGuests} — add a 3rd, 4th${
+                      maxGuests >= 5 ? ", or 5th" : ""
+                    } guest at lower add-a-guest rates; ask for your quote.`
+                  : " Add-a-guest rates available — ask us."}
               </div>
             </div>
           )}
@@ -108,6 +131,35 @@ export default function CabinShowcase({
             décor may vary.
           </div>
         </div>
+      </div>
+
+      {/* ── Cabin details ── */}
+      <div className="p-6 border-t border-white/10">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mb-3 label-mono text-[10px] uppercase tracking-wider text-sky-400/70">
+          {sqftRange && <span>{sqftRange}</span>}
+          {maxGuests ? <span>Sleeps up to {maxGuests}</span> : null}
+          <span>{available} available</span>
+        </div>
+
+        {desc && (
+          <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-3xl">
+            {desc}
+          </p>
+        )}
+
+        {features && features.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1.5">
+            {features.map((f) => (
+              <div
+                key={f}
+                className="flex items-start gap-2 text-white/70 text-sm"
+              >
+                <span className="text-sky-400 flex-shrink-0">+</span>
+                {f}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

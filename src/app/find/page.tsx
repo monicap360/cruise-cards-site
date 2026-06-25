@@ -5,7 +5,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
 import { getSailingBlocks, type SailingBlock } from "@/lib/room-blocks";
-import { fmt$, fmtDate } from "@/lib/sea-pay";
+import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
 function monthLabel(ym: string): string {
@@ -217,10 +217,13 @@ function FindInner() {
                               {b.ship}
                             </div>
                             <div className="text-white/55 text-sm mt-1">
-                              {fmtDate(b.sailingDate)} · {b.nights} nights
+                              {fmtDate(b.sailingDate)} · {b.nights}{" "}
+                              {durationWord(b.cruiseLine)}
                             </div>
                             <p className="text-white/45 text-sm mt-1">
-                              {b.itinerary}
+                              <span className="text-sky-400/80">Galveston</span> →{" "}
+                              {b.itinerary} →{" "}
+                              <span className="text-sky-400/80">Galveston</span>
                             </p>
                           </div>
                           {from > 0 && (
@@ -230,6 +233,9 @@ function FindInner() {
                               </span>
                               <div className="text-white font-bold text-xl">
                                 {fmt$(from)}
+                              </div>
+                              <div className="text-white/40 text-[10px] leading-tight">
+                                / person · dbl occ
                               </div>
                             </div>
                           )}

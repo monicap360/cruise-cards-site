@@ -71,6 +71,7 @@ interface FormData {
   sailDate: string;
   rateType: string;
   guests: string;
+  rooms: string;
   cabinType: string;
   crew: string;
   message: string;
@@ -81,7 +82,7 @@ interface FormData {
 
 const blank: FormData = {
   firstName: "", lastName: "", email: "", phone: "",
-  ship: "", sailDate: "", rateType: "flexible", guests: "2", cabinType: "", crew: "",
+  ship: "", sailDate: "", rateType: "flexible", guests: "2", rooms: "1", cabinType: "", crew: "",
   message: "", apptDate: "", apptTime: "", mode: "inquiry",
 };
 
@@ -102,7 +103,10 @@ async function saveInquiry(data: FormData & { confirmNumber: string; submittedAt
     guests: data.guests,
     cabin_type: data.cabinType,
     crew: data.crew,
-    message: data.message,
+    message:
+      data.rooms && data.rooms !== "1"
+        ? `[Staterooms requested: ${data.rooms}] ${data.message}`
+        : data.message,
     appt_date: data.apptDate,
     appt_time: data.apptTime,
     mode: data.apptDate ? "appointment" : "inquiry",
@@ -334,11 +338,19 @@ function BookPageContent() {
           </select>
         </div>
         <div>
+          <label className="block text-white/70 text-sm font-medium mb-1">Number of Staterooms</label>
+          <select value={form.rooms} onChange={(e) => set("rooms", e.target.value)}
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-400/60">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => <option key={n} value={n}>{n} room{n > 1 ? "s" : ""}</option>)}
+          </select>
+        </div>
+        <div>
           <label className="block text-white/70 text-sm font-medium mb-1">Number of Guests</label>
           <select value={form.guests} onChange={(e) => set("guests", e.target.value)}
             className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-400/60">
             {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} guest{n > 1 ? "s" : ""}</option>)}
           </select>
+          <p className="text-white/40 text-xs mt-1">Per stateroom · pricing is per person, double occupancy</p>
         </div>
         <div>
           <label className="block text-white/70 text-sm font-medium mb-1">Rate Preference</label>
