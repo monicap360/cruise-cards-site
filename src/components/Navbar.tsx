@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
+import CompassLogo from "@/components/CompassLogo";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -42,15 +42,8 @@ export default function Navbar() {
     <nav className="bg-[#05070d]/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="Cruises from Galveston"
-              width={160}
-              height={64}
-              className="h-14 w-auto object-contain brightness-0 invert"
-              priority
-            />
+          <Link href="/" className="flex items-center" aria-label="Cruise Experience Center — home">
+            <CompassLogo />
           </Link>
 
           <div className="hidden md:flex items-center gap-1">
