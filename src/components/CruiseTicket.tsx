@@ -1,7 +1,7 @@
-import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
+import { fmt$, fmtDateDow, durationWord } from "@/lib/sea-pay";
 
 /**
- * White-background cruise ticket / boarding pass. Print-friendly. Purely
+ * Futuristic cruise ticket / boarding pass (dark HUD style). Purely
  * presentational so it can render in a server component.
  */
 export default function CruiseTicket({
@@ -32,7 +32,6 @@ export default function CruiseTicket({
     .split(/[·,]/)
     .map((s) => s.trim())
     .filter(Boolean);
-  // Cruise lines typically require final payment ~90 days before sailing.
   const finalDue = (() => {
     const d = new Date(sailingDate + "T12:00:00");
     d.setDate(d.getDate() - 90);
@@ -42,124 +41,125 @@ export default function CruiseTicket({
     fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
 
   return (
-    <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-white text-[#0a1f44] shadow-xl ring-1 ring-[#0a1f44]/10">
+    <div className="relative flex flex-col sm:flex-row rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020]">
+      <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-400/70 to-transparent" />
+
       {/* Main */}
-      <div className="flex-1 relative">
-        {/* accent bar */}
-        <div className="h-1.5 bg-gradient-to-r from-[#0369a1] via-sky-400 to-[#0369a1]" />
-        <div className="p-6 sm:p-8">
-          <div className="flex items-center justify-between gap-3 mb-5">
-            <div className="label-mono text-[10px] uppercase tracking-[0.2em] text-[#0a1f44]/50">
-              Cruise Ticket · Boarding Pass
+      <div className="relative z-10 flex-1 p-6 sm:p-8">
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <span className="label-mono text-[10px] uppercase tracking-[0.2em] text-sky-400/70">
+            {"// Cruise Ticket · Boarding Pass"}
+          </span>
+          <span className="hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
+            {nights} {dur}
+          </span>
+        </div>
+
+        <div className="text-3xl sm:text-4xl font-extrabold uppercase tracking-[-0.01em] text-white leading-none">
+          {ship}
+        </div>
+        <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mt-2">
+          {cruiseLine}
+        </div>
+
+        {/* Route */}
+        <div className="mt-7 flex items-start gap-4">
+          <div className="text-left flex-shrink-0">
+            <div className="label-mono text-[10px] uppercase tracking-wider text-white/40">
+              Depart
             </div>
-            <div className="label-mono text-[10px] uppercase tracking-wider bg-[#0a1f44] text-white px-2.5 py-1 rounded-full">
-              {nights} {dur}
+            <div className="font-extrabold text-sm uppercase text-white">
+              {fromPort}
             </div>
+            <div className="text-xs text-white/55">{fmtDateDow(sailingDate)}</div>
           </div>
 
-          <div className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-none">
-            {ship}
-          </div>
-          <div className="text-sm font-bold text-[#0369a1] mt-1">
-            {cruiseLine}
-          </div>
-
-          {/* Route */}
-          <div className="mt-7 flex items-start gap-4">
-            <div className="text-left flex-shrink-0">
-              <div className="label-mono text-[10px] uppercase tracking-wider text-[#0a1f44]/45">
-                Depart
-              </div>
-              <div className="font-extrabold text-sm uppercase">{fromPort}</div>
-              <div className="text-xs text-[#0a1f44]/70">
-                {fmtDate(sailingDate)}
-              </div>
+          <div className="flex-1 flex flex-col items-center pt-1 min-w-0">
+            <div className="text-sky-400 text-base leading-none">
+              ⚓
+              <span className="mx-1 text-white/25">— — —</span>🚢
             </div>
-
-            <div className="flex-1 flex flex-col items-center pt-1 min-w-0">
-              <div className="text-[#0369a1] text-base leading-none">
-                ⚓
-                <span className="mx-1 text-[#0a1f44]/30">— — —</span>🚢
-              </div>
-              <div className="flex flex-wrap justify-center gap-1.5 mt-2">
-                {ports.map((p) => (
-                  <span
-                    key={p}
-                    className="bg-[#0a1f44]/[0.05] border border-[#0a1f44]/15 rounded-full px-2.5 py-1 text-[11px] font-semibold text-[#0a1f44]"
-                  >
-                    {p}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="text-right flex-shrink-0">
-              <div className="label-mono text-[10px] uppercase tracking-wider text-[#0a1f44]/45">
-                Return
-              </div>
-              <div className="font-extrabold text-sm uppercase">{fromPort}</div>
-              <div className="text-xs text-[#0a1f44]/70">
-                {fmtDate(returnDate)}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-[#0a1f44]/10 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-[#0a1f44]/70">
-            <span>
-              <span className="font-semibold text-[#0a1f44]">Round-trip</span> ·
-              closed-loop sailing from {fromPort}
-            </span>
-            {embarkStreet && (
-              <span>
-                Enter at{" "}
-                <span className="font-semibold text-[#0a1f44]">
-                  {embarkStreet}
+            <div className="flex flex-wrap justify-center gap-1.5 mt-2.5">
+              {ports.map((p) => (
+                <span
+                  key={p}
+                  className="bg-white/5 border border-white/15 rounded-full px-2.5 py-1 text-[11px] font-semibold text-sky-300"
+                >
+                  {p}
                 </span>
-              </span>
-            )}
+              ))}
+            </div>
           </div>
+
+          <div className="text-right flex-shrink-0">
+            <div className="label-mono text-[10px] uppercase tracking-wider text-white/40">
+              Return
+            </div>
+            <div className="font-extrabold text-sm uppercase text-white">
+              {fromPort}
+            </div>
+            <div className="text-xs text-white/55">{fmtDateDow(returnDate)}</div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-white/55">
+          <span>
+            <span className="font-semibold text-white/80">Round-trip</span> ·
+            closed-loop sailing from {fromPort}
+          </span>
+          {embarkStreet && (
+            <span>
+              Enter at{" "}
+              <span className="font-semibold text-white/80">{embarkStreet}</span>
+            </span>
+          )}
         </div>
       </div>
 
       {/* Perforated stub */}
-      <div className="relative sm:w-64 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-dashed border-[#0a1f44]/25 bg-[#f4f7fb] p-6 sm:p-7 flex flex-col">
-        <span className="hidden sm:block absolute -left-2.5 -top-2.5 w-5 h-5 rounded-full bg-white" />
-        <span className="hidden sm:block absolute -left-2.5 -bottom-2.5 w-5 h-5 rounded-full bg-white" />
+      <div className="relative z-10 sm:w-64 flex-shrink-0 border-t sm:border-t-0 sm:border-l border-dashed border-white/20 bg-[#05070d] p-6 sm:p-7 flex flex-col">
+        <span className="hidden sm:block absolute -left-2.5 -top-2.5 w-5 h-5 rounded-full bg-[#0b1020]" />
+        <span className="hidden sm:block absolute -left-2.5 -bottom-2.5 w-5 h-5 rounded-full bg-[#0b1020]" />
 
         {fromPrice && fromPrice > 0 ? (
           <>
-            <div className="label-mono text-[10px] uppercase text-[#0a1f44]/45">
+            <div className="label-mono text-[10px] uppercase text-white/40">
               Fare from
             </div>
-            <div className="text-3xl font-extrabold leading-none">
+            <div className="text-holo text-3xl font-extrabold leading-none">
               {fmt$(fromPrice)}
             </div>
-            <div className="text-[11px] text-[#0a1f44]/60 mt-0.5 leading-snug">
+            <div className="text-[11px] text-white/50 mt-1 leading-snug">
               per person · double occupancy · taxes &amp; port fees included
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#0a1f44]/10 space-y-1.5 text-[12px]">
+            <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-[12px]">
               <div className="flex justify-between gap-2">
-                <span className="text-[#0a1f44]/55">Deposit today</span>
-                <span className="font-bold">{fmt$(deposit)} / person</span>
+                <span className="text-white/45">Deposit today</span>
+                <span className="font-bold text-white">
+                  {fmt$(deposit)} / person
+                </span>
               </div>
               {balance && (
                 <div className="flex justify-between gap-2">
-                  <span className="text-[#0a1f44]/55">Balance after deposit</span>
-                  <span className="font-bold">{fmt$(balance)} / person</span>
+                  <span className="text-white/45">Balance after deposit</span>
+                  <span className="font-bold text-white">
+                    {fmt$(balance)} / person
+                  </span>
                 </div>
               )}
               <div className="flex justify-between gap-2">
-                <span className="text-[#0a1f44]/55">Final payment due</span>
-                <span className="font-bold">{fmtDate(finalDue)}</span>
+                <span className="text-white/45">Final payment due</span>
+                <span className="font-bold text-white">{fmtDateDow(finalDue)}</span>
               </div>
             </div>
-            <div className="text-[10px] text-[#0a1f44]/45 mt-2 leading-snug">
+            <div className="text-[10px] text-white/35 mt-2 leading-snug">
               Your deposit is applied to your fare — the balance is what remains.
             </div>
           </>
         ) : (
-          <div className="label-mono text-[11px] uppercase tracking-wider text-[#0a1f44]/60">
+          <div className="label-mono text-[11px] uppercase tracking-wider text-white/60">
             Cruise Experience Center
           </div>
         )}
@@ -169,16 +169,16 @@ export default function CruiseTicket({
           {Array.from({ length: 38 }).map((_, i) => (
             <span
               key={i}
-              className="bg-[#0a1f44]"
+              className="bg-sky-400"
               style={{
                 width: 2,
                 height: `${[10, 26, 16, 30, 12, 22, 18, 28][i % 8]}px`,
-                opacity: i % 3 === 0 ? 0.85 : 0.5,
+                opacity: i % 3 === 0 ? 0.9 : 0.4,
               }}
             />
           ))}
         </div>
-        <div className="label-mono text-[9px] uppercase tracking-[0.2em] text-[#0a1f44]/40 mt-1.5">
+        <div className="label-mono text-[9px] uppercase tracking-[0.2em] text-white/40 mt-1.5">
           Cruises from Galveston™
         </div>
       </div>

@@ -327,6 +327,16 @@ export function fmtDateShort(dateStr: string): string {
   });
 }
 
+// Date with day of week, e.g. "Sat, June 27, 2026".
+export function fmtDateDow(dateStr: string): string {
+  return new Date(dateStr + "T12:00:00").toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 // ── Sea Pay fee structure ─────────────────────────────────────────────────────
 
 export const SEA_PAY_ENROLLMENT_FEE = 49.99;
