@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DeckPlanImage from "@/components/DeckPlanImage";
+import ShipGallery from "@/components/ShipGallery";
 import ShipImage from "@/components/ShipImage";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { getTerminal } from "@/lib/port-terminals";
@@ -117,6 +118,19 @@ export default async function DeckPlansPage({
           </Link>
           .
         </p>
+
+        <div className="mt-12">
+          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-4">
+            {"// Real Cruise Photos"}
+          </div>
+          <ShipGallery
+            slug={shipName
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/(^-|-$)/g, "")}
+            shipName={shipName}
+          />
+        </div>
       </section>
     </main>
   );
