@@ -5,6 +5,15 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { fmt$, fmtDateDow } from "@/lib/sea-pay";
+import Photo from "@/components/Photo";
+import { destinationFor } from "@/lib/destinations";
+
+function shipSlug(s: string) {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 const DEPOSIT_PP = 50;
 
@@ -54,6 +63,7 @@ function BookCabinContent() {
   const [cabinType, setCabinType] = useState("");
   const [cruiseLine, setCruiseLine] = useState("");
   const [pricePP, setPricePP] = useState(0);
+  const [dest, setDest] = useState("");
 
   // Guest 1 (lead)
   const [firstName, setFirstName] = useState("");
@@ -90,7 +100,16 @@ function BookCabinContent() {
     if (!Number.isNaN(p)) setPricePP(p);
     const g = params.get("guests");
     if (g) setGuests(g);
+    setDest(params.get("dest") ?? "");
   }, [params]);
+
+  const destInfo = dest ? destinationFor(dest) : null;
+  const photoSrc = destInfo
+    ? `/destinations/${destInfo.slug}.jpg`
+    : ship
+      ? `/ships/${shipSlug(ship)}.jpg`
+      : "";
+  const photoGradient = destInfo?.gradient ?? "from-blue-700 to-[#0a1f44]";
 
   const grossTotal = pricePP > 0 ? pricePP * 2 : 0;
   const numGuests = Number(guests) || 1;
@@ -228,35 +247,65 @@ function BookCabinContent() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
         {/* Cabin summary */}
         {(ship || cabinType) && (
-          <div className="bg-sky-500/10 border border-sky-400/30 rounded-2xl p-6">
-            <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-2">
-              You&rsquo;re booking
+          <div className="rounded-2xl overflow-hidden border border-sky-400/30 bg-sky-500/[0.07] flex flex-col sm:flex-row">
+            {/* Destination / ship photo */}
+            <div className="relative sm:w-56 h-44 sm:h-auto flex-shrink-0">
+              <Photo
+                src={photoSrc}
+                fallbackSrc={ship ? `/ships/${shipSlug(ship)}.jpg` : undefined}
+                alt={destInfo ? `${destInfo.name}, ${destInfo.country}` : ship}
+                gradient={photoGradient}
+                overlay={false}
+                className="absolute inset-0"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0b1020] via-[#0b1020]/20 to-transparent" />
+              {destInfo && (
+                <div className="absolute bottom-3 left-4 right-3">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-sky-300">
+                    You&rsquo;ll visit
+                  </div>
+                  <div className="text-white font-extrabold text-lg leading-none drop-shadow">
+                    {destInfo.name}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="text-white font-extrabold text-xl">
-              {cabinType ? `${cabinType} · ` : ""}
-              {ship}
-            </div>
-            <div className="text-white/60 text-sm mt-0.5">
-              {cruiseLine}
-              {sailDate ? ` · Sails ${fmtDateDow(sailDate)}` : ""}
-            </div>
-            {pricePP > 0 && (
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                <span className="text-white/70">
-                  From{" "}
-                  <strong className="text-holo">{fmt$(pricePP)}</strong> / person
-                </span>
-                <span className="text-white/70">
-                  Gross total{" "}
-                  <strong className="text-white">{fmt$(grossTotal)}</strong> · 2
-                  guests
-                </span>
-                <span className="text-white/70">
-                  Deposit{" "}
-                  <strong className="text-white">{fmt$(depositTotal)}</strong>
-                </span>
+
+            {/* Details */}
+            <div className="flex-1 p-6">
+              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-2">
+                You&rsquo;re booking
               </div>
-            )}
+              <div className="text-white font-extrabold text-xl">
+                {cabinType ? `${cabinType} · ` : ""}
+                {ship}
+              </div>
+              <div className="text-white/60 text-sm mt-0.5">
+                {cruiseLine}
+                {sailDate ? ` · Sails ${fmtDateDow(sailDate)}` : ""}
+              </div>
+              {pricePP > 0 && (
+                <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                  <span className="text-white/70">
+                    From <strong className="text-holo">{fmt$(pricePP)}</strong> /
+                    person
+                  </span>
+                  <span className="text-white/70">
+                    Gross total{" "}
+                    <strong className="text-white">{fmt$(grossTotal)}</strong> · 2
+                    guests
+                  </span>
+                  <span className="text-white/70">
+                    Deposit{" "}
+                    <strong className="text-white">{fmt$(depositTotal)}</strong>
+                  </span>
+                </div>
+              )}
+              <div className="mt-3 flex items-center gap-2 text-[11px] text-white/45">
+                <span className="text-sky-400">🔒</span> Secure booking ·
+                best-price support · local Galveston team
+              </div>
+            </div>
           </div>
         )}
 
