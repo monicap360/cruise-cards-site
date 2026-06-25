@@ -159,12 +159,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Trademark strip */}
-        <div className="border-t border-white/10 mt-10 pt-5 pb-2 text-white/35 text-xs leading-relaxed">
-          Cruises from Galveston™ · Cruise Experience Center™ · Portside Priority™ · Cruise Ready Concierge™ · Sea You On Deck Crews™ · Sea Duck Hunters™ · Sea Pay™ · &ldquo;Cruises Start Here.&rdquo;™ · &ldquo;Plan. Book. Sail.&rdquo;™ are trademarks of Cruises from Galveston™. All crew names, programs, and community systems are proprietary. Unauthorized use is prohibited.
-        </div>
-
-        <div className="pt-3 flex items-center justify-between flex-wrap gap-2 text-white/40 text-xs">
+        <div className="border-t border-white/10 mt-10 pt-5 flex items-center justify-between flex-wrap gap-2 text-white/40 text-xs">
           <div className="flex items-center gap-3 flex-wrap">
             <span>© {new Date().getFullYear()} Cruise Experience Center / Cruises From Galveston. All rights reserved. Portside Priority™ and Cruise Ready Concierge™ are proprietary service programs.</span>
             <Link href="/legal" className="text-sky-400/80 hover:text-white transition-colors underline">
