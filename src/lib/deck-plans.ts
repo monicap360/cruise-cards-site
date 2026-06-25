@@ -32,10 +32,10 @@ export const OFFICIAL_DECK_PLANS: Record<string, string> = {
 
   // MSC Cruises
   "MSC Seascape":
-    "https://www.msccruises.com/en-us/cruise-ship/msc-seascape.aspx",
+    "https://www.msccruises.com/int/our-cruises/ships/msc-seascape",
 
   // Norwegian Cruise Line
-  "Norwegian Viva": "https://www.ncl.com/cruise-ship/viva",
+  "Norwegian Viva": "https://www.ncl.com/cruise-ships/norwegian-viva",
 
   // Disney Cruise Line
   "Disney Magic": "https://disneycruise.disney.go.com/ships/magic/",
