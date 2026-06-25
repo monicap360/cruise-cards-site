@@ -24,7 +24,9 @@ export default function OccupancyTiers({
   reserveBase: string;
   discountPct?: number;
 }) {
-  const cap = Math.min(Math.max(maxGuests, 2), 5);
+  // Always offer up to 5 guests (3rd–5th at add-a-guest rates, subject to
+  // cabin capacity / connecting rooms — confirmed at quote).
+  const cap = Math.max(Math.min(maxGuests, 5), 5);
   const sizes: number[] = [];
   for (let n = 2; n <= cap; n++) sizes.push(n);
 
