@@ -1,4 +1,6 @@
 import Link from "next/link";
+import DestinationCard from "@/components/DestinationCard";
+import { FEATURED_DESTINATIONS } from "@/lib/destinations";
 
 const features = [
   {
@@ -304,6 +306,37 @@ export default function Home() {
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Where you'll sail ────────────────────────────────────────────── */}
+      <section className="bg-[#05070d] text-white border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28">
+          <div className="max-w-2xl mb-12">
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+              {"// Where You'll Sail"}
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+              Wake up somewhere <span className="text-holo">unforgettable.</span>
+            </h2>
+            <p className="text-white/55 text-lg">
+              Turquoise water, white sand, and ancient ruins — all on a round-trip
+              cruise from Galveston. No flights required.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURED_DESTINATIONS.map((d) => (
+              <DestinationCard key={d.slug} d={d} />
+            ))}
+          </div>
+          <div className="mt-10">
+            <Link
+              href="/destinations"
+              className="inline-block border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Explore All Destinations →
+            </Link>
           </div>
         </div>
       </section>

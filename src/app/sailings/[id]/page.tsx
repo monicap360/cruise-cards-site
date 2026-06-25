@@ -4,6 +4,8 @@ import CabinShowcase from "@/components/CabinShowcase";
 import CruiseTicket from "@/components/CruiseTicket";
 import CruiseInclusions from "@/components/CruiseInclusions";
 import CruiseOffers from "@/components/CruiseOffers";
+import DestinationCard from "@/components/DestinationCard";
+import { portsFromItinerary, destinationFor } from "@/lib/destinations";
 import {
   getSailingBlock,
   groupByType,
@@ -90,6 +92,7 @@ export default async function SailingOptionsPage({
     sailingDate: block.sailingDate,
     nights: block.nights,
   });
+  const ports = portsFromItinerary(block.itinerary);
 
   return (
     <div className="bg-[#05070d] text-white">
@@ -144,6 +147,23 @@ export default async function SailingOptionsPage({
           embarkStreet={terminal?.entryStreet}
         />
       </section>
+
+      {/* Ports of call */}
+      {ports.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+            {"// Ports of Call"}
+          </div>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-6">
+            Where You&rsquo;ll Wake Up
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {ports.map((p) => (
+              <DestinationCard key={p} d={destinationFor(p)} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Promotions / offers */}
       {offers.length > 0 && (
