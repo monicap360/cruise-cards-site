@@ -125,23 +125,33 @@ export default function CruiseTicket({
 
         {fromPrice && fromPrice > 0 ? (
           <>
-            <div className="label-mono text-[10px] uppercase text-white/40">
-              Fare from
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="label-mono text-[10px] uppercase text-white/40 mb-0.5">
+                  Guest 1
+                </div>
+                <div className="text-white font-bold">{fmt$(fromPrice)}</div>
+              </div>
+              <div>
+                <div className="label-mono text-[10px] uppercase text-white/40 mb-0.5">
+                  Guest 2
+                </div>
+                <div className="text-white font-bold">{fmt$(fromPrice)}</div>
+              </div>
             </div>
-            <div className="text-holo text-3xl font-extrabold leading-none">
-              {fmt$(fromPrice)}
+            <div className="mt-3 pt-3 border-t border-white/10 flex items-end justify-between gap-2">
+              <span className="label-mono text-[10px] uppercase text-white/40">
+                Gross Total
+              </span>
+              <span className="text-holo font-extrabold text-2xl leading-none">
+                {grossTotal ? fmt$(grossTotal) : fmt$(fromPrice)}
+              </span>
             </div>
-            <div className="text-[11px] text-white/50 mt-1 leading-snug">
-              per person · double occupancy · taxes &amp; port fees included
+            <div className="text-[10px] text-white/50 mt-1 leading-snug">
+              per person · double occ · taxes &amp; port fees included
             </div>
 
             <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-[12px]">
-              {grossTotal && (
-                <div className="flex justify-between gap-2">
-                  <span className="text-white/45">Gross total · 2 guests</span>
-                  <span className="font-bold text-white">{fmt$(grossTotal)}</span>
-                </div>
-              )}
               <div className="flex justify-between gap-2">
                 <span className="text-white/45">Deposit today</span>
                 <span className="font-bold text-white">

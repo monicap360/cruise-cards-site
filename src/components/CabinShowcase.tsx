@@ -10,19 +10,14 @@ function shipSlug(s: string): string {
 }
 
 /**
- * Representative-stateroom showcase: a full cabin photo with a frosted glass
- * info panel (category, ship, dates, from-price per person, fees-included note,
- * double-occupancy note, disclaimer) plus a cabin-details section (size, who it
- * sleeps, description, and features). Drop a real photo in at
- * /public/cabins/<slug>.jpg; a clean gradient shows until then.
+ * Cabin category card for the sailing page. Cabin-focused (the ship, line, and
+ * dates live on the page hero/ticket, so they're not repeated here). Shows a
+ * representative photo, size & occupancy, price with gross total, features, and
+ * booking actions. Drop a real photo at /public/cabins/<slug>.jpg.
  */
 export default function CabinShowcase({
   type,
-  durationRegion,
   ship,
-  cruiseLine,
-  dateRangeLabel,
-  fromPort,
   fromPerson,
   available,
   slug,
@@ -36,11 +31,7 @@ export default function CabinShowcase({
   features,
 }: {
   type: string;
-  durationRegion: string;
   ship: string;
-  cruiseLine: string;
-  dateRangeLabel: string;
-  fromPort: string;
   fromPerson: number;
   available: number;
   slug: string;
@@ -52,13 +43,19 @@ export default function CabinShowcase({
   sqftRange?: string;
   desc?: string;
   features?: string[];
+  // accepted for compatibility; not displayed (shown on page hero/ticket)
+  durationRegion?: string;
+  cruiseLine?: string;
+  dateRangeLabel?: string;
+  fromPort?: string;
 }) {
   const title = /suite/i.test(type) ? type : `${type} Cabin`;
+  const grossTotal = fromPerson > 0 ? fromPerson * 2 : 0;
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020]">
-      {/* ── Hero: representative stateroom photo + frosted info panel ── */}
-      <div className="relative min-h-[460px] sm:min-h-[520px] flex p-4 sm:p-6">
+    <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0b1020] hover:border-white/25 transition-colors flex flex-col lg:flex-row">
+      {/* Photo */}
+      <div className="relative lg:w-80 h-52 lg:h-auto flex-shrink-0">
         <Photo
           src={`/cabins/${slug}.jpg`}
           fallbackSrc={`/ships/${shipSlug(ship)}.jpg`}
@@ -67,88 +64,26 @@ export default function CabinShowcase({
           overlay={false}
           className="absolute inset-0"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#05070d]/70 via-[#05070d]/15 to-transparent" />
-
-        <div className="relative z-10 w-full sm:max-w-sm rounded-2xl bg-white/90 backdrop-blur-md ring-1 ring-white/70 shadow-2xl p-6 text-[#0a1f44] flex flex-col">
-          <h3 className="text-2xl sm:text-3xl font-extrabold leading-tight">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b1020]/90 via-[#0b1020]/20 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#0b1020]/40" />
+        <div className="absolute bottom-4 left-4 right-4">
+          <h3 className="text-white font-extrabold text-2xl uppercase tracking-tight leading-none">
             {title}
           </h3>
-          <div className="text-lg font-bold mt-1">{durationRegion}</div>
-          <div className="text-base font-bold text-[#0369a1]">{ship}</div>
-          <div className="label-mono text-[10px] uppercase tracking-wider text-[#0a1f44]/55 mt-0.5">
-            {cruiseLine}
-          </div>
-
-          <div className="mt-4 text-sm font-semibold">{dateRangeLabel}</div>
-          <div className="text-sm text-[#0a1f44]/75">from {fromPort}, TX</div>
-
-          {fromPerson > 0 && (
-            <div className="mt-4 border-t border-[#0a1f44]/15 pt-3">
-              <div className="text-base">
-                From{" "}
-                <span className="text-3xl font-extrabold">
-                  {fmt$(fromPerson)}
-                </span>{" "}
-                <span className="text-sm font-semibold">per person</span>
-              </div>
-              <div className="text-xs text-[#0a1f44]/70 mt-0.5">
-                Port fees &amp; taxes included
-              </div>
-              <div className="text-[11px] leading-snug text-[#0a1f44]/60 mt-1.5">
-                Per person, based on double occupancy (2-guest stateroom).
-                {maxGuests && maxGuests > 2
-                  ? ` Sleeps up to ${maxGuests} — add a 3rd, 4th${
-                      maxGuests >= 5 ? ", or 5th" : ""
-                    } guest at lower add-a-guest rates; ask for your quote.`
-                  : " Add-a-guest rates available — ask us."}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            <Link
-              href={reserveHref}
-              className="bg-[#0a1f44] text-white hover:bg-[#0a1f44]/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
-            >
-              Book Now
-            </Link>
-            <Link
-              href={holdHref}
-              className="border border-[#0a1f44]/30 hover:border-[#0a1f44]/70 text-[#0a1f44] font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
-            >
-              Hold a Room
-            </Link>
-            <Link
-              href={seaPayHref}
-              className="border border-[#0a1f44]/30 hover:border-[#0a1f44]/70 text-[#0a1f44] font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
-            >
-              Sea Pay™
-            </Link>
-          </div>
-
-          <div className="mt-auto pt-4 text-[11px] leading-snug text-[#0a1f44]/60">
-            Representative {type} stateroom · {available} open. Layout &amp;
-            décor may vary.
+          <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300 mt-1.5">
+            {sqftRange}
+            {maxGuests ? ` · Sleeps up to ${maxGuests}` : ""}
           </div>
         </div>
       </div>
 
-      {/* ── Cabin details ── */}
-      <div className="p-6 border-t border-white/10">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mb-3 label-mono text-[10px] uppercase tracking-wider text-sky-400/70">
-          {sqftRange && <span>{sqftRange}</span>}
-          {maxGuests ? <span>Sleeps up to {maxGuests}</span> : null}
-          <span>{available} available</span>
-        </div>
-
+      {/* Details */}
+      <div className="flex-1 p-6 flex flex-col">
         {desc && (
-          <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-3xl">
-            {desc}
-          </p>
+          <p className="text-white/60 text-sm leading-relaxed mb-4">{desc}</p>
         )}
 
         {features && features.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 mb-5">
             {features.map((f) => (
               <div
                 key={f}
@@ -160,6 +95,58 @@ export default function CabinShowcase({
             ))}
           </div>
         )}
+
+        {/* Price + actions */}
+        <div className="mt-auto border-t border-white/10 pt-4 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            {fromPerson > 0 && (
+              <>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-holo font-extrabold text-3xl leading-none">
+                    {fmt$(fromPerson)}
+                  </span>
+                  <span className="text-white/50 text-sm">/ person</span>
+                </div>
+                <div className="text-white/45 text-xs mt-1.5">
+                  Gross total {fmt$(grossTotal)} · 2 guests · taxes &amp; fees
+                  included
+                </div>
+                <div className="text-white/35 text-[11px] mt-0.5">
+                  Double occupancy
+                  {maxGuests && maxGuests > 2
+                    ? ` · sleeps up to ${maxGuests}, add-a-guest rates available`
+                    : ""}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={reserveHref}
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              Book Now
+            </Link>
+            <Link
+              href={holdHref}
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              Hold a Room
+            </Link>
+            <Link
+              href={seaPayHref}
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              Sea Pay™
+            </Link>
+          </div>
+        </div>
+
+        <div className="text-white/30 text-[10px] mt-3">
+          Representative {type} stateroom · {available} available. Layout &amp;
+          décor may vary.
+        </div>
       </div>
     </div>
   );
