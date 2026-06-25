@@ -43,12 +43,21 @@ export default function ScheduleBoard({
       </div>
 
       {/* Branded header band */}
-      <div className="flex items-center justify-between gap-4 px-5 sm:px-8 py-5 border-b border-white/10 flex-wrap">
-        <CruiseLineLogo line={cruiseLine} className="h-7 sm:h-8 w-auto" />
-        <h3 className="text-xl sm:text-3xl font-extrabold uppercase tracking-tight text-white text-center flex-1 min-w-[12rem]">
-          {ship} <span className="text-holo">Cruise Schedule</span>
+      <div className="px-5 sm:px-8 py-7 border-b border-white/10 text-center">
+        <div className="flex items-center justify-center mb-3">
+          <CruiseLineLogo line={cruiseLine} className="h-7 sm:h-8 w-auto" />
+        </div>
+        <h3 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] text-white leading-none">
+          {ship}
         </h3>
-        <span className="hud label-mono text-[11px] uppercase tracking-wider text-white px-3 py-1.5 rounded-full whitespace-nowrap">
+        <div className="flex items-center justify-center gap-3 mt-3.5">
+          <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-sky-400/60" />
+          <span className="label-mono text-[11px] uppercase tracking-[0.28em] text-sky-400/90">
+            Cruise Schedule
+          </span>
+          <span className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-sky-400/60" />
+        </div>
+        <span className="inline-block mt-4 hud label-mono text-[11px] uppercase tracking-wider text-white px-4 py-1.5 rounded-full">
           {lenLabel}
         </span>
       </div>
