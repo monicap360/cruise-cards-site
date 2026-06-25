@@ -75,7 +75,7 @@ export default function ScheduleGrid({
                 {s.nights}-{word} {regionOf(s.itinerary)}
               </div>
               <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/0 group-hover:text-sky-300 transition-colors mt-1.5">
-                Book this date →
+                Select this date →
               </div>
             </div>
 
