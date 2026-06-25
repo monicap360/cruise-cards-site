@@ -50,12 +50,24 @@ function BookCabinContent() {
   const [cruiseLine, setCruiseLine] = useState("");
   const [pricePP, setPricePP] = useState(0);
 
+  // Guest 1 (lead)
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [dob1, setDob1] = useState("");
+  // Guest 2
+  const [g2First, setG2First] = useState("");
+  const [g2Last, setG2Last] = useState("");
+  const [g2Email, setG2Email] = useState("");
+  const [g2Phone, setG2Phone] = useState("");
+  const [g2Dob, setG2Dob] = useState("");
+  // Emergency contact
+  const [emName, setEmName] = useState("");
+  const [emPhone, setEmPhone] = useState("");
+  const [emRelation, setEmRelation] = useState("");
+
   const [guests, setGuests] = useState("2");
-  const [guest2, setGuest2] = useState("");
   const [fareType, setFareType] = useState("flexible");
   const [notes, setNotes] = useState("");
   const [acks, setAcks] = useState<Record<string, boolean>>({});
@@ -74,16 +86,28 @@ function BookCabinContent() {
   }, [params]);
 
   const grossTotal = pricePP > 0 ? pricePP * 2 : 0;
-  const depositTotal = DEPOSIT_PP * (Number(guests) || 2);
+  const numGuests = Number(guests) || 1;
+  const depositTotal = DEPOSIT_PP * numGuests;
+  const today = new Date().toISOString().slice(0, 10);
   const allAcked = ACKS.every((a) => acks[a.id]);
+  const guest1Ok = firstName && lastName && dob1 && email && phone;
+  const guest2Ok =
+    numGuests < 2 || (g2First && g2Last && g2Dob && g2Email && g2Phone);
+  const emergencyOk = emName && emPhone;
   const canSubmit =
-    firstName && lastName && email && phone && allAcked && !submitting;
+    guest1Ok && guest2Ok && emergencyOk && allAcked && !submitting;
 
   async function submit() {
     setSubmitting(true);
     const num = confirmNumber();
-    const ackNote = "Acknowledged: all booking terms accepted.";
-    const partyNote = guest2 ? `Guest 2: ${guest2}. ` : "";
+    const g1 = `Guest 1: ${firstName} ${lastName} | DOB ${dob1} | ${email} | ${phone}.`;
+    const g2 =
+      numGuests >= 2
+        ? ` Guest 2: ${g2First} ${g2Last} | DOB ${g2Dob} | ${g2Email} | ${g2Phone}.`
+        : "";
+    const em = ` Emergency contact: ${emName}${
+      emRelation ? ` (${emRelation})` : ""
+    } | ${emPhone}.`;
     await supabase.from("inquiries").insert({
       confirm_number: num,
       first_name: firstName,
@@ -100,7 +124,7 @@ function BookCabinContent() {
         `CABIN BOOKING REQUEST — ${cabinType || "cabin"} on ${ship} ${sailDate}. ` +
         `From ${fmt$(pricePP)}/pp · gross ${fmt$(grossTotal)} · deposit ${fmt$(
           depositTotal
-        )}. ${partyNote}${ackNote}` +
+        )}. ${g1}${g2}${em} Acknowledged all booking terms.` +
         (notes ? ` Notes: ${notes}` : ""),
       appt_date: "",
       appt_time: "",
@@ -229,57 +253,10 @@ function BookCabinContent() {
           </div>
         )}
 
-        {/* Lead guest */}
+        {/* Booking details */}
         <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Lead Guest
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>First Name *</label>
-              <input
-                className={field}
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Jane"
-              />
-            </div>
-            <div>
-              <label className={lbl}>Last Name *</label>
-              <input
-                className={field}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Smith"
-              />
-            </div>
-            <div>
-              <label className={lbl}>Email *</label>
-              <input
-                type="email"
-                className={field}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-              />
-            </div>
-            <div>
-              <label className={lbl}>Phone *</label>
-              <input
-                type="tel"
-                className={field}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="(409) 555-0100"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Party + fare */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Travel Party
+            Booking Details
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -301,15 +278,6 @@ function BookCabinContent() {
               </p>
             </div>
             <div>
-              <label className={lbl}>Second Guest Name</label>
-              <input
-                className={field}
-                value={guest2}
-                onChange={(e) => setGuest2(e.target.value)}
-                placeholder="Full name (optional)"
-              />
-            </div>
-            <div className="sm:col-span-2">
               <label className={lbl}>Fare Type</label>
               <select
                 className={field}
@@ -323,17 +291,175 @@ function BookCabinContent() {
                 ))}
               </select>
             </div>
+          </div>
+        </div>
+
+        {/* Guest 1 */}
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+            Guest 1 <span className="text-sky-400/80 text-sm">(Lead Guest)</span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={lbl}>First Name *</label>
+              <input
+                className={field}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Jane"
+              />
+            </div>
+            <div>
+              <label className={lbl}>Last Name *</label>
+              <input
+                className={field}
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Smith"
+              />
+            </div>
+            <div>
+              <label className={lbl}>Date of Birth *</label>
+              <input
+                type="date"
+                max={today}
+                className={field}
+                value={dob1}
+                onChange={(e) => setDob1(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={lbl}>Phone *</label>
+              <input
+                type="tel"
+                className={field}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(409) 555-0100"
+              />
+            </div>
             <div className="sm:col-span-2">
-              <label className={lbl}>Special Requests</label>
-              <textarea
-                rows={3}
-                className={`${field} resize-none`}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Celebrating something? Accessibility needs? Bed configuration? Let us know."
+              <label className={lbl}>Email *</label>
+              <input
+                type="email"
+                className={field}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
               />
             </div>
           </div>
+        </div>
+
+        {/* Guest 2 */}
+        {numGuests >= 2 && (
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+            <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+              Guest 2
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={lbl}>First Name *</label>
+                <input
+                  className={field}
+                  value={g2First}
+                  onChange={(e) => setG2First(e.target.value)}
+                  placeholder="John"
+                />
+              </div>
+              <div>
+                <label className={lbl}>Last Name *</label>
+                <input
+                  className={field}
+                  value={g2Last}
+                  onChange={(e) => setG2Last(e.target.value)}
+                  placeholder="Smith"
+                />
+              </div>
+              <div>
+                <label className={lbl}>Date of Birth *</label>
+                <input
+                  type="date"
+                  max={today}
+                  className={field}
+                  value={g2Dob}
+                  onChange={(e) => setG2Dob(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={lbl}>Phone *</label>
+                <input
+                  type="tel"
+                  className={field}
+                  value={g2Phone}
+                  onChange={(e) => setG2Phone(e.target.value)}
+                  placeholder="(409) 555-0101"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className={lbl}>Email *</label>
+                <input
+                  type="email"
+                  className={field}
+                  value={g2Email}
+                  onChange={(e) => setG2Email(e.target.value)}
+                  placeholder="guest2@example.com"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Emergency contact */}
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+            Emergency Contact{" "}
+            <span className="text-white/45 text-sm font-normal">
+              (not sailing with you)
+            </span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={lbl}>Full Name *</label>
+              <input
+                className={field}
+                value={emName}
+                onChange={(e) => setEmName(e.target.value)}
+                placeholder="Contact name"
+              />
+            </div>
+            <div>
+              <label className={lbl}>Phone *</label>
+              <input
+                type="tel"
+                className={field}
+                value={emPhone}
+                onChange={(e) => setEmPhone(e.target.value)}
+                placeholder="(713) 555-0123"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={lbl}>Relationship</label>
+              <input
+                className={field}
+                value={emRelation}
+                onChange={(e) => setEmRelation(e.target.value)}
+                placeholder="Parent, sibling, friend…"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Special requests */}
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <label className={lbl}>Special Requests</label>
+          <textarea
+            rows={3}
+            className={`${field} resize-none`}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Celebrating something? Accessibility needs? Bed configuration? Let us know."
+          />
         </div>
 
         {/* Acknowledgments */}
