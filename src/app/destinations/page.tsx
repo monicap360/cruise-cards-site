@@ -251,6 +251,7 @@ const destinations: Destination[] = [
   {
     id: "cococay",
     name: "Perfect Day at CocoCay",
+    dealKey: "CocoCay",
     country: "Royal Caribbean Private Island • Bahamas",
     flag: "👑",
     region: "private-islands",
@@ -559,7 +560,7 @@ export default function DestinationsPage() {
                 </div>
 
                 <Link
-                  href={`/deals?to=${encodeURIComponent(dest.dealKey ?? dest.name)}`}
+                  href={`/find?q=${encodeURIComponent(dest.dealKey ?? dest.name)}`}
                   className="block w-full text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider py-3 rounded-full text-sm transition-all"
                 >
                   See Cruises to {dest.name}
