@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShipImage from "@/components/ShipImage";
+import ScheduleGrid from "@/components/ScheduleGrid";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { getSailingBlocks } from "@/lib/room-blocks";
 import { getTerminal } from "@/lib/port-terminals";
 import { officialDeckPlanUrl } from "@/lib/deck-plans";
-import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
+import { fmt$ } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
 
@@ -64,8 +65,6 @@ export default async function ShipLandingPage({
   const fromPrice = prices.length ? Math.min(...prices) : 0;
   const terminal = getTerminal(f.ship);
   const officialUrl = officialDeckPlanUrl(f.ship);
-  const dur = durationWord(f.cruiseLine);
-  const upcoming = sailings.slice(0, 8);
 
   const faqs = [
     {
@@ -207,46 +206,26 @@ export default async function ShipLandingPage({
         </p>
       </section>
 
-      {/* Upcoming sailings */}
-      {upcoming.length > 0 && (
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
-            {"// Upcoming " + f.ship + " sailings"}
+      {/* Full live sailing schedule */}
+      {sailings.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
+            <div>
+              <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-1">
+                {"// " + f.ship + " Cruise Schedule"}
+              </div>
+              <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">
+                Galveston Sailing Dates
+              </h2>
+            </div>
+            <Link
+              href={`/sailings?ship=${encodeURIComponent(f.ship)}`}
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-3 rounded-full transition-all"
+            >
+              Pick a date &amp; price →
+            </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {upcoming.map((b) => {
-              const p = b.cabins.map((c) => c.price).filter((n) => n > 0);
-              const from = p.length ? Math.min(...p) : 0;
-              return (
-                <Link
-                  key={b.id}
-                  href={`/sailings/${b.id}`}
-                  className="group bg-[#0b1020] border border-white/10 rounded-xl p-4 hover:border-white/30 transition-colors flex items-center justify-between gap-3"
-                >
-                  <div>
-                    <div className="font-bold text-white">
-                      {fmtDate(b.sailingDate)}
-                    </div>
-                    <div className="text-white/45 text-xs">
-                      {b.nights} {dur} · {b.itinerary}
-                    </div>
-                  </div>
-                  {from > 0 && (
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-white font-bold">{fmt$(from)}</div>
-                      <div className="text-white/35 text-[10px]">/ person</div>
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-          <Link
-            href={`/sailings?ship=${encodeURIComponent(f.ship)}`}
-            className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 hover:text-white transition-colors inline-block mt-5"
-          >
-            See all {f.ship} dates →
-          </Link>
+          <ScheduleGrid cruiseLine={f.cruiseLine} sailings={sailings} />
         </section>
       )}
 
