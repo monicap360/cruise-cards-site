@@ -109,11 +109,6 @@ export default function BoardingPass(props: BoardingPassProps) {
               <div className="font-bold text-white text-lg leading-tight">
                 {props.departLabel}
               </div>
-              {props.embarkStreet && (
-                <div className="label-mono text-[10px] uppercase text-sky-400/70 mt-1">
-                  Enter at {props.embarkStreet}
-                </div>
-              )}
             </div>
           </div>
 

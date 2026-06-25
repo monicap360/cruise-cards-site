@@ -13,7 +13,6 @@ export default function CruiseTicket({
   itinerary,
   fromPrice,
   fromPort = "Galveston",
-  embarkStreet,
   deposit = 50,
 }: {
   ship: string;
@@ -24,7 +23,6 @@ export default function CruiseTicket({
   itinerary: string;
   fromPrice?: number;
   fromPort?: string;
-  embarkStreet?: string;
   deposit?: number;
 }) {
   const dur = durationWord(cruiseLine);
@@ -108,12 +106,6 @@ export default function CruiseTicket({
             <span className="font-semibold text-white/80">Round-trip</span> ·
             closed-loop sailing from {fromPort}
           </span>
-          {embarkStreet && (
-            <span>
-              Enter at{" "}
-              <span className="font-semibold text-white/80">{embarkStreet}</span>
-            </span>
-          )}
         </div>
       </div>
 

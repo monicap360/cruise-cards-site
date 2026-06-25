@@ -146,7 +146,6 @@ export default async function SailingOptionsPage({
             const p = block.cabins.map((c) => c.price).filter((n) => n > 0);
             return p.length ? Math.min(...p) : undefined;
           })()}
-          embarkStreet={terminal?.entryStreet}
         />
       </section>
 
