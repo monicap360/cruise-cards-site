@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
 import CabinShowcase from "@/components/CabinShowcase";
+import CruiseTicket from "@/components/CruiseTicket";
 import {
   getSailingBlock,
   groupByType,
@@ -114,6 +115,26 @@ export default async function SailingOptionsPage({
             Round-trip from Galveston · Closed-loop sailing · Returns to Galveston
           </p>
         </div>
+      </section>
+
+      {/* Your cruise ticket */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+          {"// Your Cruise Ticket"}
+        </div>
+        <CruiseTicket
+          ship={block.ship}
+          cruiseLine={block.cruiseLine}
+          sailingDate={block.sailingDate}
+          returnDate={block.returnDate}
+          nights={block.nights}
+          itinerary={block.itinerary}
+          fromPrice={(() => {
+            const p = block.cabins.map((c) => c.price).filter((n) => n > 0);
+            return p.length ? Math.min(...p) : undefined;
+          })()}
+          embarkStreet={terminal?.entryStreet}
+        />
       </section>
 
       {/* Cabin options */}

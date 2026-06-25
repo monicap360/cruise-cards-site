@@ -40,13 +40,13 @@ export default function ShipImage({
           alt={ship}
           onError={() => setFailed(true)}
           loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
       )}
       {overlay && (
         <>
-          <div className="absolute inset-0 grid-bg opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/85 via-[#05070d]/20 to-transparent" />
+          <div className="absolute inset-0 grid-bg opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/75 via-[#05070d]/10 to-transparent" />
         </>
       )}
     </div>

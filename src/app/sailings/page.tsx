@@ -211,7 +211,7 @@ export default async function SailingsPage({
                 >
                   {/* Futuristic ship-photo backdrop */}
                   <ShipImage ship={b.ship} overlay={false} className="absolute inset-0" />
-                  <div className="absolute inset-0 bg-[#0b1020]/88" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1020]/96 via-[#0b1020]/82 to-[#0b1020]/55" />
                   <div className="absolute inset-0 grid-bg opacity-20" />
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-400/60 to-transparent" />
 
