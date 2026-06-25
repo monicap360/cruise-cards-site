@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ShipImage from "@/components/ShipImage";
-import ScheduleGrid from "@/components/ScheduleGrid";
+import ScheduleBoard from "@/components/ScheduleBoard";
 import ItineraryRoute from "@/components/ItineraryRoute";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { getSailingBlocks } from "@/lib/room-blocks";
@@ -217,26 +217,14 @@ export default async function ShipLandingPage({
         </div>
       </section>
 
-      {/* Full live sailing schedule */}
+      {/* Full live sailing schedule — poster style */}
       {sailings.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="flex items-end justify-between gap-3 mb-6 flex-wrap">
-            <div>
-              <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-1">
-                {"// " + f.ship + " Cruise Schedule"}
-              </div>
-              <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">
-                Galveston Sailing Dates
-              </h2>
-            </div>
-            <Link
-              href={`/sailings?ship=${encodeURIComponent(f.ship)}`}
-              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-3 rounded-full transition-all"
-            >
-              Pick a date &amp; price →
-            </Link>
-          </div>
-          <ScheduleGrid cruiseLine={f.cruiseLine} sailings={sailings} />
+          <ScheduleBoard
+            ship={f.ship}
+            cruiseLine={f.cruiseLine}
+            sailings={sailings}
+          />
         </section>
       )}
 
