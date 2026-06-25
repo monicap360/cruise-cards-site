@@ -3,6 +3,7 @@ import ShipImage from "@/components/ShipImage";
 import CabinShowcase from "@/components/CabinShowcase";
 import CruiseTicket from "@/components/CruiseTicket";
 import CruiseInclusions from "@/components/CruiseInclusions";
+import CruiseOffers from "@/components/CruiseOffers";
 import {
   getSailingBlock,
   groupByType,
@@ -136,6 +137,14 @@ export default async function SailingOptionsPage({
           })()}
           embarkStreet={terminal?.entryStreet}
         />
+      </section>
+
+      {/* Promotions / offers */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
+          {"// Add an Offer to Your Cruise"}
+        </div>
+        <CruiseOffers contextHref={`/contact?ship=${shipParam}`} />
       </section>
 
       {/* Cabin options */}
