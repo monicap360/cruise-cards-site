@@ -190,7 +190,9 @@ export default async function SailingOptionsPage({
               sqftRange={info.sqftRange}
               desc={info.desc}
               features={info.features}
-              reserveHref={`/book?ship=${shipParam}&date=${block.sailingDate}`}
+              reserveHref={`/book-cabin?ship=${shipParam}&date=${block.sailingDate}&type=${encodeURIComponent(
+                type
+              )}&price=${from}&line=${encodeURIComponent(block.cruiseLine)}`}
               holdHref={`/hold?ship=${shipParam}&name=${encodeURIComponent(
                 block.ship + " " + type
               )}`}
