@@ -8,6 +8,10 @@ import { fmt$ } from "@/lib/sea-pay";
 // (the classic "add-a-guest" discount). Tune here to change every cabin's tiers.
 const EXTRA_GUEST_FRACTION = 0.5;
 
+// Promotional discount shown off the regular fare. Change this one number to
+// adjust the advertised savings on every cabin card.
+const DISCOUNT_OFF = 0.2; // 20% off the regular rate
+
 export default function OccupancyTiers({
   pricePerPerson,
   maxGuests,
@@ -27,11 +31,13 @@ export default function OccupancyTiers({
     Math.round(
       pricePerPerson * 2 + (n - 2) * pricePerPerson * EXTRA_GUEST_FRACTION
     );
-  const total = totalFor(sel);
-  const perPerson = Math.round(total / sel);
+  const regular = totalFor(sel); // regular (full) fare for this party size
+  const sale = Math.round(regular * (1 - DISCOUNT_OFF)); // discounted fare
+  const saved = regular - sale;
+  const perPerson = Math.round(sale / sel);
   const reserveHref = `${reserveBase}${
     reserveBase.includes("?") ? "&" : "?"
-  }guests=${sel}&total=${total}`;
+  }guests=${sel}&total=${sale}`;
 
   return (
     <div>
@@ -55,22 +61,24 @@ export default function OccupancyTiers({
       {/* Selected tier — only this one shows */}
       <div className="flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-white/40 text-lg line-through">
+              {fmt$(regular)}
+            </span>
             <span className="text-holo font-extrabold text-3xl leading-none">
-              {fmt$(total)}
+              {fmt$(sale)}
             </span>
             <span className="text-white/50 text-sm">
               total · {sel} guest{sel > 1 ? "s" : ""}
             </span>
           </div>
-          <div className="text-white/45 text-xs mt-1.5">
-            ~{fmt$(perPerson)} / person · taxes &amp; fees included
-            {sel === 2 && (
-              <span className="text-sky-300 font-semibold">
-                {" "}
-                · 2-Guest Special
-              </span>
-            )}
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span className="bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+              Save {fmt$(saved)} · {Math.round(DISCOUNT_OFF * 100)}% off
+            </span>
+            <span className="text-white/45 text-xs">
+              ~{fmt$(perPerson)} / person · taxes &amp; fees included
+            </span>
           </div>
         </div>
         <Link
