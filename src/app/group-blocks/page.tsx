@@ -8,32 +8,10 @@ import {
   type CabinCategory,
   getSailingBlocks,
   groupByType,
-  CATEGORY_ICON,
+  CATEGORY_INFO,
 } from "@/lib/room-blocks";
 import { fmtDate, fmt$ } from "@/lib/sea-pay";
-
-const CATEGORY_PHOTOS: Record<CabinCategory, { gradient: string; features: string[] }> = {
-  Interior: {
-    gradient: "from-slate-600 to-slate-800",
-    features: ["Queen or twin beds", "Full bathroom", "Climate control", "Interactive TV", "In-room safe"],
-  },
-  "Ocean View": {
-    gradient: "from-blue-500 to-blue-800",
-    features: ["Porthole or large window", "Natural light & ocean views", "Queen or twin beds", "Full bathroom", "Extra square footage"],
-  },
-  Balcony: {
-    gradient: "from-teal-500 to-blue-700",
-    features: ["Private balcony", "Floor-to-ceiling door", "Outdoor seating", "Fresh ocean air", "Some with extended balconies"],
-  },
-  "Mini-Suite": {
-    gradient: "from-purple-500 to-purple-800",
-    features: ["Separate living area", "Sofa with pull-out", "Larger balcony", "Enhanced bathroom", "Priority boarding"],
-  },
-  Suite: {
-    gradient: "from-yellow-500 to-orange-700",
-    features: ["Full living room", "Butler service", "Premium amenities", "Whirlpool tub", "Concierge access"],
-  },
-};
+import Photo from "@/components/Photo";
 
 export default function GroupBlocksPage() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
@@ -47,39 +25,91 @@ export default function GroupBlocksPage() {
   }, []);
 
   return (
-    <div>
+    <div className="bg-[#05070d]">
       {/* Header */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block bg-red-600 text-white text-sm font-bold px-4 py-1 rounded-full mb-4 uppercase tracking-wide">
-            🚢 Group Cabin Blocks
-          </div>
-          <h1 className="text-5xl font-extrabold mb-4">Available Room Blocks</h1>
-          <p className="text-blue-100 text-xl max-w-2xl mx-auto">
+      <section className="bg-[#05070d] text-white relative overflow-hidden py-16">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 left-1/2 -translate-x-1/2 -top-32 opacity-[0.14]" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Group Cabin Blocks"}</div>
+          <h1 className="text-5xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Available Room Blocks</h1>
+          <p className="text-white/55 text-xl max-w-2xl mx-auto">
             We hold group cabin blocks on select sailings — specific room numbers, exact decks, and known locations. See what&apos;s available and reserve yours today.
           </p>
           <div className="mt-5 flex flex-wrap gap-3 justify-center text-sm font-semibold">
-            <span className="bg-green-600/20 text-green-300 border border-green-500/30 px-4 py-1.5 rounded-full">
-              ✅ Available — ready to book
+            <span className="bg-white/10 text-white/70 border border-white/15 px-4 py-1.5 rounded-full">
+              Available — ready to book
             </span>
-            <span className="bg-yellow-500/20 text-yellow-200 border border-yellow-400/30 px-4 py-1.5 rounded-full">
-              🔒 Held — contact us to inquire
+            <span className="bg-white/5 text-white/55 border border-white/10 px-4 py-1.5 rounded-full">
+              Held — contact us to inquire
             </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Group perk — free cabin with 8+ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
+        <div className="bg-[#0b1020] border border-sky-400/30 rounded-2xl p-6 sm:p-8">
+          <div className="grid lg:grid-cols-3 gap-6 items-center">
+            <div className="lg:col-span-2">
+              <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+                {"// Group Perk"}
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-[-0.01em] mb-2">
+                Book 8 Cabins — the{" "}
+                <span className="text-holo">9th Sails Free</span>
+              </h2>
+              <p className="text-white/55 text-sm leading-relaxed">
+                Weddings, family reunions, corporate retreats, milestone birthdays —
+                bring the whole crew. Reserve eight staterooms and the ninth is on
+                us, with a <span className="text-white">dedicated group
+                coordinator</span> handling cabins, dining, and the whole itinerary.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {[
+                  "Weddings",
+                  "Family Reunions",
+                  "Corporate Retreats",
+                  "Bachelorette",
+                  "Milestone Birthdays",
+                ].map((t) => (
+                  <span
+                    key={t}
+                    className="label-mono text-[10px] uppercase tracking-wider text-white/60 bg-white/5 border border-white/10 rounded-full px-3 py-1"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/contact"
+                className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-4 rounded-full transition-all text-center"
+              >
+                Plan a Group Cruise
+              </Link>
+              <Link
+                href="/sea-pay"
+                className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-6 py-4 rounded-full transition-all text-center"
+              >
+                Ask About Group Sea Pay™
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {blocks.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
-            <div className="text-6xl mb-4">🚢</div>
-            <h2 className="text-xl font-extrabold text-blue-900 mb-2">No Group Blocks Available Right Now</h2>
-            <p className="text-gray-400 mb-6">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-16 text-center">
+            <h2 className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">No Group Blocks Available Right Now</h2>
+            <p className="text-white/45 mb-6">
               New blocks are added regularly. Contact us to ask about upcoming group sailings.
             </p>
             <Link
               href="/contact"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full text-sm transition-all"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-8 py-4 rounded-full text-sm transition-all"
             >
               Contact a Cruise Specialist
             </Link>
@@ -87,29 +117,32 @@ export default function GroupBlocksPage() {
         ) : (
           <div className="space-y-8">
             {blocks.map((block) => {
-              const byType = groupByType(block.cabins.filter((c) => c.status === "available"));
+              const available = block.cabins.filter((c) => c.status === "available");
+              const byType = groupByType(available.filter((c) => !c.isGuarantee));
+              const gtyByType = groupByType(available.filter((c) => c.isGuarantee));
               const isOpen = expandedBlock === block.id;
 
               return (
-                <div key={block.id} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                <div key={block.id} className="bg-[#0b1020] rounded-2xl border border-white/10 overflow-hidden">
                   {/* Sailing header */}
                   <button
                     onClick={() => setExpandedBlock(isOpen ? null : block.id)}
                     className="w-full text-left"
                   >
-                    <div className="bg-gradient-to-r from-blue-900 to-blue-700 text-white p-6 flex items-center justify-between flex-wrap gap-4">
-                      <div>
-                        <h2 className="text-2xl font-extrabold">{block.ship}</h2>
-                        <p className="text-blue-200 text-sm mt-0.5">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 to-[#0a1f44] text-white p-6 flex items-center justify-between flex-wrap gap-4">
+                      <div className="absolute inset-0 grid-bg opacity-40" />
+                      <div className="relative z-10">
+                        <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">{block.ship}</h2>
+                        <p className="text-white/55 text-sm mt-0.5">
                           {block.cruiseLine} · {fmtDate(block.sailingDate)} · {block.nights} nights
                         </p>
-                        <p className="text-blue-300 text-xs mt-0.5">{block.itinerary}</p>
+                        <p className="text-white/45 text-xs mt-0.5">{block.itinerary}</p>
                       </div>
-                      <div className="flex items-center gap-3 flex-wrap">
+                      <div className="relative z-10 flex items-center gap-3 flex-wrap">
                         {/* Available counts by type */}
                         {Object.entries(byType).map(([type, cabins]) => (
-                          <span key={type} className="bg-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                            {(CATEGORY_ICON as Record<string, string>)[type]} {cabins.length} {type}
+                          <span key={type} className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                            {cabins.length} {type}
                           </span>
                         ))}
                         <span className="text-white/60 text-xl">{isOpen ? "▲" : "▼"}</span>
@@ -123,32 +156,42 @@ export default function GroupBlocksPage() {
                       {Object.entries(byType).map(([type, cabins]) => {
                         const typeKey = `${block.id}-${type}`;
                         const typeOpen = expandedType === typeKey;
-                        const info = CATEGORY_PHOTOS[type as CabinCategory] ?? CATEGORY_PHOTOS["Interior"];
+                        const info = CATEGORY_INFO[type as CabinCategory] ?? CATEGORY_INFO["Interior"];
                         const minPrice = Math.min(...cabins.map((c) => c.price));
 
                         return (
-                          <div key={type} className="rounded-2xl border border-gray-100 overflow-hidden">
+                          <div key={type} className="rounded-2xl border border-white/10 overflow-hidden">
                             {/* Type header with "photo" */}
                             <button
                               onClick={() => setExpandedType(typeOpen ? null : typeKey)}
                               className="w-full text-left"
                             >
-                              <div className={`bg-gradient-to-br ${info.gradient} text-white p-5 flex items-center justify-between`}>
-                                <div className="flex items-center gap-4">
-                                  <span className="text-4xl">
-                                    {(CATEGORY_ICON as Record<string, string>)[type]}
-                                  </span>
+                              <div className="relative overflow-hidden bg-gradient-to-br from-blue-700 to-[#0a1f44] text-white p-5 flex items-center justify-between">
+                                <Photo
+                                  src={`/cabins/${type
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9]+/g, "-")}.jpg`}
+                                  alt={`${type} stateroom`}
+                                  overlay={false}
+                                  className="absolute inset-0"
+                                />
+                                <div className="absolute inset-0 bg-[#05070d]/60" />
+                                <div className="absolute inset-0 grid-bg opacity-30" />
+                                <div className="relative z-10 flex items-center gap-4">
                                   <div>
-                                    <div className="font-extrabold text-xl">{type}</div>
-                                    <div className="text-white/70 text-sm">
+                                    <div className="font-extrabold uppercase tracking-[-0.01em] text-xl">{type}</div>
+                                    <div className="text-white/55 text-xs font-semibold">
+                                      {info.sqftRange}
+                                    </div>
+                                    <div className="text-white/55 text-sm">
                                       {cabins.length} room{cabins.length !== 1 ? "s" : ""} available · From {fmt$(minPrice)}/person
                                     </div>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="relative z-10 flex items-center gap-3">
                                   <div className="hidden sm:flex gap-1.5 flex-wrap max-w-xs">
                                     {info.features.slice(0, 3).map((f) => (
-                                      <span key={f} className="bg-white/15 text-white text-xs px-2.5 py-1 rounded-full">{f}</span>
+                                      <span key={f} className="bg-white/10 text-white text-xs px-2.5 py-1 rounded-full">{f}</span>
                                     ))}
                                   </div>
                                   <span className="text-white/60 text-lg">{typeOpen ? "▲" : "▼"}</span>
@@ -159,19 +202,27 @@ export default function GroupBlocksPage() {
                             {/* Room list */}
                             {typeOpen && (
                               <div>
-                                {/* Features bar */}
-                                <div className="bg-gray-50 px-5 py-3 border-b border-gray-100">
+                                {/* Description + square footage + features */}
+                                <div className="bg-[#05070d] px-5 py-4 border-b border-white/10">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-xs font-extrabold text-sky-400 bg-sky-400/10 px-2.5 py-1 rounded-full">
+                                      {info.sqftRange}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-white/55 leading-relaxed mb-3">
+                                    {info.desc}
+                                  </p>
                                   <div className="flex flex-wrap gap-2">
                                     {info.features.map((f) => (
-                                      <span key={f} className="text-xs font-semibold text-gray-500 bg-white border border-gray-200 px-3 py-1 rounded-full">
-                                        ✓ {f}
+                                      <span key={f} className="text-xs font-semibold text-white/55 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+                                        {f}
                                       </span>
                                     ))}
                                   </div>
                                 </div>
 
                                 {/* Table header */}
-                                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 px-5 py-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wide">
+                                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 px-5 py-3 bg-[#05070d] border-b border-white/10 text-xs font-bold text-white/45 uppercase tracking-wide">
                                   <div>Room #</div>
                                   <div>Deck</div>
                                   <div>Location</div>
@@ -182,23 +233,23 @@ export default function GroupBlocksPage() {
                                 {(cabins as Cabin[]).sort((a, b) => a.deck - b.deck || a.roomNumber.localeCompare(b.roomNumber)).map((cabin) => (
                                   <div
                                     key={cabin.id}
-                                    className="grid grid-cols-4 sm:grid-cols-5 gap-2 items-center px-5 py-4 border-b border-gray-50 hover:bg-blue-50/30 transition-colors"
+                                    className="grid grid-cols-4 sm:grid-cols-5 gap-2 items-center px-5 py-4 border-b border-white/5 hover:bg-white/[0.03] transition-colors"
                                   >
-                                    <div className="font-extrabold text-blue-900 font-mono text-sm">
+                                    <div className="font-extrabold text-white font-mono text-sm">
                                       {cabin.roomNumber}
                                     </div>
-                                    <div className="text-gray-600 text-sm">Deck {cabin.deck}</div>
-                                    <div className="text-gray-600 text-sm">{cabin.location}</div>
-                                    <div className="hidden sm:block text-gray-400 text-xs italic">
+                                    <div className="text-white/55 text-sm">Deck {cabin.deck}</div>
+                                    <div className="text-white/55 text-sm">{cabin.location}</div>
+                                    <div className="hidden sm:block text-white/45 text-xs italic">
                                       {cabin.notes || "—"}
                                     </div>
                                     <div className="flex items-center justify-end gap-2">
-                                      <span className="font-extrabold text-blue-900 text-sm">
-                                        {fmt$(cabin.price)}<span className="text-gray-400 text-xs font-normal">/pp</span>
+                                      <span className="font-extrabold text-white text-sm">
+                                        {fmt$(cabin.price)}<span className="text-white/45 text-xs font-normal">/pp</span>
                                       </span>
                                       <Link
                                         href={`/contact?room=${encodeURIComponent(cabin.roomNumber)}&ship=${encodeURIComponent(block.ship)}&type=${encodeURIComponent(type)}`}
-                                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all whitespace-nowrap"
+                                        className="bg-white text-black hover:bg-white/90 text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-full transition-all whitespace-nowrap"
                                       >
                                         Reserve
                                       </Link>
@@ -211,23 +262,72 @@ export default function GroupBlocksPage() {
                         );
                       })}
 
+                      {/* Guarantee (GTY) options — room assigned by cruise line */}
+                      {Object.keys(gtyByType).length > 0 && (
+                        <div className="rounded-2xl border border-white/10 bg-[#05070d] p-5">
+                          <div className="flex items-center gap-2 mb-3">
+                            <h4 className="font-extrabold uppercase tracking-[-0.01em] text-white">
+                              Guarantee Rates — Available Anywhere on the Ship
+                            </h4>
+                          </div>
+                          <p className="text-white/55 text-sm mb-4">
+                            Lock in a category at a great rate. You&apos;re
+                            guaranteed at least this stateroom type — the cruise
+                            line assigns your exact room number closer to sailing.
+                          </p>
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {Object.entries(gtyByType).map(([type, units]) => {
+                              const minPrice = Math.min(
+                                ...(units as Cabin[]).map((u) => u.price)
+                              );
+                              return (
+                                <div
+                                  key={type}
+                                  className="bg-[#0b1020] rounded-xl border border-white/10 p-4 flex items-center justify-between gap-3"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div>
+                                      <div className="font-extrabold uppercase tracking-[-0.01em] text-white text-sm">
+                                        {type}
+                                      </div>
+                                      <div className="text-white/45 text-xs">
+                                        {(CATEGORY_INFO[type as CabinCategory] ?? CATEGORY_INFO["Interior"]).sqftRange}
+                                      </div>
+                                      <div className="text-white/45 text-xs">
+                                        From {fmt$(minPrice)}/person · GTY
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Link
+                                    href={`/contact?ship=${encodeURIComponent(block.ship)}&type=${encodeURIComponent(type)}&gty=1`}
+                                    className="bg-white text-black hover:bg-white/90 text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-full whitespace-nowrap"
+                                  >
+                                    Reserve
+                                  </Link>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Sea Pay + Hold buttons */}
-                      <div className="flex flex-wrap gap-3 pt-2 border-t border-gray-100">
+                      <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
                         <Link
                           href={`/sea-pay/plan?ship=${encodeURIComponent(block.ship)}`}
-                          className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all"
+                          className="bg-white text-black hover:bg-white/90 text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all"
                         >
-                          💳 Set Up Sea Pay for This Sailing
+                          Set Up Sea Pay for This Sailing
                         </Link>
                         <Link
                           href={`/hold?ship=${encodeURIComponent(block.ship)}&sailing=${encodeURIComponent(block.sailingDate)}`}
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-bold px-5 py-2.5 rounded-full transition-all"
+                          className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all"
                         >
-                          🔒 Hold a Room (24/48/72 hr)
+                          Hold a Room (24/48/72 hr)
                         </Link>
                         <Link
                           href="/contact"
-                          className="border border-gray-200 text-gray-600 text-sm font-bold px-5 py-2.5 rounded-full hover:bg-gray-50 transition-all"
+                          className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all"
                         >
                           Ask a Specialist
                         </Link>
@@ -242,15 +342,17 @@ export default function GroupBlocksPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-900 text-white py-14">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">Don&apos;t See Your Sailing?</h2>
-          <p className="text-blue-200 mb-6">
+      <section className="bg-[#05070d] text-white relative overflow-hidden py-14">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 left-1/2 -translate-x-1/2 -top-32 opacity-[0.14]" />
+        <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-3">Don&apos;t See Your Sailing?</h2>
+          <p className="text-white/55 mb-6">
             We can add group blocks to many sailings. Contact us and we&apos;ll check inventory for you.
           </p>
           <Link
             href="/contact"
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-10 py-4 rounded-full text-lg transition-all shadow-lg inline-block"
+            className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-8 py-4 rounded-full text-sm transition-all inline-block"
           >
             Contact a Cruise Specialist
           </Link>

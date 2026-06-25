@@ -150,66 +150,66 @@ function BookPageContent() {
 
   if (step === "choose") {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#05070d]">
         {/* Hero */}
-        <div className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-14 text-center">
-          <h1 className="text-4xl font-extrabold mb-2">Book Your Cruise</h1>
-          <p className="text-blue-100 text-lg max-w-xl mx-auto">
-            See the same live inventory our staff sees. Chat, ask questions, or schedule a time to come in.
-          </p>
-          <div className={`mt-5 inline-flex items-center gap-2 text-sm font-bold px-5 py-2 rounded-full ${officeStatus.open ? "bg-green-500" : "bg-gray-600"} text-white`}>
-            <span className={`w-2 h-2 rounded-full ${officeStatus.open ? "bg-white animate-pulse" : "bg-gray-400"}`} />
-            {officeStatus.open ? "Office Open Now" : "Office Currently Closed"}
+        <div className="bg-[#05070d] text-white relative overflow-hidden grid-bg py-16 text-center">
+          <div className="aurora bg-sky-500 w-[600px] h-[600px] -top-40 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+          <div className="relative z-10">
+            <h1 className="text-4xl font-extrabold uppercase tracking-[-0.01em] mb-2">Book Your Cruise</h1>
+            <p className="text-white/55 text-lg max-w-xl mx-auto">
+              See the same live inventory our staff sees. Chat, ask questions, or schedule a time to come in.
+            </p>
+            <div className={`mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider px-5 py-2 rounded-full border ${officeStatus.open ? "text-sky-300 border-sky-400/30 bg-sky-400/10" : "text-white/55 border-white/15 bg-white/5"}`}>
+              <span className={`w-2 h-2 rounded-full ${officeStatus.open ? "bg-sky-400 animate-pulse" : "bg-white/30"}`} />
+              {officeStatus.open ? "Office Open Now" : "Office Currently Closed"}
+            </div>
+            {!officeStatus.open && (
+              <p className="text-white/45 text-xs mt-2">{officeStatus.reason}</p>
+            )}
           </div>
-          {!officeStatus.open && (
-            <p className="text-blue-200 text-xs mt-2">{officeStatus.reason}</p>
-          )}
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-14">
-          <h2 className="text-2xl font-extrabold text-blue-900 text-center mb-8">How would you like to connect?</h2>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white text-center mb-8">How would you like to connect?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Send an Inquiry */}
             <button
               onClick={() => { set("mode", "inquiry"); setStep("inquiry"); }}
-              className="bg-white rounded-2xl border border-gray-100 shadow-md p-8 text-left hover:border-blue-300 hover:shadow-lg transition-all group"
+              className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-left hover:border-sky-400/40 transition-all group"
             >
-              <div className="text-4xl mb-4">💬</div>
-              <h3 className="font-extrabold text-blue-900 text-xl mb-2 group-hover:text-blue-700">Send an Inquiry</h3>
-              <p className="text-gray-500 text-sm mb-4">Tell us what you&apos;re looking for. We&apos;ll reply with a custom quote, inventory options, and next steps.</p>
-              <div className="text-xs text-gray-400">Auto confirmation + receipt sent immediately</div>
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-xl mb-2 group-hover:text-sky-300">Send an Inquiry</h3>
+              <p className="text-white/55 text-sm mb-4">Tell us what you&apos;re looking for. We&apos;ll reply with a custom quote, inventory options, and next steps.</p>
+              <div className="text-xs text-white/45">Auto confirmation + receipt sent immediately</div>
             </button>
 
             {/* Schedule an Appointment */}
             <button
               onClick={() => { set("mode", "appointment"); setStep("appointment"); }}
-              className="bg-white rounded-2xl border border-gray-100 shadow-md p-8 text-left hover:border-red-300 hover:shadow-lg transition-all group"
+              className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-left hover:border-sky-400/40 transition-all group"
             >
-              <div className="text-4xl mb-4">📅</div>
-              <h3 className="font-extrabold text-blue-900 text-xl mb-2 group-hover:text-red-700">Book an Appointment</h3>
-              <p className="text-gray-500 text-sm mb-4">Come in to the Cruise Experience Center and work with a specialist to pick your cabin, review inventory, and book live.</p>
-              <div className="text-xs text-gray-400">Open Mon, Thu, Fri, Sat, Sun · Closed Tue &amp; Wed</div>
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-xl mb-2 group-hover:text-sky-300">Book an Appointment</h3>
+              <p className="text-white/55 text-sm mb-4">Come in to the Cruise Experience Center and work with a specialist to pick your cabin, review inventory, and book live.</p>
+              <div className="text-xs text-white/45">Open Mon, Thu, Fri, Sat, Sun · Closed Tue &amp; Wed</div>
             </button>
           </div>
 
           {/* Office hours callout */}
-          <div className="mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="text-3xl">🏢</div>
+          <div className="mt-8 bg-[#0b1020] rounded-2xl border border-white/10 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
-              <div className="font-extrabold text-blue-900 mb-0.5">Cruise Experience Center — Galveston, Texas</div>
-              <div className="text-sm text-gray-500">
+              <div className="font-extrabold text-white mb-0.5">Cruise Experience Center — Galveston, Texas</div>
+              <div className="text-sm text-white/55">
                 Open Mon, Thu–Sun · {OPEN_HOURS}<br />
-                <span className="text-red-500 font-semibold">Closed Tuesday &amp; Wednesday</span>
+                <span className="text-sky-300 font-semibold">Closed Tuesday &amp; Wednesday</span>
               </div>
             </div>
             <div className="flex flex-col gap-2 text-sm">
-              <a href={`tel:+14095551-cruise`} className="text-blue-600 font-bold hover:underline">{OFFICE_PHONE}</a>
-              <a href={`mailto:${OFFICE_EMAIL}`} className="text-blue-600 font-bold hover:underline truncate">{OFFICE_EMAIL}</a>
+              <a href={`tel:+14095551-cruise`} className="text-sky-400 font-bold hover:underline">{OFFICE_PHONE}</a>
+              <a href={`mailto:${OFFICE_EMAIL}`} className="text-sky-400 font-bold hover:underline truncate">{OFFICE_EMAIL}</a>
             </div>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-400">Next available appointment day: <strong className="text-blue-900">{nextOpen}</strong></p>
+            <p className="text-sm text-white/45">Next available appointment day: <strong className="text-white">{nextOpen}</strong></p>
           </div>
         </div>
       </div>
@@ -219,59 +219,58 @@ function BookPageContent() {
   if (step === "confirm") {
     const isAppt = form.mode === "appointment";
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-16">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-10 max-w-lg w-full text-center">
-          <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-3xl font-extrabold text-blue-900 mb-2">You&apos;re all set!</h2>
-          <div className="text-gray-400 font-mono text-sm mb-4">Confirmation #{confirmNumber}</div>
+      <div className="min-h-screen bg-[#05070d] flex items-center justify-center px-4 py-16">
+        <div className="bg-[#0b1020] rounded-3xl border border-white/10 p-10 max-w-lg w-full text-center">
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">You&apos;re all set</h2>
+          <div className="text-white/45 font-mono text-sm mb-4">Confirmation #{confirmNumber}</div>
 
           {isAppt ? (
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-6 text-left">
-              <div className="font-extrabold text-blue-900 mb-2">Your Appointment</div>
-              <div className="text-sm text-gray-600 space-y-1">
-                <div><strong>Date:</strong> {form.apptDate}</div>
-                <div><strong>Time:</strong> {form.apptTime}</div>
-                <div><strong>Location:</strong> Cruise Experience Center, Galveston, TX</div>
-                <div><strong>Name:</strong> {form.firstName} {form.lastName}</div>
+            <div className="bg-sky-400/10 border border-sky-400/20 rounded-2xl p-5 mb-6 text-left">
+              <div className="font-extrabold text-white mb-2">Your Appointment</div>
+              <div className="text-sm text-white/55 space-y-1">
+                <div><strong className="text-white/70">Date:</strong> {form.apptDate}</div>
+                <div><strong className="text-white/70">Time:</strong> {form.apptTime}</div>
+                <div><strong className="text-white/70">Location:</strong> Cruise Experience Center, Galveston, TX</div>
+                <div><strong className="text-white/70">Name:</strong> {form.firstName} {form.lastName}</div>
               </div>
             </div>
           ) : (
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-5 mb-6 text-left">
-              <div className="font-extrabold text-green-800 mb-2">Inquiry Received</div>
-              <div className="text-sm text-gray-600 space-y-1">
-                {form.ship && <div><strong>Ship:</strong> {form.ship}</div>}
-                {form.sailDate && <div><strong>Sail Date:</strong> {form.sailDate}</div>}
-                {form.cabinType && <div><strong>Cabin Type:</strong> {form.cabinType}</div>}
-                <div><strong>Name:</strong> {form.firstName} {form.lastName}</div>
+            <div className="bg-sky-400/10 border border-sky-400/20 rounded-2xl p-5 mb-6 text-left">
+              <div className="font-extrabold text-sky-300 mb-2">Inquiry Received</div>
+              <div className="text-sm text-white/55 space-y-1">
+                {form.ship && <div><strong className="text-white/70">Ship:</strong> {form.ship}</div>}
+                {form.sailDate && <div><strong className="text-white/70">Sail Date:</strong> {form.sailDate}</div>}
+                {form.cabinType && <div><strong className="text-white/70">Cabin Type:</strong> {form.cabinType}</div>}
+                <div><strong className="text-white/70">Name:</strong> {form.firstName} {form.lastName}</div>
               </div>
             </div>
           )}
 
-          <div className="bg-gray-50 rounded-2xl p-5 mb-6 text-left space-y-2 text-sm">
-            <div className="font-extrabold text-gray-700 mb-2">What happens next?</div>
-            <div className="flex items-start gap-2 text-gray-600">
-              <span className="text-blue-500 font-bold">1.</span>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left space-y-2 text-sm">
+            <div className="font-extrabold text-white mb-2">What happens next?</div>
+            <div className="flex items-start gap-2 text-white/55">
+              <span className="text-sky-400 font-bold">1.</span>
               A confirmation has been logged with reference #{confirmNumber}.
             </div>
-            <div className="flex items-start gap-2 text-gray-600">
-              <span className="text-blue-500 font-bold">2.</span>
-              We&apos;ll contact you at <strong>{form.email}</strong> {isAppt ? "with your appointment confirmation." : "with cruise options and pricing."}
+            <div className="flex items-start gap-2 text-white/55">
+              <span className="text-sky-400 font-bold">2.</span>
+              We&apos;ll contact you at <strong className="text-white/70">{form.email}</strong> {isAppt ? "with your appointment confirmation." : "with cruise options and pricing."}
             </div>
-            <div className="flex items-start gap-2 text-gray-600">
-              <span className="text-blue-500 font-bold">3.</span>
+            <div className="flex items-start gap-2 text-white/55">
+              <span className="text-sky-400 font-bold">3.</span>
               {isAppt ? "Bring a photo ID and any cruise paperwork to your appointment." : "Our specialist will review live inventory for your requested dates."}
             </div>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-xs text-yellow-800 mb-6">
-            ⚠️ <strong>Please note:</strong> Office is closed Tuesday &amp; Wednesday. If you submitted outside business hours, we&apos;ll reply the next business day.
+          <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-4 text-xs text-amber-300/80 mb-6">
+            <strong>Please note:</strong> Office is closed Tuesday &amp; Wednesday. If you submitted outside business hours, we&apos;ll reply the next business day.
           </div>
 
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/deals" className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-full text-sm transition-all">
+            <Link href="/deals" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all">
               Browse More Deals
             </Link>
-            <button onClick={() => { setForm({ ...blank }); setStep("choose"); }} className="border border-gray-200 text-gray-600 font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-50">
+            <button onClick={() => { setForm({ ...blank }); setStep("choose"); }} className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all">
               Start Over
             </button>
           </div>
@@ -282,28 +281,28 @@ function BookPageContent() {
 
   // Shared contact info section
   const contactSection = (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h3 className="font-extrabold text-blue-900 text-base mb-4">Your Contact Information</h3>
+    <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+      <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">Your Contact Information</h3>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">First Name *</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">First Name *</label>
           <input value={form.firstName} onChange={(e) => set("firstName", e.target.value)} placeholder="Monica"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Last Name *</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Last Name *</label>
           <input value={form.lastName} onChange={(e) => set("lastName", e.target.value)} placeholder="Pena"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Email *</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Email *</label>
           <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Phone *</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Phone *</label>
           <input type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="(409) 555-0100"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
       </div>
     </div>
@@ -311,23 +310,23 @@ function BookPageContent() {
 
   // Cruise details
   const cruiseDetails = (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-      <h3 className="font-extrabold text-blue-900 text-base mb-4">Cruise Details <span className="text-gray-400 font-normal text-sm">(optional — helps us pull the right inventory)</span></h3>
+    <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+      <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">Cruise Details <span className="text-white/45 font-normal text-sm">(optional — helps us pull the right inventory)</span></h3>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Ship or Cruise Line</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Ship or Cruise Line</label>
           <input value={form.ship} onChange={(e) => set("ship", e.target.value)} placeholder="Carnival Jubilee"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Sail Date</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Sail Date</label>
           <input type="date" value={form.sailDate} onChange={(e) => set("sailDate", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Cabin Type</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Cabin Type</label>
           <select value={form.cabinType} onChange={(e) => set("cabinType", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-400/60">
             <option value="">Any / Not sure</option>
             {["Interior", "Ocean View", "Balcony", "Mini-Suite", "Suite"].map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -335,16 +334,16 @@ function BookPageContent() {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Number of Guests</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Number of Guests</label>
           <select value={form.guests} onChange={(e) => set("guests", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-400/60">
             {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} guest{n > 1 ? "s" : ""}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Rate Preference</label>
+          <label className="block text-white/70 text-sm font-medium mb-1">Rate Preference</label>
           <select value={form.rateType} onChange={(e) => set("rateType", e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-400/60">
             <option value="flexible">Flexible (refundable)</option>
             <option value="semiflex">Semi-Flex (partial refund)</option>
             <option value="nonrefundable">Non-Refundable (best price)</option>
@@ -353,8 +352,8 @@ function BookPageContent() {
         </div>
         {form.crew && (
           <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Sea You on Deck Crew</label>
-            <input value={form.crew} readOnly className="w-full bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 text-sm text-blue-800 font-semibold" />
+            <label className="block text-white/70 text-sm font-medium mb-1">Sea You on Deck Crew</label>
+            <input value={form.crew} readOnly className="w-full bg-sky-400/10 border border-sky-400/20 rounded-xl px-4 py-3 text-sky-300 font-semibold" />
           </div>
         )}
       </div>
@@ -363,44 +362,44 @@ function BookPageContent() {
 
   if (step === "inquiry") {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-blue-900 text-white px-6 py-6">
+      <div className="min-h-screen bg-[#05070d]">
+        <div className="bg-[#0b1020] border-b border-white/10 text-white px-6 py-6">
           <div className="max-w-3xl mx-auto flex items-center gap-4">
-            <button onClick={() => setStep("choose")} className="text-blue-300 hover:text-white text-sm font-semibold">← Back</button>
+            <button onClick={() => setStep("choose")} className="text-white/55 hover:text-white text-sm font-semibold">← Back</button>
             <div>
-              <h1 className="text-2xl font-extrabold">Send an Inquiry</h1>
-              <p className="text-blue-300 text-sm">We&apos;ll check live inventory and reply with options.</p>
+              <h1 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">Send an Inquiry</h1>
+              <p className="text-white/55 text-sm">We&apos;ll check live inventory and reply with options.</p>
             </div>
           </div>
         </div>
 
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
           {!officeStatus.open && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
-              ⚠️ <strong>Office closed:</strong> {officeStatus.reason} Your inquiry is still saved and will be reviewed.
+            <div className="bg-amber-400/10 border border-amber-400/20 rounded-2xl p-4 text-sm text-amber-300/80">
+              <strong>Office closed:</strong> {officeStatus.reason} Your inquiry is still saved and will be reviewed.
             </div>
           )}
 
           {contactSection}
           {cruiseDetails}
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Your Message *</label>
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+            <label className="block text-white/70 text-sm font-medium mb-2">Your Message *</label>
             <textarea value={form.message} onChange={(e) => set("message", e.target.value)}
               rows={4} placeholder="Tell us what you're looking for — dates, budget, number of guests, special occasions, or any questions."
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 resize-none" />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-800">
-            📋 <strong>What happens next:</strong> You&apos;ll get a confirmation number immediately. Our specialist will review live cabin inventory and reply to <strong>{form.email || "your email"}</strong> with cruise options, pricing, and availability.
+          <div className="bg-sky-400/10 border border-sky-400/20 rounded-2xl p-4 text-sm text-white/55">
+            <strong className="text-white">What happens next:</strong> You&apos;ll get a confirmation number immediately. Our specialist will review live cabin inventory and reply to <strong className="text-white/70">{form.email || "your email"}</strong> with cruise options, pricing, and availability.
           </div>
 
           <div className="flex gap-4 justify-end">
-            <button onClick={() => setStep("choose")} className="border border-gray-200 text-gray-600 font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-50">
+            <button onClick={() => setStep("choose")} className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all">
               Cancel
             </button>
             <button onClick={handleSubmit} disabled={!canSubmit}
-              className="bg-blue-900 hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold px-8 py-3 rounded-full text-sm transition-all shadow-lg">
+              className="bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-8 py-3 rounded-full text-sm transition-all">
               Submit Inquiry →
             </button>
           </div>
@@ -411,13 +410,13 @@ function BookPageContent() {
 
   if (step === "appointment") {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-red-700 text-white px-6 py-6">
+      <div className="min-h-screen bg-[#05070d]">
+        <div className="bg-[#0b1020] border-b border-white/10 text-white px-6 py-6">
           <div className="max-w-3xl mx-auto flex items-center gap-4">
-            <button onClick={() => setStep("choose")} className="text-red-200 hover:text-white text-sm font-semibold">← Back</button>
+            <button onClick={() => setStep("choose")} className="text-white/55 hover:text-white text-sm font-semibold">← Back</button>
             <div>
-              <h1 className="text-2xl font-extrabold">Book an Appointment</h1>
-              <p className="text-red-200 text-sm">Cruise Experience Center · Open Mon, Thu–Sun · Closed Tue &amp; Wed</p>
+              <h1 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">Book an Appointment</h1>
+              <p className="text-white/55 text-sm">Cruise Experience Center · Open Mon, Thu–Sun · Closed Tue &amp; Wed</p>
             </div>
           </div>
         </div>
@@ -427,8 +426,8 @@ function BookPageContent() {
           {cruiseDetails}
 
           {/* Date picker */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <h3 className="font-extrabold text-blue-900 text-base mb-4">Choose an Appointment Date *</h3>
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+            <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">Choose an Appointment Date *</h3>
             <div className="grid grid-cols-5 gap-2 mb-5">
               {availableDates.map((d) => (
                 <button
@@ -436,8 +435,8 @@ function BookPageContent() {
                   onClick={() => set("apptDate", d.date)}
                   className={`rounded-xl py-3 text-center text-xs font-bold transition-all border ${
                     form.apptDate === d.date
-                      ? "bg-blue-900 text-white border-blue-900"
-                      : "bg-gray-50 text-gray-700 border-gray-200 hover:border-blue-300"
+                      ? "bg-sky-400/10 text-white border-sky-400/70"
+                      : "bg-white/5 text-white/55 border-white/15 hover:border-white/40"
                   }`}
                 >
                   <div className="opacity-70">{d.dayName.slice(0, 3)}</div>
@@ -448,7 +447,7 @@ function BookPageContent() {
 
             {form.apptDate && (
               <>
-                <h3 className="font-extrabold text-blue-900 text-base mb-3">Choose a Time *</h3>
+                <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-3">Choose a Time *</h3>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {SLOTS.map((slot) => (
                     <button
@@ -456,8 +455,8 @@ function BookPageContent() {
                       onClick={() => set("apptTime", slot)}
                       className={`rounded-xl py-2.5 text-sm font-bold transition-all border ${
                         form.apptTime === slot
-                          ? "bg-red-600 text-white border-red-600"
-                          : "bg-gray-50 text-gray-700 border-gray-200 hover:border-red-300"
+                          ? "bg-sky-400/10 text-white border-sky-400/70"
+                          : "bg-white/5 text-white/55 border-white/15 hover:border-white/40"
                       }`}
                     >
                       {slot}
@@ -468,24 +467,24 @@ function BookPageContent() {
             )}
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Anything we should know before your appointment?</label>
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+            <label className="block text-white/70 text-sm font-medium mb-2">Anything we should know before your appointment?</label>
             <textarea value={form.message} onChange={(e) => set("message", e.target.value)}
               rows={3} placeholder="Special occasion, specific ship you're interested in, group size, accessibility needs…"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+              className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 resize-none" />
           </div>
 
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-800">
-            📍 <strong>Location:</strong> Cruise Experience Center · Galveston, Texas<br/>
+          <div className="bg-sky-400/10 border border-sky-400/20 rounded-2xl p-4 text-sm text-white/55">
+            <strong className="text-white">Location:</strong> Cruise Experience Center · Galveston, Texas<br/>
             Bring a photo ID and any cruise quotes or paperwork you already have. Our staff will have your inquiry on file and live inventory ready to review.
           </div>
 
           <div className="flex gap-4 justify-end">
-            <button onClick={() => setStep("choose")} className="border border-gray-200 text-gray-600 font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-50">
+            <button onClick={() => setStep("choose")} className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all">
               Cancel
             </button>
             <button onClick={handleSubmit} disabled={!canSubmit}
-              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold px-8 py-3 rounded-full text-sm transition-all shadow-lg">
+              className="bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-8 py-3 rounded-full text-sm transition-all">
               Book Appointment →
             </button>
           </div>

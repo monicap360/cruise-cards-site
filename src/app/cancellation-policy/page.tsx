@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 const schedule = [
-  { window: "91+ days before sailing", penalty: "Deposit only forfeited", refund: "Full refund of all payments above deposit", color: "bg-green-600", badge: "Full Refund" },
-  { window: "61–90 days before sailing", penalty: "25% of total fare", refund: "75% refund of total fare paid", color: "bg-yellow-500", badge: "25% Penalty" },
-  { window: "31–60 days before sailing", penalty: "50% of total fare", refund: "50% refund of total fare paid", color: "bg-orange-500", badge: "50% Penalty" },
-  { window: "15–30 days before sailing", penalty: "75% of total fare", refund: "25% refund of total fare paid", color: "bg-red-500", badge: "75% Penalty" },
-  { window: "0–14 days before sailing", penalty: "100% of total fare — no refund", refund: "No refund issued under any circumstance", color: "bg-red-800", badge: "No Refund" },
+  { window: "91+ days before sailing", penalty: "Deposit only forfeited", refund: "Full refund of all payments above deposit", badge: "Full Refund" },
+  { window: "61–90 days before sailing", penalty: "25% of total fare", refund: "75% refund of total fare paid", badge: "25% Penalty" },
+  { window: "31–60 days before sailing", penalty: "50% of total fare", refund: "50% refund of total fare paid", badge: "50% Penalty" },
+  { window: "15–30 days before sailing", penalty: "75% of total fare", refund: "25% refund of total fare paid", badge: "75% Penalty" },
+  { window: "0–14 days before sailing", penalty: "100% of total fare — no refund", refund: "No refund issued under any circumstance", badge: "No Refund" },
 ];
 
 const nonRefundableRules = [
@@ -45,20 +45,20 @@ const faqs = [
 
 export default function CancellationPolicyPage() {
   return (
-    <div>
+    <div className="bg-[#05070d]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-14">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-3">Policy</div>
-          <h1 className="text-4xl font-extrabold mb-3">Cancellation Policy</h1>
-          <p className="text-blue-100 text-lg max-w-2xl">
+      <section className="bg-[#05070d] text-white relative overflow-hidden grid-bg py-14">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Policy"}</div>
+          <h1 className="text-4xl font-extrabold uppercase tracking-[-0.01em] mb-3">Cancellation Policy</h1>
+          <p className="text-white/65 text-lg max-w-2xl">
             Understanding your cancellation window can save you significant money. We strongly recommend Vacation Protection for all bookings.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/vacation-protection" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold px-6 py-3 rounded-full text-sm transition-all shadow">
+            <Link href="/vacation-protection" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               View Vacation Protection →
             </Link>
-            <Link href="/booking-options" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-full text-sm transition-all">
+            <Link href="/booking-options" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Booking Rate Types
             </Link>
           </div>
@@ -69,20 +69,20 @@ export default function CancellationPolicyPage() {
 
         {/* Flexible / Semi-Flex Schedule */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-2">Flexible &amp; Semi-Flex Rate Cancellation Schedule</h2>
-          <p className="text-gray-500 mb-6 text-sm">Applies to Flexible and Semi-Flex rate bookings. The penalty increases as you approach the sail date.</p>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">Flexible &amp; Semi-Flex Rate Cancellation Schedule</h2>
+          <p className="text-white/55 mb-6 text-sm">Applies to Flexible and Semi-Flex rate bookings. The penalty increases as you approach the sail date.</p>
           <div className="space-y-3">
             {schedule.map((row) => (
-              <div key={row.window} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row">
-                <div className={`${row.color} text-white px-5 py-4 flex items-center gap-3 sm:w-56 flex-shrink-0`}>
+              <div key={row.window} className="bg-[#0b1020] rounded-2xl border border-white/10 overflow-hidden flex flex-col sm:flex-row">
+                <div className="bg-white/5 border-b border-white/10 sm:border-b-0 sm:border-r text-white px-5 py-4 flex items-center gap-3 sm:w-56 flex-shrink-0">
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide opacity-80">{row.badge}</div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-sky-400/80">{row.badge}</div>
                     <div className="font-extrabold text-sm leading-tight mt-0.5">{row.window}</div>
                   </div>
                 </div>
                 <div className="px-6 py-4 flex-1">
-                  <div className="font-extrabold text-gray-800 text-sm mb-1">Penalty: {row.penalty}</div>
-                  <div className="text-xs text-gray-400">{row.refund}</div>
+                  <div className="font-extrabold text-white text-sm mb-1">Penalty: {row.penalty}</div>
+                  <div className="text-xs text-white/45">{row.refund}</div>
                 </div>
               </div>
             ))}
@@ -91,13 +91,13 @@ export default function CancellationPolicyPage() {
 
         {/* Non-Refundable */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-2">Non-Refundable Rate</h2>
-          <p className="text-gray-500 mb-5 text-sm">Non-refundable bookings carry no cancellation rights. By accepting this rate, you agree to the following conditions.</p>
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">Non-Refundable Rate</h2>
+          <p className="text-white/55 mb-5 text-sm">Non-refundable bookings carry no cancellation rights. By accepting this rate, you agree to the following conditions.</p>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
             <ul className="space-y-3">
               {nonRefundableRules.map((rule, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-red-800">
-                  <span className="font-extrabold text-red-600 flex-shrink-0 mt-0.5">✗</span>
+                <li key={i} className="flex items-start gap-3 text-sm text-white/65">
+                  <span className="font-extrabold text-sky-400 flex-shrink-0 mt-0.5">·</span>
                   {rule}
                 </li>
               ))}
@@ -106,19 +106,18 @@ export default function CancellationPolicyPage() {
         </section>
 
         {/* Waiver reminder */}
-        <section className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+        <section className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
           <div className="flex items-start gap-4">
-            <span className="text-3xl flex-shrink-0">⚠️</span>
             <div>
-              <div className="font-extrabold text-yellow-900 text-lg mb-2">Vacation Protection Declination</div>
-              <p className="text-sm text-yellow-800 leading-relaxed mb-4">
+              <div className="font-extrabold text-white text-lg mb-2">Vacation Protection Declination</div>
+              <p className="text-sm text-amber-300/80 leading-relaxed mb-4">
                 If you choose not to purchase Vacation Protection, you will be required to sign a <strong>Vacation Protection Declination &amp; Liability Release</strong> form. This form acknowledges that you were offered coverage, understand the cancellation risks, and release Cruises from Galveston™ from any financial liability related to your uncovered losses.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Link href="/vacation-protection" className="bg-yellow-500 hover:bg-yellow-400 text-white font-bold px-5 py-2 rounded-full text-sm transition-all">
+                <Link href="/vacation-protection" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
                   Learn About Protection
                 </Link>
-                <Link href="/decline-protection" className="border border-yellow-400 text-yellow-800 font-bold px-5 py-2 rounded-full text-sm hover:bg-yellow-100 transition-all">
+                <Link href="/decline-protection" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
                   Sign Declination Form
                 </Link>
               </div>
@@ -128,20 +127,20 @@ export default function CancellationPolicyPage() {
 
         {/* FAQ */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-6">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.q} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="font-extrabold text-blue-900 mb-2">{faq.q}</div>
-                <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="bg-[#0b1020] rounded-2xl border border-white/10 p-5">
+                <div className="font-extrabold text-white mb-2">{faq.q}</div>
+                <p className="text-sm text-white/65 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Legal note */}
-        <section className="border-t border-gray-100 pt-8">
-          <p className="text-xs text-gray-400 leading-relaxed">
+        <section className="border-t border-white/10 pt-8">
+          <p className="text-xs text-white/45 leading-relaxed">
             This cancellation policy is the policy of Cruises from Galveston™ and applies to all bookings made directly through our agency. Individual cruise lines may have additional or different policies that apply simultaneously. In the event of a conflict, the more restrictive policy applies. Policy is subject to change; the version in effect at the time of your booking applies. For questions, contact us at cruisesfromgalveston.texas@gmail.com.
           </p>
         </section>

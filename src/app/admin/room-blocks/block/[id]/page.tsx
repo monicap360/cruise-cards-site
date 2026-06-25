@@ -22,6 +22,14 @@ import {
   countByStatus,
 } from "@/lib/room-blocks";
 import { fmtDateShort, fmt$ } from "@/lib/sea-pay";
+import ShipDeckMap from "@/components/ShipDeckMap";
+
+const blankGty = {
+  type: "Interior" as CabinCategory,
+  price: "",
+  maxGuests: "2",
+  qty: "1",
+};
 
 const blankCabin = {
   roomNumber: "",
@@ -40,6 +48,10 @@ export default function BlockDetailPage() {
   const [block, setBlock] = useState<SailingBlock | null>(null);
   const [addingCabin, setAddingCabin] = useState(false);
   const [cabinForm, setCabinForm] = useState(blankCabin);
+  const [selectedDeck, setSelectedDeck] = useState<number | null>(null);
+  const [selectedCabinId, setSelectedCabinId] = useState<string | null>(null);
+  const [gtyForm, setGtyForm] = useState(blankGty);
+  const [addingGty, setAddingGty] = useState(false);
 
   useEffect(() => {
     getSailingBlock(id).then((b) => setBlock(b));
@@ -88,6 +100,35 @@ export default function BlockDetailPage() {
     if (!block) return;
     if (!confirm("Remove this room from the block?")) return;
     persist({ ...block, cabins: block.cabins.filter((c) => c.id !== cabinId) });
+    if (selectedCabinId === cabinId) setSelectedCabinId(null);
+  }
+
+  // Open the add form pre-filled for a spot tapped on the deck map.
+  function openAddAt(deck: number, location: CabinLocation, side: CabinSide) {
+    setCabinForm({ ...blankCabin, deck: String(deck), location, side });
+    setAddingCabin(true);
+  }
+
+  // Add N guarantee (GTY) units — guaranteed category, room assigned by cruise line.
+  function addGuarantee() {
+    if (!block || !gtyForm.price) return;
+    const qty = Math.max(1, parseInt(gtyForm.qty) || 1);
+    const units: Cabin[] = Array.from({ length: qty }, () => ({
+      id: generateCabinId(),
+      roomNumber: "GTY",
+      deck: 0,
+      location: "Midship" as CabinLocation,
+      side: "Both" as CabinSide,
+      type: gtyForm.type,
+      maxGuests: parseInt(gtyForm.maxGuests) || 2,
+      sqft: 0,
+      price: parseFloat(gtyForm.price),
+      status: "available",
+      isGuarantee: true,
+    }));
+    persist({ ...block, cabins: [...block.cabins, ...units] });
+    setGtyForm(blankGty);
+    setAddingGty(false);
   }
 
   if (!block) {
@@ -103,7 +144,23 @@ export default function BlockDetailPage() {
   }
 
   const counts = countByStatus(block.cabins);
-  const byType = groupByType(block.cabins);
+  const physicalCabins = block.cabins.filter((c) => !c.isGuarantee);
+  const guaranteeCabins = block.cabins.filter((c) => c.isGuarantee);
+  const byType = groupByType(physicalCabins);
+
+  const decksPresent = [...new Set(physicalCabins.map((c) => c.deck))].sort(
+    (a, b) => a - b
+  );
+  const currentDeck = selectedDeck ?? decksPresent[0] ?? 1;
+  const selectedCabin = selectedCabinId
+    ? block.cabins.find((c) => c.id === selectedCabinId) ?? null
+    : null;
+
+  // Guarantee inventory grouped by category
+  const gtyByType = guaranteeCabins.reduce<Record<string, Cabin[]>>((acc, c) => {
+    (acc[c.type] = acc[c.type] ?? []).push(c);
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -226,6 +283,271 @@ export default function BlockDetailPage() {
             </div>
           </div>
         )}
+
+        {/* ── Ship deck map ─────────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+            <div>
+              <h3 className="font-extrabold text-blue-900 text-lg">🗺️ Ship Map</h3>
+              <p className="text-gray-400 text-xs">
+                Pick staterooms on the deck plan. Tap a room to manage it, or “+”
+                in a zone to add one there.
+              </p>
+            </div>
+            <button
+              onClick={() => setAddingCabin(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-full text-sm"
+            >
+              + Add Room
+            </button>
+          </div>
+
+          {/* Deck tabs */}
+          {decksPresent.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {decksPresent.map((d) => (
+                <button
+                  key={d}
+                  onClick={() => {
+                    setSelectedDeck(d);
+                    setSelectedCabinId(null);
+                  }}
+                  className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
+                    currentDeck === d
+                      ? "bg-blue-900 text-white"
+                      : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  Deck {d}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm mb-4">
+              No physical rooms yet — add one to start mapping the deck.
+            </p>
+          )}
+
+          <ShipDeckMap
+            cabins={physicalCabins}
+            deck={currentDeck}
+            selectedId={selectedCabinId ?? undefined}
+            onSelectCabin={(c) => setSelectedCabinId(c.id)}
+            onAddAt={(loc, side) => openAddAt(currentDeck, loc, side)}
+          />
+
+          {/* Selected cabin actions */}
+          {selectedCabin && !selectedCabin.isGuarantee && (
+            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-3 flex-wrap text-sm">
+                <span className="text-xl">{CATEGORY_ICON[selectedCabin.type]}</span>
+                <span className="font-extrabold text-blue-900 font-mono">
+                  Room {selectedCabin.roomNumber}
+                </span>
+                <span className="text-gray-500">
+                  Deck {selectedCabin.deck} · {selectedCabin.location} ·{" "}
+                  {selectedCabin.side} · {selectedCabin.type}
+                </span>
+                <span className="font-bold text-blue-900">
+                  {fmt$(selectedCabin.price)}
+                  <span className="text-gray-400 text-xs font-normal">/pp</span>
+                </span>
+                <span
+                  className={`text-xs font-bold px-2.5 py-1 rounded-full capitalize ${STATUS_COLOR[selectedCabin.status]}`}
+                >
+                  {selectedCabin.status}
+                  {selectedCabin.guestName ? ` · ${selectedCabin.guestName}` : ""}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {selectedCabin.status === "available" && (
+                  <>
+                    <button
+                      onClick={() => {
+                        const guest = prompt("Guest name for hold (optional):");
+                        updateStatus(selectedCabin.id, "held", {
+                          guestName: guest ?? undefined,
+                          heldUntil: new Date(Date.now() + 48 * 3600000).toISOString(),
+                        });
+                      }}
+                      className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                    >
+                      Hold
+                    </button>
+                    <button
+                      onClick={() => {
+                        const guest = prompt("Guest name:");
+                        if (!guest) return;
+                        updateStatus(selectedCabin.id, "booked", { guestName: guest });
+                      }}
+                      className="bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                    >
+                      Book
+                    </button>
+                  </>
+                )}
+                {(selectedCabin.status === "held" ||
+                  selectedCabin.status === "booked") && (
+                  <button
+                    onClick={() =>
+                      updateStatus(selectedCabin.id, "available", {
+                        guestName: undefined,
+                      })
+                    }
+                    className="bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                  >
+                    Release
+                  </button>
+                )}
+                <button
+                  onClick={() => removeCabin(selectedCabin.id)}
+                  className="text-red-400 hover:text-red-600 text-xs font-bold px-2"
+                >
+                  Remove ✕
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Guarantee (GTY) inventory ─────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+            <div>
+              <h3 className="font-extrabold text-blue-900 text-lg">
+                🎟️ Guarantee (GTY) Inventory
+              </h3>
+              <p className="text-gray-400 text-xs">
+                Sell a guaranteed category without a specific room — the cruise
+                line assigns the exact cabin later. Great for “available anywhere
+                on the ship.”
+              </p>
+            </div>
+            <button
+              onClick={() => setAddingGty((v) => !v)}
+              className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-full text-sm"
+            >
+              {addingGty ? "Cancel" : "+ Add GTY"}
+            </button>
+          </div>
+
+          {addingGty && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end mt-3 mb-4 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  Category
+                </label>
+                <select
+                  value={gtyForm.type}
+                  onChange={(e) =>
+                    setGtyForm((f) => ({ ...f, type: e.target.value as CabinCategory }))
+                  }
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {CABIN_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  $/person *
+                </label>
+                <input
+                  type="number"
+                  value={gtyForm.price}
+                  onChange={(e) =>
+                    setGtyForm((f) => ({ ...f, price: e.target.value }))
+                  }
+                  placeholder="599"
+                  min="0"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  Max Guests
+                </label>
+                <select
+                  value={gtyForm.maxGuests}
+                  onChange={(e) =>
+                    setGtyForm((f) => ({ ...f, maxGuests: e.target.value }))
+                  }
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                    <option key={n} value={n}>
+                      {n} guest{n > 1 ? "s" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-600 mb-1">
+                  How many?
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    value={gtyForm.qty}
+                    onChange={(e) =>
+                      setGtyForm((f) => ({ ...f, qty: e.target.value }))
+                    }
+                    min="1"
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={addGuarantee}
+                    disabled={!gtyForm.price}
+                    className="bg-blue-900 hover:bg-blue-800 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-full text-sm whitespace-nowrap"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {guaranteeCabins.length === 0 ? (
+            <p className="text-gray-400 text-sm mt-2">No guarantee inventory yet.</p>
+          ) : (
+            <div className="flex flex-wrap gap-3 mt-3">
+              {CABIN_CATEGORIES.filter((t) => gtyByType[t]?.length).map((type) => {
+                const units = gtyByType[type];
+                const avail = units.filter((u) => u.status === "available").length;
+                const minPrice = Math.min(...units.map((u) => u.price));
+                return (
+                  <div
+                    key={type}
+                    className="bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 flex items-center gap-3"
+                  >
+                    <span className="text-2xl">{CATEGORY_ICON[type]}</span>
+                    <div>
+                      <div className="font-extrabold text-blue-900 text-sm">
+                        {type} GTY
+                      </div>
+                      <div className="text-gray-500 text-xs">
+                        {avail} of {units.length} available · from {fmt$(minPrice)}/pp
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const last = units[units.length - 1];
+                        if (last) removeCabin(last.id);
+                      }}
+                      className="text-red-400 hover:text-red-600 text-xs font-bold ml-1"
+                      title="Remove one unit"
+                    >
+                      −1
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* Rooms grouped by type */}
         {CABIN_CATEGORIES.filter((t) => byType[t]?.length > 0).map((type) => {

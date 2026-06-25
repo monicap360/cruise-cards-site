@@ -74,6 +74,7 @@ export default function NewBookingPage() {
       depositAmount: deposit,
       depositPaid: false,
       paymentPlan: plan,
+      payments: [],
       status: "pending",
       contractSigned: false,
       confirmationNumber: form.confirmationNumber,

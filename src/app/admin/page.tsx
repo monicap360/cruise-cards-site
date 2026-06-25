@@ -62,6 +62,18 @@ export default function AdminPage() {
             </div>
             <div className="flex gap-3 flex-wrap">
               <Link
+                href="/admin/reservations"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                🛎️ Front Desk
+              </Link>
+              <Link
+                href="/admin/sales"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                📈 Sales
+              </Link>
+              <Link
                 href="/admin/room-blocks"
                 className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
               >

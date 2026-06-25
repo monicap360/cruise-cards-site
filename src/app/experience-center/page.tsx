@@ -1,11 +1,19 @@
 import Link from "next/link";
+import StoreHours from "@/components/StoreHours";
+
+export const metadata = {
+  title: "Cruise Experience Center — Galveston Walk-In Cruise Help",
+  description:
+    "A real walk-in Cruise Experience Center in Galveston: boarding-pass & luggage-tag printing, luggage storage, embark-day essentials, scooter & wheelchair rentals, and in-person specialists. Cruises Start Here.",
+};
 
 const serviceGroups = [
   {
-    icon: "🚢",
     title: "Cruise Planning & Booking",
+    href: "/deals",
     services: [
       "Cruise planning and booking assistance",
+      "Help finishing a booking you started elsewhere",
       "Group cruise coordination",
       "Shore excursion guidance",
       "Non-refundable and non-transferable booking options",
@@ -14,8 +22,8 @@ const serviceGroups = [
     ],
   },
   {
-    icon: "🏨",
     title: "Travel Coordination",
+    href: "/add-ons#hotels",
     services: [
       "Hotel reservations near the port",
       "Restaurant recommendations and reservations",
@@ -25,8 +33,8 @@ const serviceGroups = [
     ],
   },
   {
-    icon: "🖨️",
     title: "Document & Check-In Help",
+    href: "/reserve",
     services: [
       "Boarding pass printing",
       "Luggage tag printing",
@@ -36,18 +44,19 @@ const serviceGroups = [
     ],
   },
   {
-    icon: "♿",
     title: "Accessibility & Special Needs",
+    href: "/add-ons#extras",
     services: [
       "Scooter rental assistance",
       "Wheelchair rental assistance",
       "Accessibility and special-assistance coordination",
+      "Oxygen, CPAP supplies & medical-equipment rental",
       "Cruise packing checklists and terminal guidance",
     ],
   },
   {
-    icon: "☕",
     title: "Comfort & Convenience",
+    href: "/reserve",
     services: [
       "Waiting lounge with ship information and cruise videos",
       "Wi-Fi and charging stations",
@@ -56,8 +65,8 @@ const serviceGroups = [
     ],
   },
   {
-    icon: "🎁",
     title: "Gifts & Merchandise",
+    href: "/add-ons#gifts",
     services: [
       "Cruise gifts and travel accessories",
       "Custom luggage tags",
@@ -65,6 +74,41 @@ const serviceGroups = [
       "Celebration packages and onboard extras",
     ],
   },
+  {
+    title: "Embark-Day Essentials",
+    href: "/add-ons#embark-essentials",
+    services: [
+      "Anchors Essentials™ — sunscreen, lanyards, magnetic hooks, power strips",
+      "Bag Drop & Stow™ — we babysit your bags (reservation required)",
+      "Port Cash & Tips™ — small bills & tip envelopes",
+      "Doc Stop™ — passport photos, printing & copies",
+      "Stay Connected™ — travel SIM/eSIM & chargers",
+      "Snap & Sail™ embarkation-day photo backdrop",
+    ],
+  },
+  {
+    title: "Book Your Next™",
+    href: "/book",
+    services: [
+      "Next-cruise planning with onboard-credit perks",
+      "Loyalty status match across cruise lines",
+      "Sea Pay™ your deposit on the spot",
+      "Cruising 101™ first-timer class & packing workshops",
+      "Crew Meetup™ space for Sea You on Deck™ roll calls",
+    ],
+  },
+];
+
+const crews = [
+  "Sea Duck Hunters™",
+  "First Time Cruisers",
+  "Family Cruisers",
+  "Adults Only",
+  "Singles at Sea",
+  "SeaStrong Crew",
+  "Easy Waves",
+  "Jackpot Crew",
+  "Party Wake Crew",
 ];
 
 const directions = [
@@ -142,195 +186,270 @@ const disembarkTimes = [
     time: "6:30 – 7:00 AM",
     type: "Self-Assist / Walk-Off",
     label: "Earliest",
-    color: "bg-green-600",
     desc: "Carry all your luggage yourself. Best for guests catching early flights or with tight schedules. Available on most cruise lines.",
   },
   {
     time: "7:00 – 8:30 AM",
     type: "Express Disembarkation",
     label: "Early",
-    color: "bg-blue-600",
     desc: "Priority luggage tags — your bags are among the first off the ship. Walk off when your tag color/number is called.",
   },
   {
     time: "8:30 – 10:30 AM",
     type: "Standard Disembarkation",
     label: "Standard",
-    color: "bg-blue-900",
     desc: "The majority of guests disembark during this window by tag group. Bags are placed outside your cabin the night before.",
   },
   {
     time: "10:30 AM – 12:00 PM",
     type: "Late / Assisted Disembarkation",
     label: "Late",
-    color: "bg-gray-600",
     desc: "Wheelchair-assisted guests and those who need extra time. All guests must be off the ship by noon.",
   },
 ];
 
 export default function ExperienceCenterPage() {
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block bg-red-600 text-white text-sm font-bold px-4 py-1 rounded-full mb-4 uppercase tracking-wide">
-            📍 Galveston, Texas
-          </div>
-          <h1 className="text-5xl font-extrabold mb-3">Cruise Experience Center</h1>
-          <p className="text-3xl font-bold text-red-400 mb-4">Cruises Start Here.</p>
-          <p className="text-blue-100 text-xl max-w-3xl mx-auto mb-2">
-            Plan. Book. Sail.
+    <div className="bg-[#05070d] text-white">
+      {/* Hero — a destination you arrive at */}
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg" />
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="aurora bg-sky-500 w-[48rem] h-[48rem] -top-72 left-1/2 -translate-x-1/2 opacity-[0.16]" />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 text-center">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-6">{"// Galveston Island, Texas"}</div>
+          <h1 className="text-5xl sm:text-7xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mb-5">
+            The Cruise
+            <br />
+            Experience Center
+          </h1>
+          <p className="text-holo font-bold text-2xl sm:text-3xl uppercase tracking-wide mb-7">
+            Cruises Start Here.
           </p>
-          <p className="text-blue-200 text-lg max-w-2xl mx-auto">
-            Your one-stop cruise concierge in Galveston — from the moment you start planning to the moment you board.
+          <p className="text-white/55 text-lg max-w-2xl mx-auto mb-12">
+            Not a call center. Not just a website. A place you walk into — where
+            your whole cruise comes together, from first idea to the moment you
+            board.
           </p>
 
-          {/* Signage text */}
-          <div className="mt-8 max-w-3xl mx-auto bg-white/10 border border-white/20 rounded-2xl p-6 text-left">
-            <div className="text-white font-black text-xl text-center mb-3 tracking-widest uppercase">
-              CRUISE EXPERIENCE CENTER
-            </div>
-            <div className="text-blue-200 text-sm text-center leading-relaxed">
-              Cruise Planning • Hotels • Tours • Transportation<br />
-              Boarding Pass Printing • Luggage Tags • Accessibility Support<br />
-              Scooter &amp; Wheelchair Rentals • Wi-Fi • Charging<br />
-              Cruise Gifts • Travel Help • Concierge Support
-            </div>
+          {/* Arrival info bar */}
+          <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden mb-12">
+            {[
+              { label: "Walk right in", sub: "No appointment needed" },
+              { label: "Easy to reach", sub: "Minutes from the port" },
+              { label: "English & Spanish", sub: "Specialists in person" },
+              { label: "Mon–Sat", sub: "9am – 6pm CST" },
+            ].map((b, i) => (
+              <div key={b.label} className="bg-[#05070d] px-5 py-6 text-left">
+                <div className="label-mono text-sky-400/70 text-xs mb-3">
+                  0{i + 1}
+                </div>
+                <div className="font-semibold text-white text-sm leading-tight">
+                  {b.label}
+                </div>
+                <div className="text-white/45 text-xs mt-1">{b.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/reserve"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Plan Your Visit
+            </Link>
+            <Link
+              href="/deals"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Browse Cruises
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-blue-900 mb-3">Everything Under One Roof</h2>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            From booking your first cruise to printing your boarding pass, we handle every detail.
+      {/* Services Grid — every desk is bookable */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28">
+        <div className="max-w-2xl mb-4">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Everything Under One Roof"}</div>
+          <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+            Six Desks. One Roof.
+          </h2>
+          <p className="text-white/55 text-lg">
+            From booking your first cruise to printing your boarding pass — tap a
+            desk to start.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {serviceGroups.map((group) => (
-            <div key={group.title} className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl">{group.icon}</span>
-                <h3 className="font-extrabold text-blue-900 text-lg">{group.title}</h3>
+        <div className="label-mono text-[11px] uppercase text-white/40 mb-10">
+          Select a service to book →
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
+          {serviceGroups.map((group, i) => (
+            <Link
+              key={group.title}
+              href={group.href}
+              className="group bg-[#05070d] p-7 hover:bg-white/[0.03] transition-colors flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-5">
+                <span className="label-mono text-sky-400/70 text-sm">
+                  0{i + 1}
+                </span>
+                <span className="text-white/30 group-hover:text-white transition-colors text-lg">
+                  →
+                </span>
               </div>
-              <ul className="space-y-2">
+              <h3 className="font-bold text-white uppercase tracking-wide text-base mb-4">
+                {group.title}
+              </h3>
+              <ul className="space-y-2 flex-1">
                 {group.services.map((s) => (
-                  <li key={s} className="flex items-start gap-2 text-sm text-gray-600">
-                    <span className="text-green-500 font-bold mt-0.5 flex-shrink-0">✓</span>
+                  <li
+                    key={s}
+                    className="flex items-start gap-2 text-sm text-white/55"
+                  >
+                    <span className="text-sky-400 mt-0.5 flex-shrink-0">–</span>
                     {s}
                   </li>
                 ))}
               </ul>
-            </div>
+              <span className="label-mono text-[11px] uppercase text-white/40 group-hover:text-sky-400/80 transition-colors mt-6">
+                Book this →
+              </span>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* Sea You on Deck */}
-      <section className="bg-gradient-to-br from-blue-900 to-teal-700 text-white py-14">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <div className="inline-block bg-white/10 border border-white/20 text-blue-200 text-xs font-bold px-4 py-1.5 rounded-full mb-3 uppercase tracking-widest">
-              Powered by Cruise Experience Center
-            </div>
-            <div className="text-yellow-400 text-sm font-extrabold uppercase tracking-widest mb-2">Sea You On Deck Crews™</div>
-            <h2 className="text-3xl font-extrabold mb-2">Find Your People Before You Sail.</h2>
-            <p className="text-blue-100 max-w-xl mx-auto text-base">
-              Cruise communities, meetups, tips, and onboard connections — join a crew that matches your cruise style. Stay private or connect before you board.
+      {/* Store Hours */}
+      <StoreHours />
+
+      {/* Sea You on Deck — post-booking perk */}
+      <section className="relative border-y border-white/10 overflow-hidden">
+        <div className="absolute inset-0 grid-bg" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center mb-12">
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Sea You On Deck Crews™ · Powered by the Experience Center"}</div>
+            <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+              Booked? See Who&apos;s On Deck.
+            </h2>
+            <p className="text-white/55 max-w-2xl mx-auto text-lg">
+              Once your sailing is booked, unlock your ship&apos;s crews — meet the
+              people on your exact departure, swap tips, and plan meetups before you
+              ever step aboard. Stay private, or connect. Your call.
             </p>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 mb-8">
-            {[
-              { name: "Sea Duck Hunters™", icon: "🦆", color: "bg-yellow-400", text: "text-yellow-900" },
-              { name: "First Time Cruisers", icon: "🚢", color: "bg-blue-500", text: "text-white" },
-              { name: "Family Cruisers", icon: "👨‍👩‍👧", color: "bg-green-500", text: "text-white" },
-              { name: "Adults Only", icon: "🍸", color: "bg-purple-600", text: "text-white" },
-              { name: "Singles at Sea", icon: "🌟", color: "bg-pink-500", text: "text-white" },
-              { name: "SeaStrong Crew", icon: "💪", color: "bg-red-600", text: "text-white" },
-              { name: "Easy Waves", icon: "♿", color: "bg-teal-400", text: "text-white" },
-              { name: "Jackpot Crew", icon: "🎰", color: "bg-orange-500", text: "text-white" },
-              { name: "Party Wake Crew", icon: "🎉", color: "bg-indigo-500", text: "text-white" },
-            ].map((crew) => (
-              <div key={crew.name} className={`${crew.color} ${crew.text} rounded-2xl p-3 text-center flex flex-col items-center gap-1`}>
-                <span className="text-2xl">{crew.icon}</span>
-                <span className="text-xs font-extrabold leading-tight">{crew.name}</span>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden mb-10">
+            {crews.map((name, i) => (
+              <div
+                key={name}
+                className="bg-[#05070d] px-5 py-6 hover:bg-white/[0.03] transition-colors"
+              >
+                <div className="label-mono text-sky-400/70 text-xs mb-3">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div className="font-semibold text-white uppercase tracking-wide text-sm leading-tight">
+                  {name}
+                </div>
               </div>
             ))}
           </div>
-          <div className="text-center">
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg inline-block">
-                Join a Crew
-              </Link>
-              <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all inline-block">
-                🔍 Who&apos;s on My Sailing?
-              </Link>
-            </div>
+
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/sea-you-on-deck/join"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Join a Crew
+            </Link>
+            <Link
+              href="/sea-you-on-deck/community"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Who&apos;s On My Sailing?
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Disembarkation Times */}
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-4xl font-extrabold text-blue-900 mb-3">Earliest Disembarkation Times</h2>
-            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-              The ship arrives at the Port of Galveston early in the morning. Here&apos;s when you can expect to get off — based on your luggage method and tag group.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {disembarkTimes.map((item) => (
-              <div key={item.type} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                <div className={`${item.color} text-white p-4 text-center`}>
-                  <div className="text-xs font-bold uppercase tracking-wide opacity-80 mb-1">{item.label}</div>
-                  <div className="text-2xl font-extrabold">{item.time}</div>
-                </div>
-                <div className="p-4">
-                  <div className="font-extrabold text-blue-900 text-sm mb-2">{item.type}</div>
-                  <p className="text-gray-500 text-xs leading-relaxed">{item.desc}</p>
-                </div>
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="max-w-2xl mb-12">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Day of Disembarkation"}</div>
+          <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+            Earliest Off-Times
+          </h2>
+          <p className="text-white/55 text-lg">
+            The ship arrives at the Port of Galveston early. Here&apos;s when you can
+            expect to step off — based on your luggage method and tag group.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
+          {disembarkTimes.map((item) => (
+            <div key={item.type} className="bg-[#05070d] p-6">
+              <div className="label-mono text-[11px] uppercase text-sky-400/70 mb-2">
+                {item.label}
               </div>
-            ))}
-          </div>
-          <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-2xl p-5 text-sm text-yellow-800">
-            <strong>💡 Pro tip:</strong> If you have a morning flight out of Houston, always choose Self-Assist (Walk-Off) or Express. Build in at least 3 hours between your expected walk-off time and your flight departure. We can help coordinate airport transportation — just ask.
-          </div>
+              <div className="text-xl font-bold text-white mb-3">{item.time}</div>
+              <div className="font-semibold text-white text-sm mb-2">
+                {item.type}
+              </div>
+              <p className="text-white/45 text-xs leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 bg-[#0b1020] border border-white/10 rounded-2xl p-5 text-sm text-white/60">
+          <span className="text-sky-400 font-semibold">Pro tip — </span>
+          If you have a morning flight out of Houston, choose Self-Assist (Walk-Off)
+          or Express, and build in at least 3 hours between your expected walk-off
+          time and your flight. We can coordinate airport transportation — just ask.
         </div>
       </section>
 
       {/* Directions */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-blue-900 mb-3">Directions to the Port of Galveston</h2>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            Galveston is the drive-to cruise capital of the South. Here&apos;s how to get here from anywhere in the region.
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-t border-white/10">
+        <div className="max-w-2xl mb-12">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Getting Here"}</div>
+          <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+            Directions to the Port
+          </h2>
+          <p className="text-white/55 text-lg mb-5">
+            Galveston is the drive-to cruise capital of the South. Here&apos;s how to
+            reach us from anywhere in the region.
           </p>
-          <div className="mt-4 inline-block bg-blue-50 border border-blue-200 text-blue-800 text-sm font-semibold px-5 py-2 rounded-full">
-            📍 Port of Galveston — 2502 Harborside Dr, Galveston, TX 77550
+          <div className="inline-block bg-[#0b1020] border border-white/10 text-white/70 text-sm px-5 py-2 rounded-full">
+            Port of Galveston — 2502 Harborside Dr, Galveston, TX 77550
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
           {directions.map((dir) => (
-            <div key={dir.from} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-              <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                <h3 className="font-extrabold text-blue-900 text-base">From {dir.from}</h3>
-                <span className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">{dir.drive}</span>
+            <div key={dir.from} className="bg-[#05070d] p-6">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+                <h3 className="font-bold text-white text-base">From {dir.from}</h3>
+                <span className="label-mono text-[11px] uppercase text-sky-400/80">
+                  {dir.drive}
+                </span>
               </div>
-              <ol className="space-y-1 mb-3">
+              <ol className="space-y-1.5 mb-4">
                 {dir.steps.map((step, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                    <span className="text-blue-400 font-bold flex-shrink-0">{i + 1}.</span>
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-white/55"
+                  >
+                    <span className="label-mono text-sky-400/60 flex-shrink-0">
+                      {i + 1}
+                    </span>
                     {step}
                   </li>
                 ))}
               </ol>
               {dir.tip && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2 text-xs text-yellow-800">
-                  💡 {dir.tip}
+                <div className="bg-[#0b1020] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white/55">
+                  <span className="text-sky-400">Tip — </span>
+                  {dir.tip}
                 </div>
               )}
             </div>
@@ -339,17 +458,35 @@ export default function ExperienceCenterPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-900 text-white py-14">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">Ready to Start Planning?</h2>
-          <p className="text-blue-200 mb-6">
-            Come visit us in Galveston or reach out — our cruise specialists are standing by to make your voyage seamless from start to finish.
+      <section className="relative border-t border-white/10 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="aurora bg-sky-500 w-[44rem] h-[44rem] -bottom-72 left-1/2 -translate-x-1/2 opacity-[0.12]" />
+        </div>
+        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+          <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
+            Ready to Start Planning?
+          </h2>
+          <p className="text-white/55 text-lg mb-9">
+            Come visit us in Galveston or reach out — our specialists are standing by
+            to make your voyage seamless from start to finish.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/contact" className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/reserve"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              Plan Your Visit
+            </Link>
+            <Link
+              href="/contact"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
               Contact Us
             </Link>
-            <Link href="/deals" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
+            <Link
+              href="/deals"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
               Browse Deals
             </Link>
           </div>

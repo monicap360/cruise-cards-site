@@ -2,8 +2,27 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import Photo from "@/components/Photo";
 
-const destinations = [
+type Destination = {
+  id: string;
+  name: string;
+  dealKey?: string;
+  country: string;
+  flag: string;
+  region: string;
+  color: string;
+  nights: string;
+  icon: string;
+  tagline: string;
+  description: string;
+  activities: { icon: string; text: string }[];
+  cruiseLines: string[];
+  bestFor: string[];
+  highlight: string;
+};
+
+const destinations: Destination[] = [
   // ── Mexico ──────────────────────────────────────────────────────────────
   {
     id: "cozumel",
@@ -97,6 +116,7 @@ const destinations = [
   {
     id: "belize",
     name: "Belize City",
+    dealKey: "Belize",
     country: "Belize",
     flag: "🇧🇿",
     region: "central-america",
@@ -167,7 +187,7 @@ const destinations = [
     country: "Florida, USA",
     flag: "🇺🇸",
     region: "caribbean",
-    color: "from-orange-400 to-red-600",
+    color: "from-sky-700 to-blue-900",
     nights: "5–7 nights",
     icon: "🌅",
     tagline: "Sunsets, Hemingway & America's Southernmost Point",
@@ -256,7 +276,7 @@ const destinations = [
     country: "Carnival Private Island • Bahamas",
     flag: "🎉",
     region: "private-islands",
-    color: "from-orange-400 to-red-700",
+    color: "from-blue-600 to-blue-900",
     nights: "5–7 nights",
     icon: "🎊",
     tagline: "Carnival's Brand-New Private Island Paradise — Opened 2025",
@@ -278,7 +298,7 @@ const destinations = [
     country: "Carnival Private Island • Bahamas",
     flag: "🎉",
     region: "private-islands",
-    color: "from-red-400 to-red-700",
+    color: "from-blue-700 to-[#0a1f44]",
     nights: "5–7 nights",
     icon: "🌙",
     tagline: "Carnival's Pristine Private Island Hideaway",
@@ -372,12 +392,12 @@ const filters = [
 ];
 
 const lineColors: Record<string, string> = {
-  Carnival: "bg-red-100 text-red-700",
-  "Royal Caribbean": "bg-blue-100 text-blue-700",
-  Norwegian: "bg-teal-100 text-teal-700",
-  Princess: "bg-purple-100 text-purple-700",
-  MSC: "bg-slate-100 text-slate-700",
-  Disney: "bg-yellow-100 text-yellow-800",
+  Carnival: "bg-white/10 text-white border border-white/15",
+  "Royal Caribbean": "bg-white/10 text-white border border-white/15",
+  Norwegian: "bg-white/10 text-white border border-white/15",
+  Princess: "bg-white/10 text-white border border-white/15",
+  MSC: "bg-white/10 text-white border border-white/15",
+  Disney: "bg-white/10 text-white border border-white/15",
 };
 
 export default function DestinationsPage() {
@@ -389,54 +409,54 @@ export default function DestinationsPage() {
       : destinations.filter((d) => d.region === activeFilter);
 
   return (
-    <div>
+    <div className="bg-[#05070d]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block bg-red-600 text-white text-sm font-bold px-4 py-1 rounded-full mb-4 uppercase tracking-wide">
-            🌍 Sail from Galveston, Texas
-          </div>
-          <h1 className="text-5xl font-extrabold mb-4">Cruise Destinations</h1>
-          <p className="text-blue-100 text-xl max-w-2xl mx-auto">
+      <section className="bg-[#05070d] text-white relative overflow-hidden py-20">
+        <div className="absolute inset-0 grid-bg" />
+        <div className="aurora bg-sky-500 w-[46rem] h-[46rem] -top-60 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Sail from Galveston, Texas"}</div>
+          <h1 className="text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">Cruise Destinations</h1>
+          <p className="text-white/55 text-xl max-w-2xl mx-auto">
             From Mayan ruins to private islands, world-class reefs to colonial
             cities — every destination below is reachable directly from the Port
             of Galveston.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
-            <div className="bg-white/10 rounded-full px-4 py-2 font-semibold">
-              🌎 {destinations.length} Destinations
+            <div className="bg-[#0b1020] border border-white/10 rounded-full px-4 py-2 font-semibold text-white/55">
+              {destinations.length} Destinations
             </div>
-            <div className="bg-white/10 rounded-full px-4 py-2 font-semibold">
-              🚢 6 Cruise Lines
+            <div className="bg-[#0b1020] border border-white/10 rounded-full px-4 py-2 font-semibold text-white/55">
+              6 Cruise Lines
             </div>
-            <div className="bg-white/10 rounded-full px-4 py-2 font-semibold">
-              🏖️ 6 Private Islands
+            <div className="bg-[#0b1020] border border-white/10 rounded-full px-4 py-2 font-semibold text-white/55">
+              6 Private Islands
             </div>
-            <div className="bg-white/10 rounded-full px-4 py-2 font-semibold">
-              ⚓ All Depart from Galveston
+            <div className="bg-[#0b1020] border border-white/10 rounded-full px-4 py-2 font-semibold text-white/55">
+              All Depart from Galveston
             </div>
           </div>
         </div>
       </section>
 
       {/* Filter Tabs */}
-      <section className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
+      <section className="bg-[#05070d] border-b border-white/10 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1 overflow-x-auto py-3 scrollbar-hide">
             {filters.map((f) => (
               <button
                 key={f.id}
                 onClick={() => setActiveFilter(f.id)}
-                className={`flex-shrink-0 px-5 py-2 rounded-full text-sm font-bold transition-all ${
+                className={`flex-shrink-0 px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
                   activeFilter === f.id
-                    ? "bg-blue-900 text-white shadow-md"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-white text-black"
+                    : "bg-white/[0.03] text-white/55 border border-white/10 hover:border-white/30 hover:text-white"
                 }`}
               >
                 {f.label}
                 <span
                   className={`ml-2 text-xs ${
-                    activeFilter === f.id ? "text-blue-200" : "text-gray-400"
+                    activeFilter === f.id ? "text-black/50" : "text-white/45"
                   }`}
                 >
                   {f.count}
@@ -453,11 +473,19 @@ export default function DestinationsPage() {
           {filtered.map((dest) => (
             <div
               key={dest.id}
-              className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow"
+              className="bg-[#0b1020] rounded-2xl overflow-hidden border border-white/10 hover:border-white/25 transition-colors"
             >
               {/* Card Header */}
-              <div className={`bg-gradient-to-r ${dest.color} text-white p-6`}>
-                <div className="flex items-start justify-between gap-4">
+              <div className={`bg-gradient-to-r ${dest.color} text-white p-6 relative overflow-hidden`}>
+                <Photo
+                  src={`/destinations/${dest.id}.jpg`}
+                  alt={dest.name}
+                  overlay={false}
+                  className="absolute inset-0"
+                />
+                <div className="absolute inset-0 bg-[#05070d]/55" />
+                <div className="absolute inset-0 grid-bg opacity-30" />
+                <div className="relative z-10 flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-2xl">{dest.flag}</span>
@@ -465,36 +493,34 @@ export default function DestinationsPage() {
                         {dest.country}
                       </span>
                     </div>
-                    <h2 className="text-2xl font-extrabold mb-1">{dest.name}</h2>
+                    <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] mb-1">{dest.name}</h2>
                     <p className="text-white/80 text-sm font-medium">{dest.tagline}</p>
                   </div>
                   <div className="text-center flex-shrink-0">
                     <div className="text-5xl mb-1">{dest.icon}</div>
-                    <div className="bg-white/20 rounded-full px-3 py-1 text-xs font-bold text-white whitespace-nowrap">
+                    <div className="bg-black/30 border border-white/20 rounded-full px-3 py-1 text-xs font-bold text-white whitespace-nowrap">
                       {dest.nights}
                     </div>
                   </div>
                 </div>
                 {/* Highlight badge */}
-                <div className="mt-3 inline-block bg-black/20 rounded-full px-3 py-1 text-xs font-bold">
-                  ⭐ {dest.highlight}
+                <div className="relative z-10 mt-3 inline-block bg-black/30 border border-white/15 rounded-full px-3 py-1 text-xs font-bold">
+                  {dest.highlight}
                 </div>
               </div>
 
               {/* Card Body */}
               <div className="p-6 space-y-5">
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-white/55 text-sm leading-relaxed">
                   {dest.description}
                 </p>
 
                 {/* Activities */}
                 <div>
-                  <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wide mb-3">
-                    Top Things to Do
-                  </h3>
+                  <h3 className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Top Things to Do"}</h3>
                   <ul className="space-y-2">
                     {dest.activities.map((a, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                      <li key={i} className="flex items-start gap-2 text-sm text-white/55">
                         <span className="text-lg leading-none mt-0.5 flex-shrink-0">{a.icon}</span>
                         <span>{a.text}</span>
                       </li>
@@ -504,14 +530,12 @@ export default function DestinationsPage() {
 
                 {/* Cruise Lines */}
                 <div>
-                  <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wide mb-2">
-                    Cruise Lines from Galveston
-                  </h3>
+                  <h3 className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Cruise Lines from Galveston"}</h3>
                   <div className="flex flex-wrap gap-2">
                     {dest.cruiseLines.map((line) => (
                       <span
                         key={line}
-                        className={`text-xs font-bold px-3 py-1 rounded-full ${lineColors[line] ?? "bg-gray-100 text-gray-600"}`}
+                        className={`text-xs font-bold px-3 py-1 rounded-full ${lineColors[line] ?? "bg-white/10 text-white border border-white/15"}`}
                       >
                         {line}
                       </span>
@@ -521,14 +545,12 @@ export default function DestinationsPage() {
 
                 {/* Best For */}
                 <div>
-                  <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wide mb-2">
-                    Best For
-                  </h3>
+                  <h3 className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Best For"}</h3>
                   <div className="flex flex-wrap gap-2">
                     {dest.bestFor.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 px-3 py-1 rounded-full"
+                        className="text-xs font-medium bg-white/[0.03] text-white/55 border border-white/10 px-3 py-1 rounded-full"
                       >
                         {tag}
                       </span>
@@ -537,10 +559,10 @@ export default function DestinationsPage() {
                 </div>
 
                 <Link
-                  href="/contact"
-                  className="block w-full text-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-all"
+                  href={`/deals?to=${encodeURIComponent(dest.dealKey ?? dest.name)}`}
+                  className="block w-full text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider py-3 rounded-full text-sm transition-all"
                 >
-                  Book a Cruise to {dest.name} →
+                  See Cruises to {dest.name}
                 </Link>
               </div>
             </div>
@@ -548,20 +570,20 @@ export default function DestinationsPage() {
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
-            <div className="text-6xl mb-4">🌊</div>
-            <p className="text-xl font-bold">No destinations found</p>
+          <div className="text-center py-20 text-white/45">
+            <p className="text-xl font-bold uppercase tracking-[-0.01em]">No destinations found</p>
           </div>
         )}
       </section>
 
       {/* CTA */}
-      <section className="bg-red-600 text-white py-14">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">
-            Not Sure Which Destination is Right for You? ⚓
+      <section className="bg-[#05070d] border-t border-white/10 text-white py-16 relative overflow-hidden">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-3">
+            Not Sure Which Destination is Right for You?
           </h2>
-          <p className="text-red-100 mb-6">
+          <p className="text-white/55 mb-6">
             Our Galveston cruise specialists have sailed these ports and know
             every itinerary inside and out. Tell us what you&apos;re looking for
             and we&apos;ll find the perfect match.
@@ -569,13 +591,13 @@ export default function DestinationsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="bg-white text-red-600 hover:bg-red-50 font-bold px-8 py-4 rounded-full text-lg transition-all shadow-lg"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
             >
               Talk to a Specialist
             </Link>
             <Link
               href="/deals"
-              className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-8 py-4 rounded-full text-lg transition-all shadow-lg"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
             >
               Browse Current Deals
             </Link>

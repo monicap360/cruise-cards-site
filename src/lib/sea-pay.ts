@@ -10,6 +10,23 @@ export type PaymentInstallment = {
   note?: string;
 };
 
+// ── Payments ledger (manual — no processor) ───────────────────────────────────
+export type PaymentMethod = "check" | "in-person" | "cruise-line-direct" | "other";
+export type PaymentStatus = "pending" | "cleared" | "bounced";
+
+export type Payment = {
+  id: string;
+  receivedDate: string; // date the payment was taken in
+  amount: number;
+  method: PaymentMethod;
+  status: PaymentStatus; // checks start "pending" until they clear the bank
+  clearedDate?: string;
+  reference?: string; // check #, confirmation #, etc.
+  payerName?: string; // name of the passenger / person who paid
+  cardLast4?: string; // last 4 digits only — NEVER the full card number
+  note?: string;
+};
+
 export type Booking = {
   id: string;
   bookingNumber: string;
@@ -41,8 +58,9 @@ export type Booking = {
   depositPaidDate?: string;
   depositPaymentMethod?: string;
 
-  // Sea Pay plan
+  // Sea Pay plan (schedule) + actual payments received (ledger)
   paymentPlan: PaymentInstallment[];
+  payments: Payment[];
 
   status: BookingStatus;
 
@@ -51,9 +69,26 @@ export type Booking = {
   contractSignedDate?: string;
   contractSignedName?: string;
 
+  // Chargeback evidence — proof the customer accepted terms (NO card data here)
+  contractSignedAt?: string; // full ISO timestamp
+  contractSignedIp?: string; // captured client IP at signing
+  termsVersion?: string; // version of the Terms accepted
+
+  // Cruise-line credit-card authorization ON FILE — reference only.
+  // We NEVER store the full card number, CVV, or card images.
+  ccAuthOnFile?: boolean;
+  ccAuthLast4?: string;
+  ccAuthCruiseLine?: string;
+  ccAuthDate?: string;
+
   agentName?: string;
   notes?: string;
 };
+
+// Bump when the Terms & Conditions change. Stored on each signed contract so
+// you can prove which version a customer agreed to.
+export const TERMS_VERSION = "2026-06-24";
+export const TERMS_EFFECTIVE_DATE = "June 24, 2026";
 
 export function generateId(): string {
   return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
@@ -113,12 +148,18 @@ export function calculatePaymentPlan(
   }));
 }
 
-export function getBookingBalance(b: Booking): number {
-  const deposited = b.depositPaid ? b.depositAmount : 0;
-  const installmentsPaid = b.paymentPlan
-    .filter((p) => p.paid)
+// Cleared money from the payments ledger (a mailed check counts only once cleared).
+export function getClearedLedger(b: Booking): number {
+  return (b.payments ?? [])
+    .filter((p) => p.status === "cleared")
     .reduce((s, p) => s + p.amount, 0);
-  return Math.max(0, b.totalPrice - deposited - installmentsPaid);
+}
+
+// Money received but not yet posted (uncleared checks). Excluded from the balance.
+export function getPendingPayments(b: Booking): number {
+  return (b.payments ?? [])
+    .filter((p) => p.status === "pending")
+    .reduce((s, p) => s + p.amount, 0);
 }
 
 export function getTotalPaid(b: Booking): number {
@@ -126,8 +167,29 @@ export function getTotalPaid(b: Booking): number {
   const installmentsPaid = b.paymentPlan
     .filter((p) => p.paid)
     .reduce((s, p) => s + p.amount, 0);
-  return deposited + installmentsPaid;
+  return deposited + installmentsPaid + getClearedLedger(b);
 }
+
+export function getBookingBalance(b: Booking): number {
+  return Math.max(0, b.totalPrice - getTotalPaid(b));
+}
+
+export const CHECK_PAYABLE_TO = "Cruises from Galveston";
+export const CHECK_MAILING_ADDRESS = "3501 Winnie, Galveston, TX 77550";
+
+export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
+  { value: "check", label: "Check (mailed)" },
+  { value: "in-person", label: "In person" },
+  { value: "cruise-line-direct", label: "Paid direct to cruise line" },
+  { value: "other", label: "Other" },
+];
+
+export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
+  check: "Check (mailed)",
+  "in-person": "In person",
+  "cruise-line-direct": "Paid direct to cruise line",
+  other: "Other",
+};
 
 export function getNextPayment(b: Booking): PaymentInstallment | null {
   return b.paymentPlan.find((p) => !p.paid) ?? null;
@@ -163,8 +225,18 @@ function toBooking(row: Record<string, unknown>): Booking {
     depositAmount: (row.deposit_amount as number) ?? 0,
     depositPaid: (row.deposit_paid as boolean) ?? false,
     paymentPlan: (row.payment_plan as PaymentInstallment[]) ?? [],
+    payments: (row.payments as Payment[]) ?? [],
     status: (row.status as BookingStatus) ?? "pending",
     contractSigned: (row.contract_signed as boolean) ?? false,
+    contractSignedDate: row.contract_signed_date as string | undefined,
+    contractSignedName: row.contract_signed_name as string | undefined,
+    contractSignedAt: row.contract_signed_at as string | undefined,
+    contractSignedIp: row.contract_signed_ip as string | undefined,
+    termsVersion: row.terms_version as string | undefined,
+    ccAuthOnFile: (row.cc_auth_on_file as boolean) ?? false,
+    ccAuthLast4: row.cc_auth_last4 as string | undefined,
+    ccAuthCruiseLine: row.cc_auth_cruise_line as string | undefined,
+    ccAuthDate: row.cc_auth_date as string | undefined,
     agentName: row.agent_name as string | undefined,
     notes: row.notes as string | undefined,
   };
@@ -209,10 +281,18 @@ export async function saveBooking(booking: Booking): Promise<void> {
     deposit_amount: booking.depositAmount,
     deposit_paid: booking.depositPaid,
     payment_plan: booking.paymentPlan,
+    payments: booking.payments,
     status: booking.status,
     contract_signed: booking.contractSigned,
     contract_signed_date: booking.contractSignedDate,
     contract_signed_name: booking.contractSignedName,
+    contract_signed_at: booking.contractSignedAt,
+    contract_signed_ip: booking.contractSignedIp,
+    terms_version: booking.termsVersion,
+    cc_auth_on_file: booking.ccAuthOnFile ?? false,
+    cc_auth_last4: booking.ccAuthLast4,
+    cc_auth_cruise_line: booking.ccAuthCruiseLine,
+    cc_auth_date: booking.ccAuthDate,
     agent_name: booking.agentName,
     notes: booking.notes,
   });

@@ -10,14 +10,51 @@ import {
   CATEGORY_ICON,
   groupByType,
 } from "@/lib/room-blocks";
+import { seedInventory, clearDraftInventory, isDraftBlock } from "@/lib/seed-inventory";
 import { fmtDateShort } from "@/lib/sea-pay";
 
 export default function RoomBlocksAdminPage() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
+  const [seeding, setSeeding] = useState(false);
+
+  async function refresh() {
+    setBlocks(await getSailingBlocks());
+  }
 
   useEffect(() => {
-    getSailingBlocks().then((data) => setBlocks(data));
+    refresh();
   }, []);
+
+  async function handleSeed() {
+    if (
+      !confirm(
+        "Seed the live inventory with the current Galveston fleet?\n\nShips, lines, durations and active months are real (galvestoncruises.com). Exact weekly dates are DRAFT estimates you can edit. You can remove them anytime with “Clear drafts.”"
+      )
+    )
+      return;
+    setSeeding(true);
+    try {
+      const { blocks: b, cabins: c } = await seedInventory();
+      await refresh();
+      alert(`Added ${b} draft sailings and ${c} cabins.`);
+    } catch (e) {
+      alert("Seed failed: " + (e as Error).message);
+    } finally {
+      setSeeding(false);
+    }
+  }
+
+  async function handleClearDrafts() {
+    if (!confirm("Delete all DRAFT sailings created by the seed?")) return;
+    setSeeding(true);
+    try {
+      const n = await clearDraftInventory();
+      await refresh();
+      alert(`Removed ${n} draft sailings.`);
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   async function handleDelete(id: string, ship: string) {
     if (!confirm(`Delete the entire room block for ${ship}? This cannot be undone.`)) return;
@@ -39,12 +76,28 @@ export default function RoomBlocksAdminPage() {
               Manage your group cabin inventory by sailing
             </p>
           </div>
-          <Link
-            href="/admin/room-blocks/new"
-            className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
-          >
-            + New Sailing Block
-          </Link>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={handleSeed}
+              disabled={seeding}
+              className="bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white font-bold px-5 py-3 rounded-full transition-all shadow-lg"
+            >
+              {seeding ? "Working…" : "⚓ Seed Galveston Fleet"}
+            </button>
+            <button
+              onClick={handleClearDrafts}
+              disabled={seeding}
+              className="bg-blue-800 hover:bg-blue-700 disabled:opacity-50 text-white/90 font-bold px-4 py-3 rounded-full transition-all text-sm"
+            >
+              Clear drafts
+            </button>
+            <Link
+              href="/admin/room-blocks/new"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
+            >
+              + New Sailing Block
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -78,6 +131,11 @@ export default function RoomBlocksAdminPage() {
                       <div className="flex items-center gap-3 flex-wrap">
                         <h3 className="font-extrabold text-blue-900 text-xl">{block.ship}</h3>
                         <span className="text-blue-400 text-sm">{block.cruiseLine}</span>
+                        {isDraftBlock(block.notes) && (
+                          <span className="bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full">
+                            Draft date
+                          </span>
+                        )}
                       </div>
                       <div className="text-gray-500 text-sm mt-0.5">
                         {fmtDateShort(block.sailingDate)} · {block.nights} nights · {block.itinerary}

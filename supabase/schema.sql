@@ -28,6 +28,22 @@ create table if not exists bookings (
   deposit_amount numeric(10,2) default 0,
   status text default 'pending' check (status in ('pending','confirmed','paid','cancelled')),
   payment_plan jsonb default '[]',
+  payments jsonb default '[]',
+  deposit_paid boolean default false,
+  guest_names text,
+  agent_name text,
+  -- contract / chargeback evidence (no card data is ever stored)
+  contract_signed boolean default false,
+  contract_signed_date text,
+  contract_signed_name text,
+  contract_signed_at timestamptz,
+  contract_signed_ip text,
+  terms_version text,
+  -- cruise-line card authorization reference only (NEVER full card / CVV / images)
+  cc_auth_on_file boolean default false,
+  cc_auth_last4 text,
+  cc_auth_cruise_line text,
+  cc_auth_date text,
   notes text,
   rate_type text default 'flexible'
 );
@@ -109,6 +125,7 @@ create table if not exists cabins (
   max_guests integer default 2,
   sqft integer default 0,
   price numeric(10,2) not null,
+  is_guarantee boolean default false, -- GTY: guaranteed category, room assigned by cruise line
   status text default 'available' check (status in ('available','held','booked')),
   guest_name text,
   guest_email text,
@@ -255,6 +272,79 @@ create table if not exists service_bookings (
 
 alter table service_bookings enable row level security;
 create policy "Allow all for anon" on service_bookings for all using (true) with check (true);
+
+-- ─────────────────────────────────────────────
+-- FRONT DESK RESERVATIONS (Cruise Experience Center)
+-- Walk-in & scheduled reservations for on-site services
+-- ─────────────────────────────────────────────
+create table if not exists reservations (
+  id text primary key,
+  created_at timestamptz default now(),
+  reservation_number text not null,
+  guest_name text not null,
+  legal_first_name text,  -- legal name as it appears on travel documents
+  legal_last_name text,
+  guest_email text,
+  guest_phone text,
+  loyalty_number text,    -- VIFP, Crown & Anchor, Latitudes, Captain's Circle, etc.
+  party_size integer default 1,
+  service_type text not null,
+  ship text,
+  sail_date text,
+  booking_ref text,
+  reservation_date text not null,
+  reservation_time text,
+  agent_name text,
+  status text default 'reserved' check (status in ('requested','reserved','checked-in','in-service','completed','no-show','cancelled')),
+  request_summary text, -- guest's own description of what they need
+  ai_brief text,        -- AI-generated prep brief for the front desk agent
+  id_verified boolean default false, -- staff confirmed a physical photo ID at the desk (no image stored)
+  notes text
+);
+
+alter table reservations enable row level security;
+create policy "Allow all for anon" on reservations for all using (true) with check (true);
+
+-- ─────────────────────────────────────────────
+-- LAST-MINUTE LISTINGS (agency-mediated cruise resale)
+-- Guests list a cabin they can no longer sail; the agency verifies transfer
+-- eligibility, takes it into inventory, and offers it to last-minute buyers.
+-- NOTE: booking PINs are NEVER stored here — collected by phone at transfer.
+-- ─────────────────────────────────────────────
+create table if not exists last_minute_listings (
+  id text primary key,
+  created_at timestamptz default now(),
+  status text default 'pending' check (status in ('pending','verifying','listed','claimed','sold','declined','withdrawn')),
+  -- seller (private; never shown on the public board)
+  seller_name text not null,
+  seller_email text,
+  seller_phone text,
+  -- cruise
+  cruise_line text,
+  ship text,
+  sail_date text,
+  nights integer default 0,
+  itinerary text,
+  cabin_type text,
+  guests integer default 2,
+  -- reference only (no PIN)
+  booking_ref text,
+  -- transfer details (exact guest names + DOB for the cruise-line name change)
+  cabin_number text,
+  paid_in_full boolean default false,
+  passengers jsonb default '[]',
+  -- money
+  price_paid numeric(10,2) default 0,
+  penalty_amount numeric(10,2) default 0,
+  desired_back numeric(10,2) default 0,
+  desired_refund_pct integer default 0,
+  buyer_price numeric(10,2) default 0,
+  seller_refund numeric(10,2) default 0,
+  notes text
+);
+
+alter table last_minute_listings enable row level security;
+create policy "Allow all for anon" on last_minute_listings for all using (true) with check (true);
 
 -- ─────────────────────────────────────────────
 -- Helpful views

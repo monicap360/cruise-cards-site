@@ -1,29 +1,45 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/find", label: "Find a Cruise" },
   { href: "/deals", label: "Cruise Deals" },
+  { href: "/last-minute", label: "Last-Minute" },
   { href: "/ships-from-galveston", label: "Ships" },
+  { href: "/deck-plans", label: "Deck Plans" },
   { href: "/destinations", label: "Destinations" },
   { href: "/group-blocks", label: "Group Cabins" },
   { href: "/specials", label: "Specials" },
   { href: "/sea-you-on-deck", label: "Sea You on Deck" },
+  { href: "/countdown", label: "Countdown" },
   { href: "/sea-pay", label: "Sea Pay" },
   { href: "/hold", label: "Hold a Room" },
   { href: "/booking-options", label: "Booking Options" },
   { href: "/experience-center", label: "Experience Center" },
+  { href: "/reserve", label: "Reserve a Visit" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+
+  function doSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const q = search.trim();
+    router.push(q ? `/find?q=${encodeURIComponent(q)}` : "/find");
+    setSearch("");
+    setOpen(false);
+  }
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50 border-b-4 border-red-600">
+    <nav className="bg-[#05070d]/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center">
@@ -32,7 +48,7 @@ export default function Navbar() {
               alt="Cruises from Galveston"
               width={160}
               height={64}
-              className="h-14 w-auto object-contain"
+              className="h-14 w-auto object-contain brightness-0 invert"
               priority
             />
           </Link>
@@ -42,21 +58,30 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-blue-900 hover:bg-blue-50 px-3 py-2 rounded-lg font-semibold text-sm transition-all"
+                className="text-white/65 hover:text-white px-2.5 py-2 rounded-lg font-medium text-[13px] transition-colors"
               >
                 {link.label}
               </Link>
             ))}
+            <form onSubmit={doSearch} className="hidden lg:block ml-2">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search cruises…"
+                aria-label="Search cruises"
+                className="bg-white/5 border border-white/15 rounded-full px-4 py-1.5 text-[13px] text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 w-32 focus:w-44 transition-all"
+              />
+            </form>
             <Link
-              href="/book"
-              className="ml-3 bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2 rounded-full text-sm transition-all shadow"
+              href="/select"
+              className="ml-2 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-5 py-2.5 rounded-full text-xs transition-all"
             >
-              Book Now
+              Select Cruise
             </Link>
           </div>
 
           <button
-            className="md:hidden text-blue-900 p-2"
+            className="md:hidden text-white p-2"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -66,23 +91,32 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-blue-900 px-4 pb-4 flex flex-col gap-1">
+        <div className="md:hidden bg-[#0b1020] border-t border-white/10 px-4 pb-4 flex flex-col gap-1">
+          <form onSubmit={doSearch} className="py-2">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search cruises…"
+              aria-label="Search cruises"
+              className="w-full bg-white/5 border border-white/15 rounded-full px-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
+            />
+          </form>
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-white hover:bg-white/20 px-3 py-2 rounded-lg font-semibold text-sm"
+              className="text-white/80 hover:bg-white/10 px-3 py-2 rounded-lg font-medium text-sm"
               onClick={() => setOpen(false)}
             >
               {link.label}
             </Link>
           ))}
           <Link
-            href="/book"
-            className="mt-2 bg-red-600 text-white font-bold px-4 py-2 rounded-full text-sm text-center"
+            href="/select"
+            className="mt-2 bg-white text-black font-semibold uppercase tracking-wider px-4 py-2 rounded-full text-xs text-center"
             onClick={() => setOpen(false)}
           >
-            Book Now
+            Select Cruise
           </Link>
         </div>
       )}

@@ -65,73 +65,68 @@ const crewGroups = [
 ];
 
 const featuredCrews = [
-  { name: "Sea Duck Hunters™", icon: "🦆", color: "bg-yellow-400", textColor: "text-yellow-900" },
-  { name: "First Time Cruisers", icon: "🚢", color: "bg-blue-500", textColor: "text-white" },
-  { name: "Family Cruisers", icon: "👨‍👩‍👧", color: "bg-green-500", textColor: "text-white" },
-  { name: "Adults Only", icon: "🍸", color: "bg-purple-600", textColor: "text-white" },
-  { name: "Singles at Sea", icon: "🌟", color: "bg-pink-500", textColor: "text-white" },
-  { name: "SeaStrong Crew", icon: "💪", color: "bg-red-600", textColor: "text-white" },
-  { name: "Easy Waves", icon: "♿", color: "bg-teal-500", textColor: "text-white" },
-  { name: "Jackpot Crew", icon: "🎰", color: "bg-orange-500", textColor: "text-white" },
-  { name: "Party Wake Crew", icon: "🎉", color: "bg-indigo-500", textColor: "text-white" },
+  { name: "Sea Duck Hunters™" },
+  { name: "First Time Cruisers" },
+  { name: "Family Cruisers" },
+  { name: "Adults Only" },
+  { name: "Singles at Sea" },
+  { name: "SeaStrong Crew" },
+  { name: "Easy Waves" },
+  { name: "Jackpot Crew" },
+  { name: "Party Wake Crew" },
 ];
 
 export default function SeaYouOnDeckPage() {
   return (
-    <div>
+    <div className="bg-[#05070d] text-white">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-teal-700 text-white py-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block bg-white/10 border border-white/20 text-blue-200 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-            Powered by Cruise Experience Center
-          </div>
-          <div className="text-yellow-400 text-sm font-extrabold uppercase tracking-widest mb-2">Sea You On Deck Crews™</div>
-          <h1 className="text-5xl font-extrabold mb-3">Find Your People Before You Sail.</h1>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto mb-2">
-            Join crews built around your cruise style, interests, and onboard experience.
+      <section className="bg-[#05070d] text-white relative overflow-hidden grid-bg py-20">
+        <div className="aurora bg-sky-500 w-[600px] h-[600px] -top-40 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Powered by Cruise Experience Center"}</div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Sea You On Deck Crews™"}</div>
+          <h1 className="text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">Booked? See Who&apos;s On Deck.</h1>
+          <p className="text-xl text-white/55 max-w-2xl mx-auto mb-2">
+            Once you&apos;ve booked your cruise, see who&apos;s sailing with you and join crews built around your style, interests, and onboard experience.
           </p>
-          <p className="text-blue-200 text-base max-w-xl mx-auto">
+          <p className="text-white/45 text-base max-w-xl mx-auto">
             Cruise communities, meetups, tips, and onboard connections — powered by Cruise Experience Center.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+          <div className="mt-10 flex flex-wrap gap-4 justify-center">
+            <Link href="/sea-you-on-deck/join" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Join a Crew
             </Link>
-            <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
-              🔍 Who&apos;s on My Sailing?
+            <Link href="/sea-you-on-deck/community" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
+              Who&apos;s on My Sailing?
             </Link>
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Sea You On Deck Crews™ · Powered by Cruise Experience Center</span>
+          <span className="label-mono text-[11px] uppercase text-sky-400/80">{"// Sea You On Deck Crews™ · Powered by Cruise Experience Center"}</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-blue-900 mb-10 text-center">How It Works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-12 text-center">How It Works</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
           {[
-            { step: "1", icon: "🚢", title: "Book Your Cruise", desc: "Choose your ship and sail date through Cruises from Galveston. Sea You on Deck is included with every booking." },
-            { step: "2", icon: "🌊", title: "Choose Your Privacy", desc: "Stay private — no one knows you're onboard — or join one or more crews that match your vibe." },
-            { step: "3", icon: "🤝", title: "Meet Your Crew", desc: "Connect with crewmates before sailing, coordinate activities, and enjoy the voyage together." },
+            { step: "01", title: "Book Your Cruise", desc: "Choose your ship and sail date through Cruises from Galveston. Sea You on Deck is included with every booking." },
+            { step: "02", title: "Choose Your Privacy", desc: "Stay private — no one knows you're onboard — or join one or more crews that match your vibe." },
+            { step: "03", title: "Meet Your Crew", desc: "Once you're booked, connect with crewmates on your sailing, coordinate activities, and enjoy the voyage together." },
           ].map((s) => (
-            <div key={s.step} className="text-center">
-              <div className="w-14 h-14 rounded-full bg-blue-900 text-white font-extrabold text-2xl flex items-center justify-center mx-auto mb-4">
-                {s.step}
-              </div>
-              <div className="text-4xl mb-3">{s.icon}</div>
-              <h3 className="font-extrabold text-blue-900 text-lg mb-2">{s.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+            <div key={s.step} className="bg-[#05070d] p-7 hover:bg-white/[0.03] text-center">
+              <div className="label-mono text-sky-400 text-sm mb-4">{s.step}</div>
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-lg mb-2">{s.title}</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 bg-blue-50 border border-blue-200 rounded-2xl p-6 flex items-start gap-4">
-          <span className="text-3xl flex-shrink-0">🔒</span>
+        <div className="mt-10 bg-[#0b1020] border border-white/10 rounded-2xl p-6 flex items-start gap-4">
           <div>
-            <div className="font-extrabold text-blue-900 mb-1">Your Privacy is Always Protected</div>
-            <p className="text-sm text-gray-600">
+            <div className="font-extrabold uppercase tracking-[-0.01em] text-white mb-1">Your Privacy is Always Protected</div>
+            <p className="text-sm text-white/55">
               You control everything. Choosing to stay private means no other passengers can find or contact you through Sea You on Deck. Only guests who actively join a crew are visible to their crewmates — and only within that crew.
             </p>
           </div>
@@ -139,21 +134,21 @@ export default function SeaYouOnDeckPage() {
       </section>
 
       {/* Featured Crews (easy starter picks) */}
-      <section className="bg-gray-50 py-14">
+      <section className="bg-[#05070d] py-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold text-blue-900 mb-2">Popular Crews to Join</h2>
-            <p className="text-gray-500">The most popular crews for first-time members — easy to understand, fun to join.</p>
+            <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">Popular Crews to Join</h2>
+            <p className="text-white/55">The most popular crews for first-time members — easy to understand, fun to join.</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
-            {featuredCrews.map((crew) => (
+            {featuredCrews.map((crew, i) => (
               <Link
                 key={crew.name}
                 href={`/sea-you-on-deck/join?crew=${encodeURIComponent(crew.name)}`}
-                className={`${crew.color} ${crew.textColor} rounded-2xl p-3 text-center flex flex-col items-center gap-1 hover:opacity-90 transition-opacity shadow-sm`}
+                className="bg-[#0b1020] border border-white/10 rounded-2xl p-3 text-center flex flex-col items-center gap-1 hover:bg-white/[0.03] transition-colors"
               >
-                <span className="text-2xl">{crew.icon}</span>
-                <span className="text-xs font-extrabold leading-tight">{crew.name}</span>
+                <span className="label-mono text-sky-400 text-[11px]">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-xs font-extrabold text-white leading-tight">{crew.name}</span>
               </Link>
             ))}
           </div>
@@ -163,9 +158,9 @@ export default function SeaYouOnDeckPage() {
       {/* All Crews */}
       <section id="crews" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Sea You On Deck Crews™ · Powered by Cruise Experience Center</div>
-          <h2 className="text-4xl font-extrabold text-blue-900 mb-2">All Crews</h2>
-          <p className="text-gray-500 text-base max-w-2xl mx-auto">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Sea You On Deck Crews™ · Powered by Cruise Experience Center"}</div>
+          <h2 className="text-4xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">All Crews</h2>
+          <p className="text-white/55 text-base max-w-2xl mx-auto">
             Cruise communities, meetups, tips, and onboard connections. Over 30 crews across every interest, lifestyle, and travel style. Join up to 3 crews per sailing.
           </p>
         </div>
@@ -173,19 +168,18 @@ export default function SeaYouOnDeckPage() {
           {crewGroups.map((group) => (
             <div key={group.category}>
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl">{group.icon}</span>
-                <h3 className="text-2xl font-extrabold text-blue-900">{group.category}</h3>
+                <h3 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white">{group.category}</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {group.crews.map((crew) => (
-                  <div key={crew.name} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
-                    <div className="font-extrabold text-blue-900 mb-2">{crew.name}</div>
-                    <p className="text-sm text-gray-500 leading-relaxed flex-1">{crew.desc}</p>
-                    <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between">
-                      <span className="text-xs text-gray-300 font-semibold">A Sea You On Deck Crew™<br/>Powered by Cruise Experience Center</span>
+                  <div key={crew.name} className="bg-[#0b1020] border border-white/10 rounded-2xl p-5 flex flex-col">
+                    <div className="font-extrabold uppercase tracking-[-0.01em] text-white mb-2">{crew.name}</div>
+                    <p className="text-sm text-white/55 leading-relaxed flex-1">{crew.desc}</p>
+                    <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-xs text-white/45 font-semibold">A Sea You On Deck Crew™<br/>Powered by Cruise Experience Center</span>
                       <Link
                         href={`/sea-you-on-deck/join?crew=${encodeURIComponent(crew.name)}`}
-                        className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex-shrink-0"
+                        className="text-xs font-bold text-sky-400 hover:text-sky-300 transition-colors flex-shrink-0"
                       >
                         Join →
                       </Link>
@@ -199,18 +193,19 @@ export default function SeaYouOnDeckPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-900 text-white py-14">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">Ready to Find Your Crew?</h2>
-          <p className="text-blue-200 mb-6">
-            Let us know which ship, sail date, and crews you&apos;re interested in. We&apos;ll connect you with your crewmates before you ever step onboard.
+      <section className="bg-[#05070d] relative overflow-hidden grid-bg text-white py-16">
+        <div className="aurora bg-sky-500 w-[500px] h-[500px] -bottom-40 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+        <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-3">Already Booked? Find Your Crew.</h2>
+          <p className="text-white/55 mb-6">
+            Let us know which ship, sail date, and crews you&apos;re interested in. Once you&apos;ve booked, we&apos;ll connect you with the crewmates already on your sailing.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/sea-you-on-deck/join" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-extrabold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+            <Link href="/sea-you-on-deck/join" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Join a Crew
             </Link>
-            <Link href="/sea-you-on-deck/community" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
-              🔍 Who&apos;s on My Sailing?
+            <Link href="/sea-you-on-deck/community" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
+              Who&apos;s on My Sailing?
             </Link>
           </div>
         </div>

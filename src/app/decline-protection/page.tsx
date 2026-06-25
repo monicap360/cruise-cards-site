@@ -105,31 +105,30 @@ function DeclinePageContent() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-16">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-10 max-w-lg w-full text-center">
-          <div className="text-5xl mb-4">📋</div>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-1">Declination Recorded</h2>
-          <p className="text-gray-400 text-sm font-mono mb-5">Waiver ID: {waiverId}</p>
+      <div className="min-h-screen bg-[#05070d] flex items-center justify-center px-4 py-16">
+        <div className="bg-[#0b1020] rounded-3xl border border-white/10 p-10 max-w-lg w-full text-center">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-1">Declination Recorded</h2>
+          <p className="text-white/45 text-sm font-mono mb-5">Waiver ID: {waiverId}</p>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-left text-sm space-y-2 mb-6">
-            <div><strong>Name:</strong> {form.firstName} {form.lastName}</div>
-            <div><strong>Email:</strong> {form.email}</div>
-            {form.ship && <div><strong>Ship:</strong> {form.ship}</div>}
-            {form.sailDate && <div><strong>Sail Date:</strong> {form.sailDate}</div>}
-            {form.bookingRef && <div><strong>Booking Ref:</strong> {form.bookingRef}</div>}
-            <div><strong>Signed:</strong> {form.signature}</div>
-            <div><strong>Date:</strong> {TODAY()}</div>
+          <div className="bg-[#05070d] border border-white/10 rounded-2xl p-5 text-left text-sm text-white/65 space-y-2 mb-6">
+            <div><strong className="text-white">Name:</strong> {form.firstName} {form.lastName}</div>
+            <div><strong className="text-white">Email:</strong> {form.email}</div>
+            {form.ship && <div><strong className="text-white">Ship:</strong> {form.ship}</div>}
+            {form.sailDate && <div><strong className="text-white">Sail Date:</strong> {form.sailDate}</div>}
+            {form.bookingRef && <div><strong className="text-white">Booking Ref:</strong> {form.bookingRef}</div>}
+            <div><strong className="text-white">Signed:</strong> {form.signature}</div>
+            <div><strong className="text-white">Date:</strong> {TODAY()}</div>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-xs text-yellow-800 text-left mb-6">
+          <div className="bg-[#05070d] border border-white/10 rounded-2xl p-4 text-xs text-amber-300/80 text-left mb-6">
             <strong>Important:</strong> This declination has been saved to our records with waiver ID {waiverId}. A copy has been logged with your booking. By completing this form you have released Cruises from Galveston™ from liability for losses this plan would have covered. This release is binding.
           </div>
 
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link href="/book" className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-6 py-3 rounded-full text-sm transition-all">
+            <Link href="/book" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Continue Booking
             </Link>
-            <Link href="/vacation-protection" className="border border-gray-200 text-gray-600 font-bold px-6 py-3 rounded-full text-sm hover:bg-gray-50">
+            <Link href="/vacation-protection" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Reconsider Protection
             </Link>
           </div>
@@ -139,13 +138,13 @@ function DeclinePageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#05070d]">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-10">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-2">Legal Document</div>
-          <h1 className="text-3xl font-extrabold mb-2">Vacation Protection Declination &amp; Liability Release</h1>
-          <p className="text-blue-200 text-sm max-w-xl">
+      <div className="bg-[#05070d] text-white relative overflow-hidden grid-bg px-6 py-10">
+        <div className="max-w-3xl mx-auto relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Legal Document"}</div>
+          <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-2">Vacation Protection Declination &amp; Liability Release</h1>
+          <p className="text-white/65 text-sm max-w-xl">
             Read each statement carefully and check each box before signing. This is a binding legal release.
           </p>
         </div>
@@ -154,82 +153,80 @@ function DeclinePageContent() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-6">
 
         {/* Reconsider banner */}
-        <div className="bg-yellow-50 border border-yellow-300 rounded-2xl p-5 flex items-start gap-4">
-          <span className="text-3xl flex-shrink-0">🛡️</span>
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-5 flex items-start gap-4">
           <div>
-            <div className="font-extrabold text-yellow-900 mb-1">Have you considered Vacation Protection?</div>
-            <p className="text-sm text-yellow-800 leading-relaxed mb-3">
+            <div className="font-extrabold text-white mb-1">Have you considered Vacation Protection?</div>
+            <p className="text-sm text-white/65 leading-relaxed mb-3">
               For as little as 6% of your trip cost, you can protect your entire fare against cancellation, medical emergencies, travel delays, and more. Skipping coverage to save $150 on a $2,500 trip puts the entire $2,500 at risk.
             </p>
-            <Link href="/vacation-protection" className="text-sm font-extrabold text-yellow-700 underline hover:no-underline">
+            <Link href="/vacation-protection" className="text-sm font-extrabold text-sky-400/80 hover:text-white underline">
               Review plan options before signing →
             </Link>
           </div>
         </div>
 
         {/* Customer info */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h3 className="font-extrabold text-blue-900 text-base mb-4">Your Information</h3>
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <h3 className="font-bold text-white text-base mb-4">Your Information</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">First Name *</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">First Name *</label>
               <input value={form.firstName} onChange={(e) => setF("firstName", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Last Name *</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">Last Name *</label>
               <input value={form.lastName} onChange={(e) => setF("lastName", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Email *</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">Email *</label>
               <input type="email" value={form.email} onChange={(e) => setF("email", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Phone *</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">Phone *</label>
               <input type="tel" value={form.phone} onChange={(e) => setF("phone", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Booking Reference</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">Booking Reference</label>
               <input value={form.bookingRef} onChange={(e) => setF("bookingRef", e.target.value)}
                 placeholder="e.g. CFG-ABC123"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase mb-1">Ship / Sail Date</label>
+              <label className="block text-xs font-bold text-white/55 uppercase mb-1">Ship / Sail Date</label>
               <input value={form.ship} onChange={(e) => setF("ship", e.target.value)}
                 placeholder="Carnival Jubilee · Jan 15, 2027"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full bg-[#05070d] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" />
             </div>
           </div>
         </div>
 
         {/* Legal acknowledgments */}
-        <div className="bg-white rounded-2xl border border-red-200 shadow-sm p-6">
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <div className="flex items-center gap-3 mb-5">
-            <span className="text-2xl">⚖️</span>
             <div>
-              <h3 className="font-extrabold text-red-900 text-base">Liability Release — Read Each Statement</h3>
-              <p className="text-xs text-gray-400 mt-0.5">You must check every box before you can sign. This is a binding legal document.</p>
+              <h3 className="font-bold text-white text-base">Liability Release — Read Each Statement</h3>
+              <p className="text-xs text-white/45 mt-0.5">You must check every box before you can sign. This is a binding legal document.</p>
             </div>
           </div>
 
           <div className="space-y-4">
             {acknowledgments.map((ack, i) => (
-              <label key={ack.id} className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all ${checked[ack.id] ? "bg-green-50 border-green-300" : "bg-gray-50 border-gray-200 hover:border-gray-300"}`}>
+              <label key={ack.id} className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all ${checked[ack.id] ? "bg-sky-400/10 border-sky-400/40" : "bg-[#05070d] border-white/10 hover:border-white/25"}`}>
                 <div className="flex-shrink-0 mt-0.5">
                   <input
                     type="checkbox"
                     checked={!!checked[ack.id]}
                     onChange={() => toggleCheck(ack.id)}
-                    className="w-5 h-5 accent-green-600 cursor-pointer"
+                    className="w-5 h-5 accent-sky-500 cursor-pointer"
                   />
                 </div>
                 <div className="text-sm leading-relaxed">
-                  <span className="font-extrabold text-gray-400 mr-2">{i + 1}.</span>
-                  <span className={checked[ack.id] ? "text-green-800" : "text-gray-700"}>{ack.text}</span>
+                  <span className="font-extrabold text-white/45 mr-2">{i + 1}.</span>
+                  <span className={checked[ack.id] ? "text-white" : "text-white/65"}>{ack.text}</span>
                 </div>
               </label>
             ))}
@@ -237,9 +234,9 @@ function DeclinePageContent() {
         </div>
 
         {/* Full waiver text */}
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
-          <h3 className="font-extrabold text-gray-700 text-sm uppercase tracking-wide mb-3">Full Waiver Text</h3>
-          <div className="text-xs text-gray-500 leading-relaxed space-y-3">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <h3 className="font-bold text-white text-sm uppercase tracking-wide mb-3">Full Waiver Text</h3>
+          <div className="text-xs text-white/55 leading-relaxed space-y-3">
             <p>
               I, the undersigned, acknowledge that I was offered and have voluntarily declined a Vacation Protection Plan in connection with my cruise booking through {COMPANY_LEGAL}.
             </p>
@@ -259,53 +256,53 @@ function DeclinePageContent() {
         </div>
 
         {/* Signature */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h3 className="font-extrabold text-blue-900 text-base mb-1">Digital Signature</h3>
-          <p className="text-xs text-gray-400 mb-4">
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <h3 className="font-bold text-white text-base mb-1">Digital Signature</h3>
+          <p className="text-xs text-white/45 mb-4">
             Type your full legal name exactly as entered above ({form.firstName || "First"} {form.lastName || "Last"}) to sign this document. Your typed name constitutes a legal electronic signature under the Electronic Signatures in Global and National Commerce Act (E-SIGN Act).
           </p>
           <input
             value={form.signature}
             onChange={(e) => setF("signature", e.target.value)}
             placeholder={`${form.firstName || "First"} ${form.lastName || "Last"}`}
-            className={`w-full border rounded-xl px-5 py-4 text-lg font-bold focus:outline-none focus:ring-2 ${
+            className={`w-full rounded-xl px-5 py-4 text-lg font-bold focus:outline-none focus:ring-2 ${
               form.signature && !signatureMatch
-                ? "border-red-300 focus:ring-red-400 bg-red-50"
+                ? "border border-amber-400/40 focus:ring-amber-400 bg-[#05070d] text-amber-300/80"
                 : form.signature && signatureMatch
-                ? "border-green-400 focus:ring-green-400 bg-green-50 text-green-800"
-                : "border-gray-200 focus:ring-blue-500"
+                ? "border border-sky-400/60 focus:ring-sky-400 bg-[#05070d] text-white"
+                : "border border-white/10 bg-[#05070d] text-white focus:ring-sky-400"
             }`}
             style={{ fontFamily: "cursive, Georgia, serif" }}
           />
           {form.signature && !signatureMatch && (
-            <p className="text-xs text-red-500 mt-2">Signature must match your name exactly: &quot;{form.firstName} {form.lastName}&quot;</p>
+            <p className="text-xs text-amber-300/80 mt-2">Signature must match your name exactly: &quot;{form.firstName} {form.lastName}&quot;</p>
           )}
           {signatureMatch && (
-            <p className="text-xs text-green-600 mt-2 font-semibold">✓ Signature matched</p>
+            <p className="text-xs text-sky-400/80 mt-2 font-semibold">Signature matched</p>
           )}
-          <p className="text-xs text-gray-400 mt-3">Date: {TODAY()} · IP and timestamp are recorded with this submission.</p>
+          <p className="text-xs text-white/45 mt-3">Date: {TODAY()} · IP and timestamp are recorded with this submission.</p>
         </div>
 
         {!allChecked && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-800 text-center">
+          <div className="bg-[#0b1020] border border-white/10 rounded-xl p-4 text-sm text-amber-300/80 text-center">
             Please check all {acknowledgments.length} boxes above before signing.
           </div>
         )}
 
         <div className="flex gap-4 justify-between items-center flex-wrap">
-          <Link href="/vacation-protection" className="text-sm font-semibold text-blue-600 hover:underline">
+          <Link href="/vacation-protection" className="text-sm font-semibold text-sky-400/80 hover:text-white underline">
             ← Reconsider Vacation Protection
           </Link>
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-extrabold px-10 py-4 rounded-full text-base transition-all shadow-lg"
+            className="bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider text-sm px-10 py-4 rounded-full transition-all"
           >
             I Decline Protection — Sign &amp; Submit
           </button>
         </div>
 
-        <p className="text-xs text-gray-400 text-center pb-4">
+        <p className="text-xs text-white/45 text-center pb-4">
           This document is stored securely with a unique waiver ID and timestamp. A copy is maintained in our booking records. By submitting, you confirm your agreement to the liability release above.
         </p>
       </div>

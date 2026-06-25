@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import {
   type Booking,
   getBooking,
@@ -9,6 +10,7 @@ import {
   fmt$,
   fmtDate,
   fmtDateShort,
+  TERMS_VERSION,
 } from "@/lib/sea-pay";
 
 export default function ContractPage() {
@@ -29,11 +31,23 @@ export default function ContractPage() {
 
   async function handleSign() {
     if (!booking || !sigName.trim() || !agreed) return;
+    // Capture the client IP as chargeback evidence (best-effort).
+    let ip = "unknown";
+    try {
+      const res = await fetch("/api/ip");
+      if (res.ok) ip = (await res.json()).ip ?? "unknown";
+    } catch {
+      /* non-fatal */
+    }
+    const now = new Date();
     const updated: Booking = {
       ...booking,
       contractSigned: true,
-      contractSignedDate: new Date().toISOString().split("T")[0],
+      contractSignedDate: now.toISOString().split("T")[0],
       contractSignedName: sigName.trim(),
+      contractSignedAt: now.toISOString(),
+      contractSignedIp: ip,
+      termsVersion: TERMS_VERSION,
       status: booking.status === "pending" ? "confirmed" : booking.status,
     };
     await saveBooking(updated);
@@ -242,6 +256,14 @@ export default function ContractPage() {
                   Signed by <strong>{booking.contractSignedName}</strong> on{" "}
                   {booking.contractSignedDate && fmtDate(booking.contractSignedDate)}
                 </div>
+                <div className="mt-2 text-[11px] text-gray-400">
+                  Electronically accepted
+                  {booking.contractSignedAt
+                    ? ` ${new Date(booking.contractSignedAt).toLocaleString("en-US")}`
+                    : ""}
+                  {booking.contractSignedIp ? ` · IP ${booking.contractSignedIp}` : ""}
+                  {booking.termsVersion ? ` · Terms ${booking.termsVersion}` : ""}
+                </div>
                 <div className="mt-3 text-xs text-gray-400 font-mono">{booking.bookingNumber}</div>
               </div>
             ) : (
@@ -266,7 +288,17 @@ export default function ContractPage() {
                     className="mt-1 w-4 h-4 accent-blue-600"
                   />
                   <span className="text-sm text-gray-600">
-                    I have read and agree to all terms and conditions in this Cruise Booking Agreement, including the cancellation policy, payment schedule, and agency liability terms.
+                    I have read and agree to all terms and conditions in this Cruise
+                    Booking Agreement, including the cancellation policy, payment
+                    schedule, and agency liability terms, and the full{" "}
+                    <Link
+                      href="/terms"
+                      target="_blank"
+                      className="text-blue-600 underline font-semibold"
+                    >
+                      Terms &amp; Conditions
+                    </Link>
+                    .
                   </span>
                 </label>
                 <button

@@ -5,9 +5,7 @@ const options = [
     id: "flexible",
     label: "Flexible Rate",
     badge: "Most Popular",
-    badgeColor: "bg-blue-600",
     priceNote: "Standard price",
-    icon: "🔄",
     highlight: false,
     features: [
       "Fully refundable up to final payment date",
@@ -18,15 +16,12 @@ const options = [
     ],
     fine: null,
     cta: "Book Flexible",
-    ctaColor: "bg-blue-900 hover:bg-blue-800",
   },
   {
     id: "semiflex",
     label: "Semi-Flex Rate",
     badge: "Save 5–8%",
-    badgeColor: "bg-purple-600",
     priceNote: "Moderate savings",
-    icon: "⚖️",
     highlight: false,
     features: [
       "Refundable up to 90 days before sailing",
@@ -37,15 +32,12 @@ const options = [
     ],
     fine: "Cancellations inside 90 days receive a future cruise credit only.",
     cta: "Book Semi-Flex",
-    ctaColor: "bg-purple-700 hover:bg-purple-800",
   },
   {
     id: "nonrefundable",
     label: "Non-Refundable Rate",
     badge: "Best Price",
-    badgeColor: "bg-red-600",
     priceNote: "Lowest available price",
-    icon: "🏷️",
     highlight: true,
     features: [
       "Lowest price — no refunds for any reason",
@@ -56,15 +48,12 @@ const options = [
     ],
     fine: "By choosing this rate you acknowledge that all payments are final and non-refundable under any circumstance, including illness, weather, or schedule changes.",
     cta: "Book Non-Refundable",
-    ctaColor: "bg-red-600 hover:bg-red-700",
   },
   {
     id: "nontransferable",
     label: "Non-Transferable Rate",
     badge: "Save 3–5%",
-    badgeColor: "bg-orange-500",
     priceNote: "Slight discount",
-    icon: "🔒",
     highlight: false,
     features: [
       "Fully refundable up to final payment date",
@@ -75,7 +64,6 @@ const options = [
     ],
     fine: "The cabin is tied to the original guest's name. No substitutions allowed at any time.",
     cta: "Book Non-Transferable",
-    ctaColor: "bg-orange-600 hover:bg-orange-700",
   },
 ];
 
@@ -104,15 +92,14 @@ const faqItems = [
 
 export default function BookingOptionsPage() {
   return (
-    <div>
+    <div className="bg-[#05070d]">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block bg-red-600 text-white text-sm font-bold px-4 py-1 rounded-full mb-4 uppercase tracking-wide">
-            Booking Rates
-          </div>
-          <h1 className="text-5xl font-extrabold mb-3">Choose Your Rate Type</h1>
-          <p className="text-blue-100 text-xl max-w-2xl mx-auto">
+      <section className="bg-[#05070d] text-white relative overflow-hidden grid-bg py-20">
+        <div className="aurora bg-sky-500 w-[600px] h-[600px] -top-40 left-1/2 -translate-x-1/2 opacity-[0.14]" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Booking Rates"}</div>
+          <h1 className="text-5xl font-extrabold uppercase tracking-[-0.01em] mb-3">Choose Your Rate Type</h1>
+          <p className="text-white/55 text-xl max-w-2xl mx-auto">
             We offer flexible, semi-flex, non-refundable, and non-transferable rates — so you can match your booking to your travel style and budget.
           </p>
         </div>
@@ -122,32 +109,31 @@ export default function BookingOptionsPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {options.map((opt) => (
-            <div key={opt.id} className={`rounded-2xl border overflow-hidden flex flex-col shadow-md ${opt.highlight ? "border-red-300 ring-2 ring-red-500" : "border-gray-100"}`}>
-              <div className={`p-5 ${opt.highlight ? "bg-red-50" : "bg-white"}`}>
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-3xl">{opt.icon}</span>
-                  <span className={`text-xs font-extrabold text-white px-3 py-1 rounded-full ${opt.badgeColor}`}>{opt.badge}</span>
+            <div key={opt.id} className={`rounded-2xl border overflow-hidden flex flex-col bg-[#0b1020] ${opt.highlight ? "border-sky-400/70" : "border-white/10"}`}>
+              <div className="p-5">
+                <div className="flex items-start justify-end mb-3">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-sky-300 border border-sky-400/30 bg-sky-400/10 px-3 py-1 rounded-full">{opt.badge}</span>
                 </div>
-                <h3 className="font-extrabold text-blue-900 text-xl mb-1">{opt.label}</h3>
-                <p className="text-sm text-gray-500 mb-4">{opt.priceNote}</p>
+                <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-xl mb-1">{opt.label}</h3>
+                <p className="text-sm text-white/45 mb-4">{opt.priceNote}</p>
                 <ul className="space-y-2 mb-4">
                   {opt.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-green-500 font-bold mt-0.5 flex-shrink-0">✓</span>
+                    <li key={f} className="flex items-start gap-2 text-sm text-white/55">
+                      <span className="text-sky-400 font-bold mt-0.5 flex-shrink-0">✓</span>
                       {f}
                     </li>
                   ))}
                 </ul>
                 {opt.fine && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-xs text-yellow-800">
-                    ⚠️ {opt.fine}
+                  <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-3 text-xs text-amber-300/80">
+                    {opt.fine}
                   </div>
                 )}
               </div>
-              <div className="mt-auto p-5 bg-gray-50 border-t border-gray-100">
+              <div className="mt-auto p-5 border-t border-white/10">
                 <Link
                   href={`/contact?rate=${opt.id}`}
-                  className={`block text-center text-white font-bold px-5 py-3 rounded-full text-sm transition-all shadow ${opt.ctaColor}`}
+                  className="block text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-5 py-3 rounded-full text-sm transition-all"
                 >
                   {opt.cta}
                 </Link>
@@ -158,19 +144,19 @@ export default function BookingOptionsPage() {
 
         {/* Comparison table */}
         <div className="mt-14">
-          <h2 className="text-3xl font-extrabold text-blue-900 mb-6 text-center">Quick Comparison</h2>
-          <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-6 text-center">Quick Comparison</h2>
+          <div className="overflow-x-auto rounded-2xl border border-white/10">
             <table className="w-full text-sm">
-              <thead className="bg-blue-900 text-white">
+              <thead className="bg-[#0b1020] text-white">
                 <tr>
                   <th className="text-left px-5 py-3 font-bold">Feature</th>
                   <th className="text-center px-4 py-3 font-bold">Flexible</th>
                   <th className="text-center px-4 py-3 font-bold">Semi-Flex</th>
-                  <th className="text-center px-4 py-3 font-bold text-red-300">Non-Refundable</th>
+                  <th className="text-center px-4 py-3 font-bold text-sky-300">Non-Refundable</th>
                   <th className="text-center px-4 py-3 font-bold">Non-Transferable</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-white/10 bg-[#05070d]">
                 {[
                   ["Best price?", "—", "✓", "✓✓", "✓"],
                   ["Full refund available?", "✓", "Partial", "✗", "✓"],
@@ -178,10 +164,10 @@ export default function BookingOptionsPage() {
                   ["Transfer to another person?", "✓", "Before FP", "✗", "✗"],
                   ["Date change?", "✓", "✓", "✗", "✓"],
                 ].map(([feature, ...vals]) => (
-                  <tr key={feature} className="hover:bg-gray-50">
-                    <td className="px-5 py-3 font-semibold text-gray-700">{feature}</td>
+                  <tr key={feature} className="hover:bg-white/[0.03]">
+                    <td className="px-5 py-3 font-semibold text-white/70">{feature}</td>
                     {vals.map((v, i) => (
-                      <td key={i} className={`px-4 py-3 text-center font-semibold ${v === "✗" ? "text-red-500" : v === "✓" || v === "✓✓" ? "text-green-600" : "text-yellow-600"}`}>
+                      <td key={i} className={`px-4 py-3 text-center font-semibold ${v === "✗" ? "text-white/40" : v === "✓" || v === "✓✓" ? "text-sky-400" : "text-amber-300/80"}`}>
                         {v}
                       </td>
                     ))}
@@ -190,19 +176,19 @@ export default function BookingOptionsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-gray-400 mt-3 text-center">FP = Final Payment date · Policies subject to each cruise line&apos;s terms.</p>
+          <p className="text-xs text-white/45 mt-3 text-center">FP = Final Payment date · Policies subject to each cruise line&apos;s terms.</p>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-gray-50 py-14">
+      <section className="bg-[#05070d] py-14 border-t border-white/10">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-blue-900 mb-8 text-center">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-8 text-center">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {faqItems.map((item) => (
-              <div key={item.q} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="font-extrabold text-blue-900 mb-2">{item.q}</div>
-                <p className="text-sm text-gray-600 leading-relaxed">{item.a}</p>
+              <div key={item.q} className="bg-[#0b1020] rounded-2xl border border-white/10 p-5">
+                <div className="font-extrabold text-white mb-2">{item.q}</div>
+                <p className="text-sm text-white/55 leading-relaxed">{item.a}</p>
               </div>
             ))}
           </div>
@@ -210,15 +196,15 @@ export default function BookingOptionsPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-900 text-white py-14">
+      <section className="bg-[#05070d] text-white py-14 border-t border-white/10">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-extrabold mb-3">Not sure which rate is right for you?</h2>
-          <p className="text-blue-200 mb-6">Our specialists will walk you through the best option based on your travel dates, budget, and flexibility needs.</p>
+          <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-3">Not sure which rate is right for you?</h2>
+          <p className="text-white/55 mb-6">Our specialists will walk you through the best option based on your travel dates, budget, and flexibility needs.</p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/contact" className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full text-lg transition-all shadow-lg">
+            <Link href="/contact" className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Talk to a Specialist
             </Link>
-            <Link href="/deals" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-4 rounded-full text-lg transition-all">
+            <Link href="/deals" className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all">
               Browse Deals
             </Link>
           </div>

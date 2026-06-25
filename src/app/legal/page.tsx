@@ -34,13 +34,13 @@ const prohibited = [
 
 export default function LegalPage() {
   return (
-    <div>
+    <div className="bg-[#05070d]">
       {/* Hero */}
-      <section className="bg-blue-900 text-white py-14">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-3">Legal</div>
-          <h1 className="text-4xl font-extrabold mb-3">Intellectual Property &amp; Legal Notice</h1>
-          <p className="text-blue-100 text-lg max-w-2xl">
+      <section className="bg-[#05070d] text-white relative overflow-hidden grid-bg py-14">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Legal"}</div>
+          <h1 className="text-4xl font-extrabold uppercase tracking-[-0.01em] mb-3">Intellectual Property &amp; Legal Notice</h1>
+          <p className="text-white/65 text-lg max-w-2xl">
             All content, brand names, programs, systems, crew names, and ideas on this website are the exclusive property of {OWNER}. Unauthorized use is prohibited.
           </p>
         </div>
@@ -50,37 +50,37 @@ export default function LegalPage() {
 
         {/* Copyright */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">Copyright Notice</h2>
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 text-blue-900 font-semibold text-lg mb-4">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Copyright Notice</h2>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 text-white font-semibold text-lg mb-4">
             © {YEAR} Cruises from Galveston™. All Rights Reserved.
           </div>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-white/65 leading-relaxed">
             All content on this website — including but not limited to text, graphics, logos, icons, images, page layouts, program names, crew names, community systems, booking system concepts, and software — is the exclusive property of {OWNER} and is protected by United States copyright law and applicable international treaties. No content may be reproduced, distributed, modified, or used in any form without the prior written consent of {OWNER}.
           </p>
         </section>
 
         {/* Trademarks */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">Trademarks &amp; Brand Names</h2>
-          <p className="text-gray-600 leading-relaxed mb-6">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Trademarks &amp; Brand Names</h2>
+          <p className="text-white/65 leading-relaxed mb-6">
             The following names, slogans, and programs are trademarks and proprietary brands of {OWNER}. Unauthorized use of any of these names — in whole, in part, or in any confusingly similar form — for commercial purposes is strictly prohibited.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {trademarks.map((tm) => (
-              <div key={tm.name} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-                <div className="font-extrabold text-blue-900 text-sm mb-1">{tm.name}</div>
-                <div className="text-xs text-gray-400 leading-relaxed">{tm.desc}</div>
+              <div key={tm.name} className="bg-[#0b1020] rounded-2xl border border-white/10 p-4">
+                <div className="font-extrabold text-white text-sm mb-1">{tm.name}</div>
+                <div className="text-xs text-white/45 leading-relaxed">{tm.desc}</div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-white/45 mt-4">
             ™ indicates a trademark claim. Use of the ™ symbol does not constitute a concession that registration is required for protection under applicable law.
           </p>
         </section>
 
         {/* Slogans */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">Proprietary Slogans &amp; Mottos</h2>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Proprietary Slogans &amp; Mottos</h2>
           <div className="space-y-3">
             {[
               { slogan: '“Cruises Start Here.”', owner: "Cruise Experience Center™" },
@@ -88,9 +88,9 @@ export default function LegalPage() {
               { slogan: '“Find Your People Before You Sail.”', owner: "Sea You On Deck Crews™" },
               { slogan: '“Cruise communities, meetups, tips, and onboard connections.”', owner: "Sea You On Deck Crews™" },
             ].map((s) => (
-              <div key={s.slogan} className="flex items-center gap-4 bg-gray-50 rounded-xl px-5 py-3">
-                <span className="font-bold text-blue-900 italic flex-1">{s.slogan}</span>
-                <span className="text-xs text-gray-400 font-semibold flex-shrink-0">{s.owner}</span>
+              <div key={s.slogan} className="flex items-center gap-4 bg-[#0b1020] border border-white/10 rounded-xl px-5 py-3">
+                <span className="font-bold text-white italic flex-1">{s.slogan}</span>
+                <span className="text-xs text-white/45 font-semibold flex-shrink-0">{s.owner}</span>
               </div>
             ))}
           </div>
@@ -98,12 +98,12 @@ export default function LegalPage() {
 
         {/* Prohibited Uses */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">Prohibited Uses</h2>
-          <p className="text-gray-600 mb-4">You may not, without prior written permission from {OWNER}:</p>
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Prohibited Uses</h2>
+          <p className="text-white/65 mb-4">You may not, without prior written permission from {OWNER}:</p>
           <ul className="space-y-3">
             {prohibited.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
-                <span className="text-red-500 font-extrabold mt-0.5 flex-shrink-0">✗</span>
+              <li key={i} className="flex items-start gap-3 text-sm text-white/65">
+                <span className="text-sky-400 font-extrabold mt-0.5 flex-shrink-0">·</span>
                 {item}
               </li>
             ))}
@@ -112,40 +112,40 @@ export default function LegalPage() {
 
         {/* DMCA */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">DMCA &amp; Infringement Reporting</h2>
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">DMCA &amp; Infringement Reporting</h2>
+          <p className="text-white/65 leading-relaxed mb-4">
             If you believe that any content on this website infringes upon your intellectual property rights, or if you become aware of unauthorized use of our intellectual property, please contact us immediately. We take IP violations seriously and will pursue all available legal remedies.
           </p>
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
-            <div className="font-extrabold text-red-800 mb-2">Report Infringement or Unauthorized Use</div>
-            <div className="text-sm text-red-700 space-y-1">
-              <div>📧 <a href={`mailto:${EMAIL}?subject=IP Infringement Notice`} className="underline hover:no-underline">{EMAIL}</a></div>
-              <div className="text-xs text-red-500 mt-2">Include: your name, description of the IP concern, URL of the infringing content (if applicable), and your contact information.</div>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-5">
+            <div className="font-extrabold text-white mb-2">Report Infringement or Unauthorized Use</div>
+            <div className="text-sm text-white/65 space-y-1">
+              <div><a href={`mailto:${EMAIL}?subject=IP Infringement Notice`} className="text-sky-400/80 hover:text-white underline">{EMAIL}</a></div>
+              <div className="text-xs text-white/45 mt-2">Include: your name, description of the IP concern, URL of the infringing content (if applicable), and your contact information.</div>
             </div>
           </div>
         </section>
 
         {/* Disclaimer */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">No License Granted</h2>
-          <p className="text-gray-600 leading-relaxed">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">No License Granted</h2>
+          <p className="text-white/65 leading-relaxed">
             Nothing on this website shall be construed as granting, by implication, estoppel, or otherwise, any license or right to use any trademark, brand name, logo, slogan, content, or intellectual property displayed on the site without the written permission of {OWNER}. Any unauthorized use will constitute an infringement and may subject you to civil and criminal penalties.
           </p>
         </section>
 
         {/* Governing Law */}
         <section>
-          <h2 className="text-2xl font-extrabold text-blue-900 mb-4">Governing Law</h2>
-          <p className="text-gray-600 leading-relaxed">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-4">Governing Law</h2>
+          <p className="text-white/65 leading-relaxed">
             This legal notice and any disputes arising from the use of this website or the unauthorized use of our intellectual property shall be governed by the laws of the State of Texas, United States of America. Any legal proceedings shall be brought exclusively in the courts of Galveston County, Texas.
           </p>
-          <div className="mt-4 bg-gray-50 rounded-xl px-5 py-4 text-sm text-gray-400">
+          <div className="mt-4 bg-[#0b1020] border border-white/10 rounded-xl px-5 py-4 text-sm text-white/45">
             Last updated: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · {OWNER} · Galveston, Texas
           </div>
         </section>
 
-        <div className="border-t border-gray-100 pt-8 text-center">
-          <Link href="/" className="text-blue-600 hover:text-blue-800 font-semibold text-sm">← Back to Home</Link>
+        <div className="border-t border-white/10 pt-8 text-center">
+          <Link href="/" className="text-sky-400/80 hover:text-white font-semibold text-sm underline">← Back to Home</Link>
         </div>
       </div>
     </div>

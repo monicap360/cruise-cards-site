@@ -19,6 +19,7 @@ export type Cabin = {
   sqft: number;
   price: number;
   status: CabinStatus;
+  isGuarantee?: boolean; // GTY — guaranteed category, specific room assigned by cruise line
   guestName?: string;
   guestEmail?: string;
   bookingId?: string;
@@ -159,6 +160,7 @@ function toCabin(row: Record<string, unknown>): Cabin {
     sqft: (row.sqft as number) ?? 0,
     price: (row.price as number) ?? 0,
     status: (row.status as CabinStatus) ?? "available",
+    isGuarantee: (row.is_guarantee as boolean) ?? false,
     guestName: row.guest_name as string | undefined,
     guestEmail: row.guest_email as string | undefined,
     bookingId: row.booking_id as string | undefined,
@@ -227,6 +229,7 @@ export async function saveSailingBlock(block: SailingBlock): Promise<void> {
         sqft: c.sqft,
         price: c.price,
         status: c.status,
+        is_guarantee: c.isGuarantee ?? false,
         guest_name: c.guestName,
         guest_email: c.guestEmail,
         booking_id: c.bookingId,
