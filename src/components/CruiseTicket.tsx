@@ -39,6 +39,8 @@ export default function CruiseTicket({
   })();
   const balance =
     fromPrice && fromPrice > deposit ? fromPrice - deposit : undefined;
+  // Gross total = the full cabin fare at double occupancy (2 guests).
+  const grossTotal = fromPrice ? fromPrice * 2 : undefined;
   const stops = [
     { name: fromPort, sub: fmtDateDow(sailingDate), role: "Depart", home: true },
     ...ports.map((p) => ({ name: p, sub: "", role: "Port", home: false })),
@@ -134,6 +136,12 @@ export default function CruiseTicket({
             </div>
 
             <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-[12px]">
+              {grossTotal && (
+                <div className="flex justify-between gap-2">
+                  <span className="text-white/45">Gross total · 2 guests</span>
+                  <span className="font-bold text-white">{fmt$(grossTotal)}</span>
+                </div>
+              )}
               <div className="flex justify-between gap-2">
                 <span className="text-white/45">Deposit today</span>
                 <span className="font-bold text-white">

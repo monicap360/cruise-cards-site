@@ -2,6 +2,7 @@ import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
 import CabinShowcase from "@/components/CabinShowcase";
 import CruiseTicket from "@/components/CruiseTicket";
+import CruiseInclusions from "@/components/CruiseInclusions";
 import {
   getSailingBlock,
   groupByType,
@@ -192,6 +193,14 @@ export default async function SailingOptionsPage({
             </Link>
           </div>
         )}
+      </section>
+
+      {/* What's included / not included */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">
+          {"// What's Included in Your Cruise"}
+        </div>
+        <CruiseInclusions />
       </section>
     </div>
   );
