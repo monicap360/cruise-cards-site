@@ -341,8 +341,60 @@ export default function GroupBlocksPage() {
         )}
       </section>
 
+      {/* FAQ — group vs individual */}
+      <section className="bg-[#05070d] text-white border-t border-white/10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">
+            {"// FAQ"}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-[-0.01em] mb-8">
+            Group vs. Individual Reservations
+          </h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: "What is an individual reservation?",
+                a: "An individual (or standard) reservation is one booking for your own cabin — you pick the ship, date, and stateroom, pay your own deposit, and manage your own payments and check-in. It's the right choice for a single household traveling on its own.",
+              },
+              {
+                q: "What is a group reservation?",
+                a: "A group reservation is a block of cabins (typically 8+ staterooms / 16+ guests) held together under one group — perfect for families, reunions, weddings, churches, and friend trips. Everyone sails on the same date and ship, and the group is managed as a whole with a shared rate and a group leader.",
+              },
+              {
+                q: "How is pricing different?",
+                a: "Groups get a negotiated group rate that's locked for the whole block, plus group amenities the cruise line offers (onboard credit, perks) and often a free berth — commonly one free guest (cruise fare) for every 8 paid cabins. Individuals pay the current published fare, which moves up and down with demand.",
+              },
+              {
+                q: "How do deposits and payments work?",
+                a: "In a group, the cabins are held with group deposits and each guest pays their own deposit and balance toward their cabin by the group's deadlines. Individually, you simply pay your own deposit and final payment. Either way, each guest's balance is tracked separately.",
+              },
+              {
+                q: "Can each guest still manage their own cabin?",
+                a: "Yes. In a group, every guest has their own confirmation number, cabin, and guest details — they just sail under the group umbrella. The group leader sees a live roster (who's booked, who's paid a deposit, who's paid in full), while each guest still does their own online check-in.",
+              },
+              {
+                q: "What happens to unbooked rooms in a group block?",
+                a: "Held cabins that aren't claimed by the group's release date are returned to general inventory at the prevailing (non-group) price. That's why we show a countdown and a Book Now in the group portal — book before release to keep the group rate.",
+              },
+              {
+                q: "Which should I choose?",
+                a: "Traveling solo or as one household? An individual reservation is simplest. Bringing 8+ cabins together for an occasion? A group reservation locks a shared rate, unlocks perks and a possible free berth, and gives your leader a portal to see everyone's status at a glance.",
+              },
+            ].map((f) => (
+              <div
+                key={f.q}
+                className="bg-[#0b1020] border border-white/10 rounded-2xl p-5"
+              >
+                <h3 className="font-bold text-white mb-1.5">{f.q}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-[#05070d] text-white relative overflow-hidden py-14">
+      <section className="bg-[#05070d] text-white relative overflow-hidden py-14 border-t border-white/10">
         <div className="absolute inset-0 grid-bg opacity-40" />
         <div className="aurora bg-sky-500 left-1/2 -translate-x-1/2 -top-32 opacity-[0.14]" />
         <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
