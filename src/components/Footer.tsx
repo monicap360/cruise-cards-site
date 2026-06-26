@@ -101,6 +101,8 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {[
                 { href: "/", label: "Home" },
+                { href: "/account", label: "My Account / Login" },
+                { href: "/whats-next", label: "You're Booked — What's Next" },
                 { href: "/already-booked", label: "Already Booked?" },
                 { href: "/cruise-line-apps", label: "Cruise Line Apps & Check-In" },
                 { href: "/deals", label: "Cruise Deals" },
