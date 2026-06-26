@@ -101,6 +101,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {[
                 { href: "/", label: "Home" },
+                { href: "/already-booked", label: "Already Booked?" },
                 { href: "/deals", label: "Cruise Deals" },
                 { href: "/last-minute", label: "Last-Minute Sailings" },
                 { href: "/list-your-cruise", label: "List Your Cruise" },

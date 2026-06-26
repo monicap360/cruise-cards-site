@@ -424,5 +424,53 @@ drop policy if exists "cabin_rates anon write" on cabin_rates;
 create policy "cabin_rates anon write" on cabin_rates for all using (true) with check (true);
 
 -- ============================================================
+-- Customer agency credits (future-cruise credit, refunds-as-credit, etc.)
+-- ============================================================
+create table if not exists customer_credits (
+  id text primary key,
+  customer_name text,
+  email text not null,
+  booking_ref text,
+  amount numeric not null default 0,
+  reason text,
+  status text default 'active', -- active | used | expired
+  expires_on text,
+  notes text,
+  created_at timestamptz default now()
+);
+
+alter table customer_credits enable row level security;
+
+drop policy if exists "credits anon read" on customer_credits;
+create policy "credits anon read" on customer_credits for select using (true);
+
+drop policy if exists "credits anon write" on customer_credits;
+create policy "credits anon write" on customer_credits for all using (true) with check (true);
+
+-- ============================================================
+-- Customer communication log (point-of-contact history per customer)
+-- ============================================================
+create table if not exists customer_contacts (
+  id text primary key,
+  customer_name text,
+  email text not null,
+  phone text,
+  channel text default 'call', -- call | email | text | in-person | voicemail | other
+  direction text default 'outbound', -- outbound | inbound
+  summary text,
+  staff text,
+  contacted_on text, -- YYYY-MM-DD
+  created_at timestamptz default now()
+);
+
+alter table customer_contacts enable row level security;
+
+drop policy if exists "contacts anon read" on customer_contacts;
+create policy "contacts anon read" on customer_contacts for select using (true);
+
+drop policy if exists "contacts anon write" on customer_contacts;
+create policy "contacts anon write" on customer_contacts for all using (true) with check (true);
+
+-- ============================================================
 -- Done. All tables created.
 -- ============================================================
