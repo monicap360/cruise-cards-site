@@ -1,6 +1,5 @@
 import Link from "next/link";
 import DestinationCard from "@/components/DestinationCard";
-import CompassLogo from "@/components/CompassLogo";
 import { FEATURED_DESTINATIONS } from "@/lib/destinations";
 import { durationWordCap } from "@/lib/sea-pay";
 
@@ -114,101 +113,11 @@ export default function Home() {
           alt="MSC Seascape cruise ship in port — sailing round-trip from Galveston, Texas"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-[#05070d]/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/55 to-[#05070d]/15" />
         {/* Blueprint grid + single cool glow */}
-        <div className="absolute inset-0 grid-bg opacity-60" />
+        <div className="absolute inset-0 grid-bg opacity-30" />
         <div className="absolute inset-0 overflow-hidden">
           <div className="aurora bg-sky-500 w-[52rem] h-[52rem] -top-72 left-1/2 -translate-x-1/2 opacity-[0.16]" />
-        </div>
-
-        {/* Compass rose */}
-        <div className="hidden lg:block absolute right-[-2rem] xl:right-12 top-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-25">
-          <svg
-            viewBox="0 0 200 200"
-            className="w-[30rem] h-[30rem] text-sky-400"
-            fill="none"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            {/* rings */}
-            <circle cx="100" cy="100" r="95" strokeWidth="0.75" opacity="0.5" />
-            <circle cx="100" cy="100" r="82" strokeWidth="0.75" opacity="0.4" />
-            <circle
-              cx="100"
-              cy="100"
-              r="68"
-              strokeWidth="0.75"
-              strokeDasharray="1 5"
-              opacity="0.6"
-            />
-            {/* tick marks every 15° */}
-            <g strokeWidth="0.75" opacity="0.45">
-              {Array.from({ length: 24 }).map((_, i) => {
-                const a = (i * 15 * Math.PI) / 180;
-                const r1 = i % 2 === 0 ? 88 : 91;
-                return (
-                  <line
-                    key={i}
-                    x1={100 + r1 * Math.sin(a)}
-                    y1={100 - r1 * Math.cos(a)}
-                    x2={100 + 95 * Math.sin(a)}
-                    y2={100 - 95 * Math.cos(a)}
-                  />
-                );
-              })}
-            </g>
-            {/* diagonal short rays */}
-            <g strokeWidth="0.75" opacity="0.5">
-              <line x1="100" y1="100" x2="148" y2="52" />
-              <line x1="100" y1="100" x2="148" y2="148" />
-              <line x1="100" y1="100" x2="52" y2="148" />
-              <line x1="100" y1="100" x2="52" y2="52" />
-            </g>
-            {/* cardinal star — N/S vertical, E/W horizontal */}
-            <path
-              d="M100 22 L108 100 L100 178 L92 100 Z"
-              fill="currentColor"
-              fillOpacity="0.22"
-              stroke="currentColor"
-              strokeWidth="0.5"
-            />
-            <path
-              d="M22 100 L100 108 L178 100 L100 92 Z"
-              fill="#ffffff"
-              fillOpacity="0.12"
-              stroke="currentColor"
-              strokeWidth="0.5"
-            />
-            <circle
-              cx="100"
-              cy="100"
-              r="3.5"
-              fill="currentColor"
-              stroke="none"
-            />
-            {/* cardinal letters */}
-            <g
-              fill="currentColor"
-              stroke="none"
-              fontSize="13"
-              fontWeight="700"
-              textAnchor="middle"
-              style={{ fontFamily: "var(--font-geist-mono, monospace)" }}
-            >
-              <text x="100" y="16">
-                N
-              </text>
-              <text x="190" y="105">
-                E
-              </text>
-              <text x="100" y="197">
-                S
-              </text>
-              <text x="11" y="105">
-                W
-              </text>
-            </g>
-          </svg>
         </div>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-16">
@@ -337,7 +246,11 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURED_DESTINATIONS.map((d) => (
-              <DestinationCard key={d.slug} d={d} />
+              <DestinationCard
+                key={d.slug}
+                d={d}
+                href={`/destinations/${d.slug}`}
+              />
             ))}
           </div>
           <div className="mt-10">
@@ -460,7 +373,6 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">{"// A real place on Galveston Island"}</div>
-            <CompassLogo showText={false} className="mb-4 scale-125 origin-left" />
             <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4 leading-[0.95]">
               The Cruise
               <br />

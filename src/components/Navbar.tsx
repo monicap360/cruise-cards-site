@@ -12,6 +12,9 @@ const links = [
   { href: "/ships-from-galveston", label: "Ships" },
   { href: "/deck-plans", label: "Deck Plans" },
   { href: "/destinations", label: "Destinations" },
+  { href: "/webcams", label: "Live Cams" },
+  { href: "/guides", label: "Guides" },
+  { href: "/news", label: "News" },
   { href: "/group-blocks", label: "Group Cabins" },
   { href: "/specials", label: "Specials" },
   { href: "/sea-you-on-deck", label: "Sea You on Deck" },
@@ -43,7 +46,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center" aria-label="Cruise Experience Center — home">
-            <CompassLogo />
+            <CompassLogo className="scale-125 origin-left" />
           </Link>
 
           <div className="hidden md:flex items-center gap-1">

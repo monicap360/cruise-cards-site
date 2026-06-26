@@ -1,19 +1,34 @@
+import Link from "next/link";
 import Photo from "@/components/Photo";
 import type { Destination } from "@/lib/destinations";
 
 /**
  * Immersive destination / port-of-call card. Drop a real photo at
  * /public/destinations/<slug>.jpg; until then a tropical gradient stands in.
+ *
+ * Pass `href` to make the whole card a clickable link (e.g. the home-page
+ * gallery linking to /destinations/<slug>). Omit it to render a static card.
  */
 export default function DestinationCard({
   d,
   compact = false,
+  href,
 }: {
   d: Destination;
   compact?: boolean;
+  href?: string;
 }) {
+  const Wrapper = href
+    ? ({ children }: { children: React.ReactNode }) => (
+        <Link href={href} className="block">
+          {children}
+        </Link>
+      )
+    : ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10 group hover:border-white/25 transition-colors">
+    <Wrapper>
+    <div className={`relative rounded-2xl overflow-hidden border border-white/10 group hover:border-white/25 transition-colors ${href ? "cursor-pointer" : ""}`}>
       <Photo
         src={`/destinations/${d.slug}.jpg`}
         alt={`${d.name}, ${d.country}`}
@@ -46,5 +61,6 @@ export default function DestinationCard({
         )}
       </div>
     </div>
+    </Wrapper>
   );
 }

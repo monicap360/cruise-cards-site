@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Photo from "@/components/Photo";
-import { destinations } from "../page";
+import { destinations } from "../destination-data";
 import { getPortGuide } from "@/lib/port-guides";
 
 export default function DestinationDetailPage() {

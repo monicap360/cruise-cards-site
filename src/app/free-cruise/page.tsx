@@ -36,7 +36,7 @@ export default function FreeCruisePage() {
       crew: vifp ? `VIFP ${vifp}` : "",
       message: canMakeIt
         ? `FREE CRUISE — YES, interested. Date: ${
-            FREE_DATES.find((d) => d.id === choice)?.label ?? choice || "flexible"
+            FREE_DATES.find((d) => d.id === choice)?.label ?? (choice || "flexible")
           }. ${notes}`
         : `FREE CRUISE — Can't make these dates this time. ${notes}`,
       appt_date: "",

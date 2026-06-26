@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { fmt$, fmtDateDow } from "@/lib/sea-pay";
 import { STATUS_STAGES, type CustomerStatus } from "@/lib/account";
 import type { CustomerCredit } from "@/lib/credits";
+import ChatWidget from "@/components/ChatWidget";
 
 export default function AccountPage() {
   const [email, setEmail] = useState("");
@@ -268,6 +269,22 @@ export default function AccountPage() {
               </button>
             </>
           )}
+        </div>
+
+        {/* AI Guest Care — knows this guest's reservation */}
+        <div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">
+            {"// Guest Care — Cruises from Galveston"}
+          </div>
+          <ChatWidget
+            agent="guestcare"
+            variant="inline"
+            email={email}
+            title="Guest Care"
+            subtitle="Cruises from Galveston"
+            greeting={`Hi${name ? `, ${name}` : ""}! I'm Guest Care from Cruises from Galveston. I can see your booking on file — ask me about your status, payments, credits, documents, transportation, or what's next.`}
+            placeholder="Ask about your booking…"
+          />
         </div>
 
         {/* Quick links */}

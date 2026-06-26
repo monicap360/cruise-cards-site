@@ -1,13 +1,36 @@
 import type { MetadataRoute } from "next";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
+import { POSTS } from "@/lib/news";
 
 const SITE_URL = "https://galvestoncruiseagency.com";
 
 const shipSlug = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+// Individual port / destination pages (/destinations/<slug>) — high-value
+// long-tail SEO targets. Keep in sync with src/app/destinations/page.tsx ids.
+const DESTINATION_SLUGS = [
+  "cozumel",
+  "costa-maya",
+  "progreso",
+  "roatan",
+  "belize",
+  "grand-cayman",
+  "nassau",
+  "key-west",
+  "san-juan",
+  "st-thomas",
+  "cococay",
+  "celebration-key",
+  "half-moon-cay",
+  "ocean-cay",
+  "castaway-cay",
+  "princess-cays",
+];
+
 const ROUTES = [
   "",
+  "/find",
   "/deals",
   "/last-minute",
   "/list-your-cruise",
@@ -16,6 +39,16 @@ const ROUTES = [
   "/experience-center",
   "/add-ons",
   "/galveston-cruise-tips",
+  "/webcams",
+  "/news",
+  "/guides",
+  "/guides/passport-requirements",
+  "/guides/cruise-terminals",
+  "/guides/travel-insurance",
+  "/transportation",
+  "/cruise-line-apps",
+  "/already-booked",
+  "/free-cruise",
   "/countdown",
   "/group-blocks",
   "/specials",
@@ -34,6 +67,8 @@ const ROUTES = [
   "/terms",
   "/legal",
   "/deck-plans",
+  ...DESTINATION_SLUGS.map((s) => `/destinations/${s}`),
+  ...POSTS.map((p) => `/news/${p.slug}`),
   ...GALVESTON_FLEET.map((f) => `/ships-from-galveston/${shipSlug(f.ship)}`),
 ];
 
