@@ -16,4 +16,4 @@ Images sourced from Wikimedia Commons.
 - **ocean-cay.jpg** — Lighthouse Bay, Ocean Cay MSC Marine Reserve · CC BY 2.0 · Wikimedia Commons
 - **celebration-key.jpg** — Port Lucaya / Grand Bahama beach (proxy) · CC BY 3.0 · Wikimedia Commons
 - **princess-cays.jpg** — Harbour Island, Eleuthera (proxy) · CC BY 3.0 · Wikimedia Commons
-- **galveston-port.jpg** — Cruise Ship & Strand District, Galveston, Texas · CC BY 2.0 · Wikimedia Commons
+- **galveston-port.jpg** — MSC Seascape · CC BY 2.0 · Wikimedia Commons

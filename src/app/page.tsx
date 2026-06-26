@@ -111,7 +111,7 @@ export default function Home() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/galveston-port.jpg"
-          alt="A cruise ship towering over the historic Strand District at the Port of Galveston, Texas"
+          alt="MSC Seascape cruise ship in port — sailing round-trip from Galveston, Texas"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-[#05070d]/45" />
@@ -229,7 +229,7 @@ export default function Home() {
             and sail. Real specialists, live cabin maps, and an AI concierge,
             right here on the island.{" "}
             <span className="text-white/80 font-semibold">
-              Plan. Book. Sail.
+              Plan. Book. Protect. Sail. Return.
             </span>
           </p>
           <div className="animate-fade-up delay-3 flex flex-col sm:flex-row gap-3">
