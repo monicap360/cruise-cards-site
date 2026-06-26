@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {
   type Group,
   type GroupMember,
+  type GroupRoom,
   getAllGroups,
   getMembers,
   saveGroup,
@@ -15,6 +16,11 @@ import {
   newGroupId,
   newMemberId,
   newGroupCode,
+  getRooms,
+  saveRoom,
+  deleteRoom,
+  newRoomId,
+  isRoomReleased,
 } from "@/lib/groups";
 
 function fmt$(n: number) {
@@ -35,6 +41,12 @@ function blankMember(groupId: string): GroupMember {
     confirmationNumber: "", notes: "",
   };
 }
+function blankRoom(groupId: string): GroupRoom {
+  return {
+    id: newRoomId(), groupId, cabinType: "", label: "", ratePP: 0,
+    holdUntil: "", status: "available", bookedBy: "", notes: "",
+  };
+}
 
 const CABIN_TYPES = ["Interior", "Ocean View", "Balcony", "Mini-Suite", "Suite"];
 
@@ -46,6 +58,8 @@ export default function AdminGroupsPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [m, setM] = useState<GroupMember>(blankMember(""));
+  const [rooms, setRooms] = useState<GroupRoom[]>([]);
+  const [r, setR] = useState<GroupRoom>(blankRoom(""));
 
   async function refresh() {
     setGroups(await getAllGroups());
@@ -74,6 +88,23 @@ export default function AdminGroupsPage() {
     setOpenId(grp.id);
     setMembers(await getMembers(grp.id));
     setM(blankMember(grp.id));
+    setRooms(await getRooms(grp.id));
+    setR(blankRoom(grp.id));
+  }
+  async function saveR() {
+    if (!r.cabinType.trim()) { alert("Pick a cabin type."); return; }
+    await saveRoom(r);
+    setRooms(await getRooms(r.groupId));
+    setR(blankRoom(r.groupId));
+  }
+  async function removeR(id: string, groupId: string) {
+    if (!confirm("Drop this room from the block?")) return;
+    await deleteRoom(id);
+    setRooms(await getRooms(groupId));
+  }
+  async function releaseR(rm: GroupRoom) {
+    await saveRoom({ ...rm, status: "released" });
+    setRooms(await getRooms(rm.groupId));
   }
   async function saveM() {
     if (!m.name.trim()) { alert("Member name required."); return; }
@@ -197,6 +228,50 @@ export default function AdminGroupsPage() {
                       <div className="flex gap-2 mt-3">
                         <button onClick={saveM} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-5 py-2 rounded-full">{members.find((x) => x.id === m.id) ? "Update member" : "Add member"}</button>
                         <button onClick={() => setM(blankMember(grp.id))} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-5 py-2 rounded-full">Clear</button>
+                      </div>
+                    </div>
+
+                    {/* Room inventory — held rooms with per-room hold expiration */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 mt-4">
+                      <div className="font-bold text-sm mb-1">Room inventory <span className="text-gray-400 font-normal">— held rooms in this block</span></div>
+                      <p className="text-gray-400 text-xs mb-3">Add rooms with a &ldquo;held until&rdquo; date. Once that passes, an unbooked room shows as <strong>released into inventory</strong> on the group portal.</p>
+                      {rooms.length > 0 && (
+                        <div className="overflow-x-auto mb-3">
+                          <table className="w-full text-sm min-w-[640px]">
+                            <thead><tr className="text-gray-400 text-xs uppercase">
+                              <th className="text-left py-2">Room</th><th className="text-right">Rate/pp</th><th className="text-left pl-3">Held until</th><th className="text-left pl-3">Status</th><th></th>
+                            </tr></thead>
+                            <tbody>
+                              {rooms.map((rm) => {
+                                const expired = isRoomReleased(rm, Date.now());
+                                return (
+                                  <tr key={rm.id} className="border-t border-gray-200">
+                                    <td className="py-2 font-semibold">{rm.cabinType}{rm.label ? ` · ${rm.label}` : ""}</td>
+                                    <td className="text-right">{rm.ratePP ? fmt$(rm.ratePP) : "group rate"}</td>
+                                    <td className="pl-3">{rm.holdUntil ? new Date(rm.holdUntil).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}</td>
+                                    <td className="pl-3">{rm.status === "booked" ? <span className="text-green-700 font-bold">Booked</span> : expired ? <span className="text-gray-400 font-bold">Released</span> : <span className="text-blue-700 font-bold">Available</span>}</td>
+                                    <td className="text-right whitespace-nowrap">
+                                      <button onClick={() => setR(rm)} className="text-blue-700 font-bold text-xs hover:underline mr-2">Edit</button>
+                                      {rm.status !== "released" && <button onClick={() => releaseR(rm)} className="text-amber-600 font-bold text-xs hover:underline mr-2">Release</button>}
+                                      <button onClick={() => removeR(rm.id, grp.id)} className="text-red-600 font-bold text-xs hover:underline">Drop</button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+                        <div className="sm:col-span-2"><label className={lbl}>Cabin type</label><select className={input} value={r.cabinType} onChange={(e) => setR({ ...r, cabinType: e.target.value })}><option value="">—</option>{CABIN_TYPES.map((c) => <option key={c}>{c}</option>)}</select></div>
+                        <div className="sm:col-span-2"><label className={lbl}>Label / cabin #</label><input className={input} value={r.label} onChange={(e) => setR({ ...r, label: e.target.value })} placeholder="Balcony #1" /></div>
+                        <div className="sm:col-span-2"><label className={lbl}>Rate/pp (blank = group)</label><input type="number" className={input} value={r.ratePP || ""} onChange={(e) => setR({ ...r, ratePP: Number(e.target.value) })} /></div>
+                        <div className="sm:col-span-3"><label className={lbl}>Held until (release if unbooked)</label><input type="datetime-local" className={input} value={r.holdUntil} onChange={(e) => setR({ ...r, holdUntil: e.target.value })} /></div>
+                        <div className="sm:col-span-3"><label className={lbl}>Status</label><select className={input} value={r.status} onChange={(e) => setR({ ...r, status: e.target.value as GroupRoom["status"] })}><option value="available">Available</option><option value="booked">Booked</option><option value="released">Released</option></select></div>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <button onClick={saveR} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-5 py-2 rounded-full">{rooms.find((x) => x.id === r.id) ? "Update room" : "Add room"}</button>
+                        <button onClick={() => setR(blankRoom(grp.id))} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-5 py-2 rounded-full">Clear</button>
                       </div>
                     </div>
                   </div>

@@ -16,6 +16,7 @@ const links = [
   { href: "/guides", label: "Guides" },
   { href: "/news", label: "News" },
   { href: "/group-blocks", label: "Group Cabins" },
+  { href: "/request-group-space", label: "Travel Agents" },
   { href: "/specials", label: "Specials" },
   { href: "/sea-you-on-deck", label: "Sea You on Deck" },
   { href: "/countdown", label: "Countdown" },

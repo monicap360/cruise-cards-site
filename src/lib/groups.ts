@@ -38,6 +38,34 @@ export type Group = {
   createdAt?: string;
 };
 
+// A single held room in the group block, with its own hold expiration.
+export type GroupRoom = {
+  id: string;
+  groupId: string;
+  cabinType: string;
+  label: string; // friendly label or cabin number, e.g. "Balcony #1"
+  ratePP: number; // per-person rate; 0 = fall back to the group rate
+  holdUntil: string; // hold expiration (datetime-local string); past = released
+  status: "available" | "booked" | "released";
+  bookedBy: string;
+  notes: string;
+  createdAt?: string;
+};
+
+// A room counts as released if explicitly released OR its hold lapsed unbooked.
+export function isRoomReleased(r: GroupRoom, nowMs: number): boolean {
+  if (r.status === "released") return true;
+  if (r.status === "available" && r.holdUntil) {
+    const t = new Date(r.holdUntil).getTime();
+    if (!Number.isNaN(t) && t < nowMs) return true;
+  }
+  return false;
+}
+
+export function newRoomId() {
+  return "rm-" + Math.random().toString(36).slice(2, 9);
+}
+
 export function newGroupId() {
   return "grp-" + Math.random().toString(36).slice(2, 9);
 }
@@ -148,7 +176,7 @@ export async function getAllGroups(): Promise<Group[]> {
 
 export async function getGroupByCode(
   code: string
-): Promise<{ group: Group; members: GroupMember[] } | null> {
+): Promise<{ group: Group; members: GroupMember[]; rooms: GroupRoom[] } | null> {
   const { data, error } = await supabase
     .from("groups")
     .select("*")
@@ -161,7 +189,61 @@ export async function getGroupByCode(
     .select("*")
     .eq("group_id", group.id)
     .order("name");
-  return { group, members: (mem ?? []).map(toMember) };
+  // group_rooms is optional — if the table isn't set up yet this just returns [].
+  const { data: rms } = await supabase
+    .from("group_rooms")
+    .select("*")
+    .eq("group_id", group.id)
+    .order("created_at");
+  return {
+    group,
+    members: (mem ?? []).map(toMember),
+    rooms: (rms ?? []).map(toRoom),
+  };
+}
+
+function toRoom(r: Record<string, unknown>): GroupRoom {
+  return {
+    id: r.id as string,
+    groupId: (r.group_id as string) ?? "",
+    cabinType: (r.cabin_type as string) ?? "",
+    label: (r.label as string) ?? "",
+    ratePP: Number(r.rate_pp) || 0,
+    holdUntil: (r.hold_until as string) ?? "",
+    status: ((r.status as string) as GroupRoom["status"]) ?? "available",
+    bookedBy: (r.booked_by as string) ?? "",
+    notes: (r.notes as string) ?? "",
+    createdAt: (r.created_at as string) ?? "",
+  };
+}
+function roomRow(r: GroupRoom): Record<string, unknown> {
+  return {
+    id: r.id,
+    group_id: r.groupId,
+    cabin_type: r.cabinType || null,
+    label: r.label || null,
+    rate_pp: r.ratePP || 0,
+    hold_until: r.holdUntil || null,
+    status: r.status,
+    booked_by: r.bookedBy || null,
+    notes: r.notes || null,
+  };
+}
+
+export async function getRooms(groupId: string): Promise<GroupRoom[]> {
+  const { data } = await supabase
+    .from("group_rooms")
+    .select("*")
+    .eq("group_id", groupId)
+    .order("created_at");
+  return (data ?? []).map(toRoom);
+}
+export async function saveRoom(r: GroupRoom): Promise<boolean> {
+  const { error } = await supabase.from("group_rooms").upsert(roomRow(r));
+  return !error;
+}
+export async function deleteRoom(id: string): Promise<void> {
+  await supabase.from("group_rooms").delete().eq("id", id);
 }
 
 export async function getMembers(groupId: string): Promise<GroupMember[]> {

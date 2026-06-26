@@ -1,9 +1,19 @@
 import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
-import { getGroupByCode, memberBalance } from "@/lib/groups";
+import Photo from "@/components/Photo";
+import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
+
+// Cabin categories a group member can pick from. Image lives at
+// /public/cabins/<img>.jpg (Photo falls back to a gradient if missing).
+const CABIN_OPTIONS = [
+  { type: "Interior", img: "interior", blurb: "Cozy and the best value — everything you need to rest between port days." },
+  { type: "Ocean View", img: "ocean-view", blurb: "Wake up to the sea through a picture window or porthole." },
+  { type: "Balcony", img: "balcony", blurb: "Your own private veranda — coffee with a sea breeze." },
+  { type: "Suite", img: "mini-suite", blurb: "More space, premium perks, and priority extras on board." },
+];
 
 export default async function GroupPortalPage({
   params,
@@ -34,7 +44,8 @@ export default async function GroupPortalPage({
     );
   }
 
-  const { group, members } = result;
+  const { group, members, rooms } = result;
+  const now = Date.now();
   const totalGuests = members.reduce((s, m) => s + (m.guests || 0), 0);
   const depositCount = members.filter(
     (m) => m.paidInFull || m.depositPaid > 0
@@ -178,6 +189,166 @@ export default async function GroupPortalPage({
               </div>
             );
           })()}
+
+        {/* Choose your cabin — room inventory (with category fallback) */}
+        {(rooms.length > 0 || group.groupRate > 0) && (
+          <div>
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+              {"// Choose Your Cabin"}
+            </div>
+            <p className="text-white/55 text-sm mb-5 max-w-2xl">
+              {rooms.length > 0
+                ? "Reserve a room held for your group. Each room is held until the date shown — once that lapses unbooked, it's released back into general inventory."
+                : "Pick your room category to book at the group rate. Select a cabin to see the full price, what's included, and reserve it."}
+            </p>
+
+            {rooms.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {rooms.map((rm) => {
+                  const released = isRoomReleased(rm, now);
+                  const booked = rm.status === "booked";
+                  const rate = rm.ratePP || group.groupRate;
+                  const heldUntil = rm.holdUntil
+                    ? new Date(rm.holdUntil).toLocaleString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })
+                    : "";
+                  const cabinImg =
+                    CABIN_OPTIONS.find(
+                      (c) => c.type.toLowerCase() === rm.cabinType.toLowerCase()
+                    )?.img ?? "interior";
+                  return (
+                    <div
+                      key={rm.id}
+                      className={`bg-[#0b1020] border rounded-2xl overflow-hidden flex flex-col ${
+                        released || booked
+                          ? "border-white/10 opacity-75"
+                          : "border-white/10 hover:border-sky-400/40 transition-colors"
+                      }`}
+                    >
+                      <div className="relative">
+                        <Photo
+                          src={`/cabins/${cabinImg}.jpg`}
+                          alt={rm.cabinType}
+                          overlay={false}
+                          className={`h-36 w-full ${released || booked ? "grayscale" : ""}`}
+                        />
+                        <span
+                          className={`absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                            booked
+                              ? "bg-green-500/20 text-green-200"
+                              : released
+                                ? "bg-white/10 text-white/60"
+                                : "bg-sky-500/20 text-sky-200"
+                          }`}
+                        >
+                          {booked ? "Booked" : released ? "Released" : "Available"}
+                        </span>
+                      </div>
+                      <div className="p-5 flex flex-col flex-1">
+                        <div className="font-extrabold uppercase tracking-tight text-white">
+                          {rm.cabinType || "Cabin"}
+                          {rm.label ? (
+                            <span className="text-white/45"> · {rm.label}</span>
+                          ) : null}
+                        </div>
+                        {booked ? (
+                          <p className="text-white/55 text-sm mt-2 flex-1">
+                            Reserved{rm.bookedBy ? ` by ${rm.bookedBy}` : ""}.
+                          </p>
+                        ) : released ? (
+                          <p className="text-white/55 text-sm mt-2 flex-1">
+                            This room&rsquo;s hold has ended — it has been{" "}
+                            <strong className="text-white/80">
+                              released into general inventory
+                            </strong>
+                            . Ask your specialist about current availability.
+                          </p>
+                        ) : (
+                          <>
+                            <div className="mt-3">
+                              <div className="text-white/50 text-xs">
+                                Group rate from
+                              </div>
+                              <div className="text-holo font-extrabold text-2xl leading-none">
+                                {fmt$(rate)}
+                                <span className="text-white/45 text-sm font-semibold">
+                                  {" "}
+                                  /person
+                                </span>
+                              </div>
+                              <div className="text-white/40 text-[11px] mt-0.5">
+                                double occupancy
+                              </div>
+                            </div>
+                            {heldUntil && (
+                              <div className="mt-3 text-amber-200/90 text-xs bg-amber-400/10 border border-amber-400/25 rounded-lg px-3 py-2">
+                                ⏳ Held for your group until{" "}
+                                <strong>{heldUntil}</strong>
+                              </div>
+                            )}
+                            <Link
+                              href={`/book-cabin?ship=${encodeURIComponent(group.ship)}&date=${encodeURIComponent(group.sailingDate)}&line=${encodeURIComponent(group.cruiseLine)}&type=${encodeURIComponent(rm.cabinType)}&price=${rate}&guests=2&group=${encodeURIComponent(group.code)}`}
+                              className="mt-4 block text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-3 rounded-full transition-all"
+                            >
+                              Select &amp; book →
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {CABIN_OPTIONS.map((opt) => (
+                  <div
+                    key={opt.type}
+                    className="bg-[#0b1020] border border-white/10 rounded-2xl overflow-hidden hover:border-sky-400/40 transition-colors flex flex-col"
+                  >
+                    <Photo
+                      src={`/cabins/${opt.img}.jpg`}
+                      alt={opt.type}
+                      overlay={false}
+                      className="h-36 w-full"
+                    />
+                    <div className="p-5 flex flex-col flex-1">
+                      <div className="font-extrabold uppercase tracking-tight text-white">
+                        {opt.type}
+                      </div>
+                      <p className="text-white/55 text-sm leading-relaxed flex-1 mt-1">
+                        {opt.blurb}
+                      </p>
+                      <div className="mt-3">
+                        <div className="text-white/50 text-xs">Group rate from</div>
+                        <div className="text-holo font-extrabold text-2xl leading-none">
+                          {fmt$(group.groupRate)}
+                          <span className="text-white/45 text-sm font-semibold">
+                            {" "}
+                            /person
+                          </span>
+                        </div>
+                        <div className="text-white/40 text-[11px] mt-0.5">
+                          double occupancy
+                        </div>
+                      </div>
+                      <Link
+                        href={`/book-cabin?ship=${encodeURIComponent(group.ship)}&date=${encodeURIComponent(group.sailingDate)}&line=${encodeURIComponent(group.cruiseLine)}&type=${encodeURIComponent(opt.type)}&price=${group.groupRate}&guests=2&group=${encodeURIComponent(group.code)}`}
+                        className="mt-4 block text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-3 rounded-full transition-all"
+                      >
+                        Select &amp; book →
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Roster */}
         <div>
