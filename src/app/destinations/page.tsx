@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Photo from "@/components/Photo";
 
-type Destination = {
+export type Destination = {
   id: string;
   name: string;
   dealKey?: string;
@@ -22,7 +22,7 @@ type Destination = {
   highlight: string;
 };
 
-const destinations: Destination[] = [
+export const destinations: Destination[] = [
   // ── Mexico ──────────────────────────────────────────────────────────────
   {
     id: "cozumel",
@@ -559,12 +559,20 @@ export default function DestinationsPage() {
                   </div>
                 </div>
 
-                <Link
-                  href={`/find?q=${encodeURIComponent(dest.dealKey ?? dest.name)}`}
-                  className="block w-full text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider py-3 rounded-full text-sm transition-all"
-                >
-                  See Cruises to {dest.name}
-                </Link>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/destinations/${dest.id}`}
+                    className="flex-1 text-center bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider py-3 rounded-full text-sm transition-all"
+                  >
+                    Explore {dest.name}
+                  </Link>
+                  <Link
+                    href={`/find?q=${encodeURIComponent(dest.dealKey ?? dest.name)}`}
+                    className="px-4 py-3 rounded-full text-sm font-semibold uppercase tracking-wider border border-white/25 text-white/80 hover:text-white hover:border-white/50 transition-all whitespace-nowrap"
+                  >
+                    Cruises →
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
