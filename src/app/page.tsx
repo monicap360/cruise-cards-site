@@ -107,8 +107,16 @@ export default function Home() {
     <div className="overflow-hidden">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative bg-[#05070d] text-white min-h-[92vh] flex items-end overflow-hidden">
+        {/* Galveston port hero photo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/galveston-port.jpg"
+          alt="A cruise ship towering over the historic Strand District at the Port of Galveston, Texas"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/85 to-[#05070d]/45" />
         {/* Blueprint grid + single cool glow */}
-        <div className="absolute inset-0 grid-bg" />
+        <div className="absolute inset-0 grid-bg opacity-60" />
         <div className="absolute inset-0 overflow-hidden">
           <div className="aurora bg-sky-500 w-[52rem] h-[52rem] -top-72 left-1/2 -translate-x-1/2 opacity-[0.16]" />
         </div>
