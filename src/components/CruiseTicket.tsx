@@ -171,21 +171,7 @@ export default function CruiseTicket({
           </div>
         )}
 
-        {/* faux barcode */}
-        <div className="mt-auto pt-4 flex items-end gap-[2px] h-8">
-          {Array.from({ length: 38 }).map((_, i) => (
-            <span
-              key={i}
-              className="bg-sky-400"
-              style={{
-                width: 2,
-                height: `${[10, 26, 16, 30, 12, 22, 18, 28][i % 8]}px`,
-                opacity: i % 3 === 0 ? 0.9 : 0.4,
-              }}
-            />
-          ))}
-        </div>
-        <div className="label-mono text-[9px] uppercase tracking-[0.2em] text-white/40 mt-1.5">
+        <div className="label-mono text-[9px] uppercase tracking-[0.2em] text-white/40 mt-auto pt-4">
           Cruises from Galveston™
         </div>
       </div>
