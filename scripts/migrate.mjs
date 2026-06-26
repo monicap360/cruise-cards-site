@@ -83,6 +83,22 @@ const STATEMENTS = [
   `alter table group_members enable row level security`,
   `drop policy if exists "group_members anon all" on group_members`,
   `create policy "group_members anon all" on group_members for all using (true) with check (true)`,
+
+  // ── customer_status ──
+  `create table if not exists customer_status (
+     email text primary key, status text, working_on text,
+     updated_at timestamptz default now())`,
+  `alter table customer_status enable row level security`,
+  `drop policy if exists "status anon all" on customer_status`,
+  `create policy "status anon all" on customer_status for all using (true) with check (true)`,
+
+  // ── messages (customer portal thread) ──
+  `create table if not exists messages (
+     id text primary key, email text not null, sender text default 'customer',
+     body text, doc_url text, doc_name text, created_at timestamptz default now())`,
+  `alter table messages enable row level security`,
+  `drop policy if exists "messages anon all" on messages`,
+  `create policy "messages anon all" on messages for all using (true) with check (true)`,
 ];
 
 await client.connect();
