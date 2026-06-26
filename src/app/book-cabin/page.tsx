@@ -291,11 +291,6 @@ function BookCabinContent() {
                     person
                   </span>
                   <span className="text-white/70">
-                    Gross total{" "}
-                    <strong className="text-white">{fmt$(grossTotal)}</strong> · 2
-                    guests
-                  </span>
-                  <span className="text-white/70">
                     Deposit{" "}
                     <strong className="text-white">{fmt$(depositTotal)}</strong>
                   </span>

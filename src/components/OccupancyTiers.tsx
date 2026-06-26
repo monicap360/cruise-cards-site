@@ -36,13 +36,14 @@ export default function OccupancyTiers({
     Math.round(
       pricePerPerson * 2 + (n - 2) * pricePerPerson * EXTRA_GUEST_FRACTION
     );
-  const rate = totalFor(sel); // cruise-line rate for this party size
+  const rate = totalFor(sel); // cruise-line total for this party size
   const hasDiscount = discountPct > 0;
   const payable = hasDiscount
     ? Math.round(rate * (1 - discountPct / 100))
     : rate;
-  const saved = rate - payable;
-  const perPerson = Math.round(payable / sel);
+  const perPerson = Math.round(payable / sel); // what we advertise
+  const regularPerPerson = Math.round(rate / sel);
+  const savedPerPerson = regularPerPerson - perPerson;
   const reserveHref = `${reserveBase}${
     reserveBase.includes("?") ? "&" : "?"
   }guests=${sel}&total=${payable}`;
@@ -72,24 +73,23 @@ export default function OccupancyTiers({
           <div className="flex items-baseline gap-2 flex-wrap">
             {hasDiscount && (
               <span className="text-white/40 text-lg line-through">
-                {fmt$(rate)}
+                {fmt$(regularPerPerson)}
               </span>
             )}
             <span className="text-holo font-extrabold text-3xl leading-none">
-              {fmt$(payable)}
+              {fmt$(perPerson)}
             </span>
-            <span className="text-white/50 text-sm">
-              total · {sel} guest{sel > 1 ? "s" : ""}
-            </span>
+            <span className="text-white/50 text-sm">/ person</span>
           </div>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             {hasDiscount && (
               <span className="bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
-                Save {fmt$(saved)} · {Math.round(discountPct)}% off
+                Save {fmt$(savedPerPerson)} / person · {Math.round(discountPct)}%
+                off
               </span>
             )}
             <span className="text-white/45 text-xs">
-              ~{fmt$(perPerson)} / person · taxes &amp; fees included
+              {sel} guest{sel > 1 ? "s" : ""} · taxes &amp; fees included
             </span>
           </div>
         </div>
