@@ -6,9 +6,9 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 const HOLD_OPTIONS = [
-  { hours: 24, label: "24 Hours", desc: "Same-day decision" },
-  { hours: 48, label: "48 Hours", desc: "Two-day window" },
-  { hours: 72, label: "72 Hours", desc: "Three-day window" },
+  { hours: 24, label: "24 Hours", desc: "Free courtesy hold", fee: 0 },
+  { hours: 48, label: "48 Hours", desc: "Two-day window", fee: 15 },
+  { hours: 72, label: "72 Hours", desc: "Three-day window", fee: 25 },
 ];
 
 function HoldForm() {
@@ -28,6 +28,14 @@ function HoldForm() {
 
   const set = (k: keyof typeof form, v: string | number) =>
     setForm((f) => ({ ...f, [k]: v }));
+
+  const opt = HOLD_OPTIONS.find((o) => o.hours === form.holdHours) ?? HOLD_OPTIONS[0];
+  const holdFee = opt.fee;
+  const expiry = new Date(Date.now() + form.holdHours * 3600000);
+  const expiryLabel =
+    expiry.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) +
+    " at " +
+    expiry.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 
   useEffect(() => {
     if (!form.sailingDate) { setWithinWindow(false); return; }
@@ -62,7 +70,10 @@ function HoldForm() {
           <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">Room Hold Requested</h2>
           <p className="text-white/55 mb-4">
             Your <span className="font-bold text-white">{form.holdHours}-hour hold</span> request for{" "}
-            <span className="font-bold text-white">{form.ship}</span> has been received.
+            <span className="font-bold text-white">
+              {form.cabinType ? `${form.cabinType} · ` : ""}{form.ship}
+            </span>{" "}
+            has been received.
           </p>
           <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl p-4 mb-6 text-left text-sm">
             <div className="font-bold text-amber-300/80 mb-1">Hold expires:</div>
@@ -70,6 +81,12 @@ function HoldForm() {
               {expiry.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{" "}
               at {expiry.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
             </div>
+            {holdFee > 0 && (
+              <div className="text-amber-300/70 text-xs mt-2">
+                ${holdFee} extended-hold service fee applies (credited toward your
+                booking).
+              </div>
+            )}
           </div>
           <p className="text-white/45 text-sm mb-6">
             A cruise specialist will contact you at <span className="font-semibold text-white/70">{form.email}</span> to confirm your hold. If we do not hear from you before expiry, the cabin will be released.
@@ -101,26 +118,66 @@ function HoldForm() {
 
       <div className="max-w-2xl mx-auto px-4 py-10">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Cabin you're holding */}
+          {(form.ship || form.cabinType) && (
+            <div className="bg-sky-500/10 border border-sky-400/30 rounded-2xl p-5">
+              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-1">
+                Holding this cabin
+              </div>
+              <div className="text-white font-extrabold text-lg">
+                {form.cabinType ? `${form.cabinType} · ` : ""}
+                {form.ship}
+              </div>
+              {form.sailingDate && (
+                <div className="text-white/60 text-sm">
+                  Sails{" "}
+                  {new Date(form.sailingDate + "T12:00:00").toLocaleDateString(
+                    "en-US",
+                    { weekday: "short", month: "long", day: "numeric", year: "numeric" }
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Hold Duration */}
           <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-            <h2 className="font-extrabold uppercase tracking-[-0.01em] text-white text-lg mb-4">How long do you need?</h2>
+            <h2 className="font-extrabold uppercase tracking-[-0.01em] text-white text-lg mb-1">How long do you need?</h2>
+            <p className="text-white/45 text-sm mb-4">
+              The first 24 hours are a free courtesy hold. Extended holds carry a
+              small service fee that&rsquo;s applied to your booking when you book.
+            </p>
             <div className="grid grid-cols-3 gap-3">
-              {HOLD_OPTIONS.map((opt) => (
+              {HOLD_OPTIONS.map((o) => (
                 <button
-                  key={opt.hours}
+                  key={o.hours}
                   type="button"
-                  onClick={() => set("holdHours", opt.hours)}
+                  onClick={() => set("holdHours", o.hours)}
                   className={`rounded-xl border p-4 text-center font-bold transition-all ${
-                    form.holdHours === opt.hours
+                    form.holdHours === o.hours
                       ? "border-sky-400/70 bg-sky-400/10 text-white"
                       : "border-white/15 bg-white/5 text-white/55 hover:border-white/40"
                   }`}
                 >
-                  <div className="text-2xl font-extrabold">{opt.label}</div>
-                  <div className="text-xs mt-0.5 opacity-80">{opt.desc}</div>
+                  <div className="text-2xl font-extrabold">{o.label}</div>
+                  <div className="text-xs mt-0.5 opacity-80">{o.desc}</div>
+                  <div className={`text-[11px] font-bold mt-1.5 ${o.fee === 0 ? "text-sky-300" : "text-amber-300/90"}`}>
+                    {o.fee === 0 ? "Free" : `+$${o.fee} service fee`}
+                  </div>
                 </button>
               ))}
             </div>
+            {!withinWindow && form.sailingDate && (
+              <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white/70">
+                Hold would expire{" "}
+                <span className="font-bold text-white">{expiryLabel}</span>
+                {holdFee > 0 && (
+                  <>
+                    {" "}· <span className="text-amber-300/90 font-bold">${holdFee} service fee</span> (applied to your booking)
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Cruise Info */}
@@ -235,8 +292,13 @@ function HoldForm() {
           </div>
 
           <div className="bg-amber-400/10 border border-amber-400/20 rounded-2xl p-5 text-sm text-amber-300/80">
-            <strong>Hold Policy:</strong> Holds are courtesy reservations only. Your cabin will be reserved for{" "}
-            <strong>{form.holdHours} hours</strong> from the time of confirmation. If you do not book within that window, the cabin is automatically released with no penalty. Holds cannot be placed on sailings within 30 days of departure.
+            <strong>Hold Policy:</strong> Your cabin will be held for{" "}
+            <strong>{form.holdHours} hours</strong> from confirmation. The first
+            24 hours are a free courtesy hold; 48- and 72-hour holds carry a
+            non-refundable service fee (${"" + holdFee}) that is credited toward
+            your booking when you book. If you don&rsquo;t book within the window,
+            the cabin is released. Holds cannot be placed within 30 days of
+            departure.
           </div>
 
           <button
@@ -245,6 +307,7 @@ function HoldForm() {
             className="w-full bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider py-4 rounded-full text-sm transition-all"
           >
             Request {form.holdHours}-Hour Hold
+            {holdFee > 0 ? ` · $${holdFee} fee` : " · Free"}
           </button>
         </form>
       </div>
