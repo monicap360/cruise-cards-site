@@ -239,7 +239,9 @@ function FindInner() {
             <select className={selectCls} value={nights} onChange={(e) => setNights(e.target.value)}>
               <option value="" className="bg-[#0b1020]">Any length</option>
               {nightOptions.map((n) => (
-                <option key={n} value={n} className="bg-[#0b1020]">{n} nights</option>
+                <option key={n} value={n} className="bg-[#0b1020]">
+                  {n} nights / {n} days
+                </option>
               ))}
             </select>
             <select className={selectCls} value={sort} onChange={(e) => setSort(e.target.value)}>
