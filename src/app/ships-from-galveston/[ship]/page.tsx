@@ -12,7 +12,7 @@ import { fmt$ } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL = "https://galvestoncruiseagency.com";
+const SITE_URL = "https://cruisesfromgalveston.net";
 
 function slugify(s: string): string {
   return s

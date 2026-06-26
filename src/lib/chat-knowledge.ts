@@ -25,7 +25,7 @@ ABOUT THE COMPANY
 - Walk-in Cruise Experience Center: 3501 Winnie St, Galveston, TX 77550.
   Open on Port of Galveston cruise days, 8:30 AM–5:00 PM (closed non-cruise
   days). Online & phone support daily, roughly 7:30 AM–9:00 PM.
-- Main phone: (409) 632-2106. General email: info@galvestoncruiseagency.com.
+- Main phone: (409) 632-2106. General email: info@cruisesfromgalveston.net.
 - Tagline / what we do for every guest: Plan. Book. Protect. Sail. Return.
 
 PAYMENTS (very important — never take a payment inside chat)

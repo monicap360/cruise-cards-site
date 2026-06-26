@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
   weight: ["600", "700", "800", "900"],
 });
 
-const SITE_URL = "https://galvestoncruiseagency.com";
+const SITE_URL = "https://cruisesfromgalveston.net";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -64,7 +64,7 @@ const BUSINESS_JSONLD = {
   url: SITE_URL,
   image: `${SITE_URL}/logo.png`,
   telephone: "+1-409-632-2106",
-  email: "info@galvestoncruiseagency.com",
+  email: "info@cruisesfromgalveston.net",
   priceRange: "$$",
   address: {
     "@type": "PostalAddress",

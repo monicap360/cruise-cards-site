@@ -152,8 +152,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:info@galvestoncruiseagency.com" className="hover:text-white transition-colors">
-                  info@galvestoncruiseagency.com
+                <a href="mailto:info@cruisesfromgalveston.net" className="hover:text-white transition-colors">
+                  info@cruisesfromgalveston.net
                 </a>
               </li>
               <li className="pt-2 font-semibold text-white">

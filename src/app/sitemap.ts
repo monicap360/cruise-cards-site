@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { POSTS } from "@/lib/news";
 
-const SITE_URL = "https://galvestoncruiseagency.com";
+const SITE_URL = "https://cruisesfromgalveston.net";
 
 const shipSlug = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
