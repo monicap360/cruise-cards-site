@@ -102,6 +102,7 @@ export default function Footer() {
               {[
                 { href: "/", label: "Home" },
                 { href: "/already-booked", label: "Already Booked?" },
+                { href: "/cruise-line-apps", label: "Cruise Line Apps & Check-In" },
                 { href: "/deals", label: "Cruise Deals" },
                 { href: "/last-minute", label: "Last-Minute Sailings" },
                 { href: "/list-your-cruise", label: "List Your Cruise" },
