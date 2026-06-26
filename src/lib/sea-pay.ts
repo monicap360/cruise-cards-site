@@ -430,3 +430,9 @@ export function durationWord(cruiseLine?: string): string {
 export function durationLabel(nights: number, cruiseLine?: string): string {
   return `${nights} ${durationWord(cruiseLine)}`;
 }
+
+// Capitalized "Days"/"Nights" for badges and headings.
+export function durationWordCap(cruiseLine?: string): string {
+  const w = durationWord(cruiseLine);
+  return w.charAt(0).toUpperCase() + w.slice(1);
+}

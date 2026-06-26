@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Photo from "@/components/Photo";
 import { destinationFor } from "@/lib/destinations";
+import { durationWordCap } from "@/lib/sea-pay";
 
 export const metadata = {
   title: "Cruise Deals from Galveston",
@@ -216,7 +217,7 @@ export default async function DealsPage({
                   {deal.badge}
                 </span>
                 <span className="absolute top-3 right-3 z-10 bg-black/40 text-white border border-white/20 label-mono text-[10px] uppercase px-3 py-1 rounded-full">
-                  {deal.nights} Nights
+                  {deal.nights} {durationWordCap(deal.line)}
                 </span>
               </div>
 

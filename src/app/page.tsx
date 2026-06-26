@@ -1,6 +1,8 @@
 import Link from "next/link";
 import DestinationCard from "@/components/DestinationCard";
+import CompassLogo from "@/components/CompassLogo";
 import { FEATURED_DESTINATIONS } from "@/lib/destinations";
+import { durationWordCap } from "@/lib/sea-pay";
 
 const features = [
   {
@@ -406,7 +408,7 @@ export default function Home() {
                     {deal.badge}
                   </span>
                   <span className="absolute bottom-4 left-5 text-white/80 label-mono text-[11px] uppercase">
-                    {deal.nights} Nights
+                    {deal.nights} {durationWordCap(deal.line)}
                   </span>
                 </div>
                 <div className="p-6">
@@ -450,6 +452,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-5">{"// A real place on Galveston Island"}</div>
+            <CompassLogo showText={false} className="mb-4 scale-125 origin-left" />
             <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4 leading-[0.95]">
               The Cruise
               <br />
