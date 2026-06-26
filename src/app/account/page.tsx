@@ -14,6 +14,9 @@ export default function AccountPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [credits, setCredits] = useState<CustomerCredit[]>([]);
   const [status, setStatus] = useState<CustomerStatus | null>(null);
+  const [requests, setRequests] = useState<
+    { confirm: string; ship: string; sailDate: string; cabinType: string; mode: string }[]
+  >([]);
 
   const [qText, setQText] = useState("");
   const [qSent, setQSent] = useState(false);
@@ -26,9 +29,11 @@ export default function AccountPage() {
       const d = await r.json();
       setCredits(Array.isArray(d.credits) ? d.credits : []);
       setStatus(d.status ?? null);
+      setRequests(Array.isArray(d.requests) ? d.requests : []);
     } catch {
       setCredits([]);
       setStatus(null);
+      setRequests([]);
     }
     setLoggedIn(true);
     setLoading(false);
@@ -190,6 +195,49 @@ export default function AccountPage() {
             <Link href="/already-booked" className="inline-block mt-3 text-sky-400 hover:text-sky-300 text-sm font-semibold">
               Manage / rebook with credit →
             </Link>
+          </div>
+        )}
+
+        {/* Requests & services */}
+        {requests.length > 0 && (
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">
+              {"// Your Requests & Services"}
+            </div>
+            <div className="space-y-2">
+              {requests.map((q, i) => {
+                const LABELS: Record<string, { l: string; icon: string }> = {
+                  booking: { l: "Cabin booking", icon: "🛏️" },
+                  hold: { l: "Room hold", icon: "⏳" },
+                  transportation: { l: "Transportation / transfer", icon: "🚐" },
+                  parking: { l: "Cruise parking", icon: "🅿️" },
+                  "free-cruise": { l: "Free cruise response", icon: "🎁" },
+                  rebook: { l: "Rebooking request", icon: "🔄" },
+                  question: { l: "Question", icon: "💬" },
+                  appointment: { l: "Appointment", icon: "📅" },
+                  inquiry: { l: "Inquiry", icon: "✉️" },
+                };
+                const meta = LABELS[q.mode] ?? { l: q.mode, icon: "•" };
+                return (
+                  <div key={i} className="flex items-center gap-3 border-b border-white/5 last:border-0 py-2">
+                    <span className="text-xl">{meta.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white text-sm font-semibold">
+                        {meta.l}
+                        {q.ship ? ` · ${q.ship}` : ""}
+                      </div>
+                      <div className="text-white/40 text-xs">
+                        {q.cabinType ? `${q.cabinType} · ` : ""}
+                        {q.sailDate || ""}
+                      </div>
+                    </div>
+                    {q.confirm && (
+                      <span className="text-white/45 font-mono text-xs">#{q.confirm}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

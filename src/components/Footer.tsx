@@ -120,6 +120,7 @@ export default function Footer() {
                 { href: "/hold", label: "Hold a Room" },
                 { href: "/booking-options", label: "Booking Options" },
                 { href: "/add-ons", label: "Hotels, Transfers & Extras" },
+                { href: "/transportation", label: "Transportation & Parking" },
                 { href: "/cancellation-policy", label: "Cancellation Policy" },
                 { href: "/terms", label: "Terms & Conditions" },
                 { href: "/vacation-protection", label: "Vacation Protection" },
