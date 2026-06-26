@@ -110,6 +110,18 @@ export default function AdminPage() {
                 📇 Comm Log
               </Link>
               <Link
+                href="/admin/groups"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                👥 Groups
+              </Link>
+              <Link
+                href="/admin/invoice"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
+              >
+                🧾 Invoice
+              </Link>
+              <Link
                 href="/admin/new-booking"
                 className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
               >

@@ -1,0 +1,311 @@
+import Link from "next/link";
+import ShipImage from "@/components/ShipImage";
+import { getGroupByCode, memberBalance } from "@/lib/groups";
+import { fmt$, fmtDate } from "@/lib/sea-pay";
+
+export const dynamic = "force-dynamic";
+
+export default async function GroupPortalPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
+  const { code } = await params;
+  const result = await getGroupByCode(code);
+
+  if (!result) {
+    return (
+      <div className="bg-[#05070d] text-white min-h-[60vh] flex items-center">
+        <div className="max-w-xl mx-auto px-4 text-center">
+          <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mb-3">
+            Group not found
+          </h1>
+          <p className="text-white/55 mb-7">
+            Double-check your group link or code, or contact your specialist.
+          </p>
+          <Link
+            href="/contact"
+            className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+          >
+            Contact us
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const { group, members } = result;
+  const totalGuests = members.reduce((s, m) => s + (m.guests || 0), 0);
+  const depositCount = members.filter(
+    (m) => m.paidInFull || m.depositPaid > 0
+  ).length;
+  const fullCount = members.filter((m) => m.paidInFull).length;
+  const outstanding = members.reduce((s, m) => s + memberBalance(m), 0);
+
+  const stat = (v: string | number, l: string) => (
+    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+      <div className="text-holo font-extrabold text-3xl leading-none">{v}</div>
+      <div className="label-mono text-[10px] uppercase tracking-wider text-white/45 mt-2">
+        {l}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="bg-[#05070d] text-white min-h-screen">
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-white/10">
+        <ShipImage ship={group.ship} overlay={false} className="absolute inset-0" />
+        <div className="absolute inset-0 bg-[#05070d]/85" />
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-400/70 to-transparent" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80">
+              {"// Group Portal"}
+            </div>
+            <div className="hud label-mono text-[10px] uppercase tracking-wider text-white px-3 py-1.5 rounded-full">
+              Group {group.code}
+            </div>
+          </div>
+          <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mt-4">
+            {group.name || "Group Cruise"}
+          </h1>
+          <div className="text-white/70 text-lg mt-2">
+            {group.ship}
+            {group.cruiseLine ? ` · ${group.cruiseLine}` : ""}
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-white/55">
+            {group.sailingDate && (
+              <span>
+                <span className="text-white/40">Sails</span>{" "}
+                {fmtDate(group.sailingDate)}
+              </span>
+            )}
+            {group.depositDueDate && (
+              <span>
+                <span className="text-white/40">Deposit due</span>{" "}
+                {fmtDate(group.depositDueDate)}
+              </span>
+            )}
+            {group.finalPaymentDate && (
+              <span>
+                <span className="text-white/40">Final payment</span>{" "}
+                {fmtDate(group.finalPaymentDate)}
+              </span>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+        {/* Stats */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {stat(members.length, "Cabins booked")}
+          {stat(totalGuests, "Total guests")}
+          {stat(`${depositCount}/${members.length}`, "Deposits paid")}
+          {stat(`${fullCount}/${members.length}`, "Paid in full")}
+        </div>
+
+        {/* Block status */}
+        {group.blockSize > 0 &&
+          (() => {
+            const booked = members.length;
+            const notBooked = Math.max(0, group.blockSize - booked);
+            const pct = Math.min(100, Math.round((booked / group.blockSize) * 100));
+            const rel = group.releaseDate
+              ? new Date(group.releaseDate).toLocaleString("en-US", {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })
+              : "";
+            return (
+              <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+                <div className="flex items-end justify-between flex-wrap gap-2 mb-3">
+                  <div className="label-mono text-[11px] uppercase text-sky-400/80">
+                    {"// Group Block Status"}
+                  </div>
+                  <div className="text-white/70 text-sm">
+                    <span className="text-holo font-extrabold text-lg">{booked}</span>{" "}
+                    booked ·{" "}
+                    <span className="text-white font-bold">{notBooked}</span> not
+                    booked · {group.blockSize} held
+                  </div>
+                </div>
+                <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-sky-400 to-sky-600"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                {rel && (
+                  <div className="mt-4 bg-amber-400/10 border border-amber-400/25 rounded-xl p-3 text-amber-200/90 text-sm">
+                    <strong>{notBooked} unbooked room{notBooked === 1 ? "" : "s"}</strong>{" "}
+                    will be released back into general inventory on{" "}
+                    <strong>{rel}</strong>. Book before then to keep your group
+                    rate and cabin.
+                  </div>
+                )}
+                {notBooked > 0 && (
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 bg-sky-500/10 border border-sky-400/30 rounded-xl p-4">
+                    <div>
+                      <div className="text-white font-bold">
+                        {notBooked} room{notBooked === 1 ? "" : "s"} left at the
+                        group rate
+                      </div>
+                      {group.groupRate > 0 && (
+                        <div className="text-white/60 text-sm">
+                          from{" "}
+                          <span className="text-holo font-bold">
+                            {fmt$(group.groupRate)}
+                          </span>{" "}
+                          / person · double occupancy
+                        </div>
+                      )}
+                    </div>
+                    <Link
+                      href={`/book-cabin?ship=${encodeURIComponent(group.ship)}&date=${group.sailingDate}&line=${encodeURIComponent(group.cruiseLine)}${group.groupRate > 0 ? `&price=${group.groupRate}` : ""}`}
+                      className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all whitespace-nowrap"
+                    >
+                      Book a room now →
+                    </Link>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+        {/* Roster */}
+        <div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+            {"// Roster & Payment Status"}
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-white/10">
+            <table className="w-full text-sm min-w-[760px]">
+              <thead>
+                <tr className="bg-white/5 text-white/50 label-mono text-[10px] uppercase tracking-wider">
+                  <th className="text-left font-bold px-4 py-3">Guest</th>
+                  <th className="text-left font-bold px-3 py-3">Cabin</th>
+                  <th className="text-center font-bold px-3 py-3">Guests</th>
+                  <th className="text-left font-bold px-3 py-3">Confirmation</th>
+                  <th className="text-center font-bold px-3 py-3">Deposit</th>
+                  <th className="text-center font-bold px-3 py-3">Paid in full</th>
+                  <th className="text-right font-bold px-4 py-3">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {members.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-8 text-center text-white/45">
+                      Cabins will appear here as members book. Check back soon.
+                    </td>
+                  </tr>
+                ) : (
+                  members.map((m) => {
+                    const bal = memberBalance(m);
+                    const depo = m.paidInFull || m.depositPaid > 0;
+                    return (
+                      <tr key={m.id} className="border-t border-white/10">
+                        <td className="px-4 py-3">
+                          <div className="font-bold text-white">{m.name}</div>
+                          {m.email && (
+                            <div className="text-white/40 text-xs">{m.email}</div>
+                          )}
+                        </td>
+                        <td className="px-3 py-3 text-white/75">
+                          {m.cabinType || "—"}
+                          {m.cabinNumber ? (
+                            <span className="text-white/40"> #{m.cabinNumber}</span>
+                          ) : null}
+                        </td>
+                        <td className="px-3 py-3 text-center text-white/70">
+                          {m.guests || "—"}
+                        </td>
+                        <td className="px-3 py-3 text-white/60 font-mono text-xs">
+                          {m.confirmationNumber || "—"}
+                        </td>
+                        <td className="px-3 py-3 text-center">
+                          {depo ? (
+                            <span className="text-sky-300">✓</span>
+                          ) : (
+                            <span className="text-white/25">—</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-3 text-center">
+                          {m.paidInFull ? (
+                            <span className="inline-block bg-green-500/15 text-green-300 text-[10px] font-bold uppercase rounded-full px-2 py-0.5">
+                              Paid
+                            </span>
+                          ) : (
+                            <span className="text-white/25">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right font-bold text-white">
+                          {bal > 0 ? fmt$(bal) : "—"}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+              {members.length > 0 && (
+                <tfoot>
+                  <tr className="border-t border-white/15 bg-white/[0.03]">
+                    <td colSpan={6} className="px-4 py-3 text-right text-white/55 label-mono text-[11px] uppercase">
+                      Outstanding balance
+                    </td>
+                    <td className="px-4 py-3 text-right font-extrabold text-holo">
+                      {fmt$(outstanding)}
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
+        </div>
+
+        {/* Contract */}
+        {group.contract && (
+          <div>
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+              {"// Group Contract & Terms"}
+            </div>
+            <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 text-white/70 text-sm leading-relaxed whitespace-pre-wrap">
+              {group.contract}
+            </div>
+          </div>
+        )}
+
+        {/* Leader contact */}
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="label-mono text-[10px] uppercase tracking-wider text-white/45 mb-1">
+              Your group specialist
+            </div>
+            <div className="text-white/70 text-sm">
+              Questions about the roster or payments? We&rsquo;re here to help.
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <a
+              href="tel:+14096322106"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              Call (409) 632-2106
+            </a>
+            <Link
+              href="/contact"
+              className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              Message us
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
