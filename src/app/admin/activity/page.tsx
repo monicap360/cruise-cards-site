@@ -25,6 +25,8 @@ const MODE_META: Record<string, { label: string; icon: string }> = {
   appointment: { label: "Appointment", icon: "📅" },
   inquiry: { label: "Inquiry", icon: "✉️" },
   rfp: { label: "Agent group RFP", icon: "📩" },
+  "rooming-list": { label: "Rooming list", icon: "🧾" },
+  waitlist: { label: "Waitlist request", icon: "📋" },
 };
 
 export default function AdminActivityPage() {

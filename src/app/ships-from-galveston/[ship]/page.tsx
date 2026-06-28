@@ -143,10 +143,16 @@ export default async function ShipLandingPage({
               See dates &amp; prices
             </Link>
             <Link
-              href={`/deck-plans?ship=${encodeURIComponent(f.ship)}`}
-              className="border border-white/25 hover:border-white/70 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+              href={`/group-blocks?ship=${encodeURIComponent(f.ship)}`}
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
             >
-              Deck plans
+              👥 Groups
+            </Link>
+            <Link
+              href={`/waitlist?ship=${encodeURIComponent(f.ship)}`}
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+            >
+              📋 Join waitlist
             </Link>
           </div>
         </div>

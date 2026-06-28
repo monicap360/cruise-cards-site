@@ -6,6 +6,7 @@ import CruiseInclusions from "@/components/CruiseInclusions";
 import CruiseOffers from "@/components/CruiseOffers";
 import DestinationCard from "@/components/DestinationCard";
 import { portsFromItinerary, destinationFor } from "@/lib/destinations";
+import { destinations as destPages } from "@/app/destinations/destination-data";
 import {
   getSailingBlock,
   groupByType,
@@ -127,6 +128,20 @@ export default async function SailingOptionsPage({
           <p className="label-mono text-[11px] uppercase tracking-wider text-sky-400/70 mt-2">
             Round-trip from Galveston · Closed-loop sailing · Returns to Galveston
           </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href={`/group-blocks?ship=${shipParam}&date=${block.sailingDate}`}
+              className="inline-block border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+            >
+              👥 Groups on this sailing
+            </Link>
+            <Link
+              href={`/waitlist?ship=${shipParam}&date=${block.sailingDate}`}
+              className="inline-block border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+            >
+              📋 Join waitlist
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -159,9 +174,17 @@ export default async function SailingOptionsPage({
             Where You&rsquo;ll Wake Up
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {ports.map((p) => (
-              <DestinationCard key={p} d={destinationFor(p)} />
-            ))}
+            {ports.map((p) => {
+              const d = destinationFor(p);
+              const hasPage = destPages.some((dp) => dp.id === d.slug);
+              return (
+                <DestinationCard
+                  key={p}
+                  d={d}
+                  href={hasPage ? `/destinations/${d.slug}` : undefined}
+                />
+              );
+            })}
           </div>
         </section>
       )}

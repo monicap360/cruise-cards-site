@@ -10,7 +10,6 @@ const links = [
   { href: "/deals", label: "Cruise Deals" },
   { href: "/last-minute", label: "Last-Minute" },
   { href: "/ships-from-galveston", label: "Ships" },
-  { href: "/deck-plans", label: "Deck Plans" },
   { href: "/destinations", label: "Destinations" },
   { href: "/webcams", label: "Live Cams" },
   { href: "/guides", label: "Guides" },

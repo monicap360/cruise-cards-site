@@ -1,6 +1,17 @@
 import Link from "next/link";
 import { fmt$ } from "@/lib/sea-pay";
 import ShipImage from "@/components/ShipImage";
+import Photo from "@/components/Photo";
+
+// Map a cabin category to its room photo in /public/cabins.
+function cabinPhoto(category: string): string {
+  const c = (category || "").toLowerCase();
+  if (c.includes("interior") || c.includes("inside")) return "interior";
+  if (c.includes("ocean") || c.includes("view") || c.includes("window") || c.includes("porthole")) return "ocean-view";
+  if (c.includes("suite")) return c.includes("mini") || c.includes("junior") ? "mini-suite" : "suite";
+  if (c.includes("balcony") || c.includes("veranda")) return "balcony";
+  return "interior";
+}
 
 export type BoardingPassProps = {
   nights: number;
@@ -142,6 +153,17 @@ export default function BoardingPass(props: BoardingPassProps) {
         <span className="hidden sm:block absolute -left-2.5 -top-2.5 w-5 h-5 rounded-full bg-[#05070d]" />
         <span className="hidden sm:block absolute -left-2.5 -bottom-2.5 w-5 h-5 rounded-full bg-[#05070d]" />
 
+        {/* Room photo */}
+        <div className="relative mb-4 h-24 rounded-lg overflow-hidden">
+          <Photo
+            src={`/cabins/${cabinPhoto(props.category)}.jpg`}
+            alt={`${props.category} stateroom`}
+            overlay={false}
+            className="h-24 w-full"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/70 to-transparent" />
+        </div>
+
         {/* Cabin + room/deck */}
         <div className="label-mono text-[10px] uppercase text-white/40 mb-1">
           Your Cabin
@@ -233,15 +255,6 @@ export default function BoardingPass(props: BoardingPassProps) {
         >
           {props.ctaLabel ?? "Book Now"}
         </Link>
-
-        {props.mapHref && (
-          <Link
-            href={props.mapHref}
-            className="mt-2 border border-white/20 text-white/80 hover:text-white hover:border-white/40 font-semibold uppercase tracking-wider text-xs text-center px-5 py-2.5 rounded-full transition-all"
-          >
-            View Deck Map
-          </Link>
-        )}
 
         <Link
           href={seaYouHref}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
 import Photo from "@/components/Photo";
+import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
@@ -437,6 +438,18 @@ export default async function GroupPortalPage({
               )}
             </table>
           </div>
+        </div>
+
+        {/* Rooming list submission */}
+        <div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+            {"// Rooming List"}
+          </div>
+          <RoomingListForm
+            groupCode={group.code}
+            groupName={group.name}
+            ship={group.ship}
+          />
         </div>
 
         {/* Contract */}

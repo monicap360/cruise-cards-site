@@ -182,11 +182,8 @@ export default async function LastMinutePage() {
                 originalPrice={l.pricePaid}
                 badge={l.sample ? "Sample" : "Transferred"}
                 embarkStreet={getTerminal(l.ship)?.entryStreet}
-                href={`/contact?listing=${encodeURIComponent(
-                  l.sample ? "sample" : l.id
-                )}`}
+                href={`/book-cabin?ship=${encodeURIComponent(l.ship)}&line=${encodeURIComponent(l.cruiseLine)}&type=${encodeURIComponent(category)}&guests=${l.guests}&price=${l.guests > 0 ? Math.round(l.buyerPrice / l.guests) : l.buyerPrice}${l.sailDate ? `&date=${encodeURIComponent(l.sailDate)}` : ""}&dest=${encodeURIComponent(firstPort(l.itinerary))}&listing=${encodeURIComponent(l.sample ? "sample" : l.id)}`}
                 ctaLabel="Claim Cabin"
-                mapHref={`/deck-plans?ship=${encodeURIComponent(l.ship)}`}
               />
             );
           })}

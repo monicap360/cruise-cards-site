@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
-import ShipImage from "@/components/ShipImage";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { type SailingBlock } from "@/lib/room-blocks";
+import { portsFromItinerary, destinationFor } from "@/lib/destinations";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
@@ -299,17 +299,30 @@ function FindInner() {
                     const available = b.cabins.filter(
                       (c) => c.status === "available"
                     ).length;
+                    const dest = destinationFor(
+                      portsFromItinerary(b.itinerary)[0] ?? ""
+                    );
                     return (
                       <Link
                         key={b.id}
                         href={`/sailings/${b.id}`}
                         className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-sky-400/40 transition-colors flex flex-col sm:flex-row"
                       >
-                        {/* Ship photo */}
+                        {/* Destination photo */}
                         <div className="relative sm:w-52 h-40 sm:h-auto flex-shrink-0">
-                          <ShipImage ship={b.ship} className="absolute inset-0" />
+                          <Photo
+                            src={`/destinations/${dest.slug}.jpg`}
+                            alt={dest.name}
+                            gradient={dest.gradient}
+                            overlay={false}
+                            className="absolute inset-0"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/80 via-[#05070d]/10 to-transparent" />
                           <span className="absolute top-3 left-3 hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
                             {b.nights} {durationWord(b.cruiseLine)}
+                          </span>
+                          <span className="absolute bottom-2.5 left-3 right-3 text-white text-sm font-extrabold uppercase tracking-tight leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                            {dest.name}
                           </span>
                         </div>
                         {/* Details */}
