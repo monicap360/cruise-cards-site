@@ -209,3 +209,10 @@ select optgroup {
   background-color: #0b1020;
   color: #ffffff;
 }
+
+/* Admin dashboard runs at a larger size than the public site — staff read it
+   all day. Scopes to /admin via the admin-scope wrapper (src/app/admin/layout).
+   `zoom` scales text + UI uniformly without touching the public site. */
+.admin-scope {
+  zoom: 1.12;
+}

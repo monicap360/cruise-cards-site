@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FloatingCTA from "@/components/FloatingCTA";
-import ConciergeLauncher from "@/components/ConciergeLauncher";
+import SiteChrome from "@/components/SiteChrome";
 import Analytics from "@/components/Analytics";
 
 const geist = Geist({
@@ -95,11 +92,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(BUSINESS_JSONLD) }}
         />
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <FloatingCTA />
-        <ConciergeLauncher />
+        <SiteChrome>{children}</SiteChrome>
         <Analytics />
       </body>
     </html>
