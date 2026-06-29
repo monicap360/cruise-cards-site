@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import BrandLogo from "@/components/BrandLogo";
 import PrintButton from "@/components/PrintButton";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
@@ -15,7 +16,13 @@ export default async function GroupReceiptPage({
 }) {
   const { id } = await params;
   const { copy } = await searchParams;
-  const isAgent = copy === "agent";
+  // Agent copy is admin-only (valid admin session required).
+  let adminOk = false;
+  try {
+    const session = (await cookies()).get("cfg-admin-session")?.value;
+    adminOk = !!session && Buffer.from(session, "base64").toString("utf8").startsWith("cfg-admin:");
+  } catch { adminOk = false; }
+  const isAgent = copy === "agent" && adminOk;
   const data = await getMemberById(id);
 
   if (!data) {
