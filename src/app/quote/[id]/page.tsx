@@ -2,8 +2,9 @@ import Link from "next/link";
 import Photo from "@/components/Photo";
 import BrandLogo from "@/components/BrandLogo";
 import PrintButton from "@/components/PrintButton";
+import QuoteAccept from "@/components/QuoteAccept";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
-import { getQuote, quoteTotal, quoteBalance } from "@/lib/quotes";
+import { getQuote, quoteTotal, quoteBalance, cabinFrom } from "@/lib/quotes";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,13 @@ export default async function QuotePage({
   const isInvoice = q.type === "invoice";
   const docLabel = isInvoice ? "INVOICE" : "QUOTE";
   const balanceLabel = isInvoice ? "Amount due" : "Balance due";
+
+  const cabins = q.cabinOptions ?? [];
+  const days = q.days ?? [];
+  const includes = q.includes ?? [];
+  const excludes = q.excludes ?? [];
+  const isAccepted = !!q.acceptedAt;
+  const acceptedCabin = isAccepted ? cabinFrom(q) : null;
 
   return (
     <div className="bg-gray-200 min-h-screen py-8 print:bg-white print:py-0">
@@ -138,6 +146,111 @@ export default async function QuotePage({
             </div>
           )}
 
+          {/* Cabin options comparison (quotes only) */}
+          {!isInvoice && cabins.length > 0 && (
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-3">
+                Choose your stateroom
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {cabins.map((c) => (
+                  <div
+                    key={c.id}
+                    className={`relative rounded-xl border p-5 flex flex-col ${
+                      c.recommended
+                        ? "border-sky-500 ring-1 ring-sky-200 bg-sky-50/40"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    {c.recommended && (
+                      <div className="absolute -top-2.5 left-4 bg-sky-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                        Recommended
+                      </div>
+                    )}
+                    <div className="text-sm font-bold text-gray-900">
+                      {c.category || "Cabin"}
+                    </div>
+                    <div className="mt-2 text-2xl font-extrabold text-gray-900 tabular-nums">
+                      {fmt$(c.perPerson)}
+                    </div>
+                    <div className="text-[11px] uppercase tracking-wider text-gray-400">
+                      per person
+                    </div>
+                    {c.perks && (
+                      <div className="mt-3 text-sm text-gray-600">{c.perks}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Itinerary timeline */}
+          {days.length > 0 && (
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-3">
+                Day by day
+              </div>
+              <ol className="space-y-0">
+                {days.map((d, i) => (
+                  <li key={i} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gray-900 mt-1.5" />
+                      {i < days.length - 1 && (
+                        <div className="w-px flex-1 bg-gray-300 my-1" />
+                      )}
+                    </div>
+                    <div className="pb-5">
+                      <div className="text-sm font-bold text-gray-900">
+                        {d.day}
+                        {d.port ? ` · ${d.port}` : ""}
+                      </div>
+                      {d.note && (
+                        <div className="text-sm text-gray-600">{d.note}</div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Includes / Excludes */}
+          {(includes.length > 0 || excludes.length > 0) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border-y border-gray-200 py-5">
+              {includes.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                    What&apos;s included
+                  </div>
+                  <ul className="space-y-1.5">
+                    {includes.map((item, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-gray-700">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {excludes.length > 0 && (
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+                    Not included
+                  </div>
+                  <ul className="space-y-1.5">
+                    {excludes.map((item, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-gray-500">
+                        <span className="text-gray-400 font-bold">✕</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Line items */}
           <table className="w-full text-sm">
             <thead>
@@ -206,6 +319,26 @@ export default async function QuotePage({
                 {q.notes}
               </div>
             </div>
+          )}
+
+          {/* Online acceptance (quotes only) */}
+          {!isInvoice && isAccepted && (
+            <div className="rounded-xl border-2 border-green-600 bg-green-50 p-5 print:border print:border-gray-300">
+              <div className="text-base font-extrabold text-green-800">
+                ✓ Accepted by {q.acceptedName || "client"} on{" "}
+                {fmtDate(q.acceptedAt)}
+                {acceptedCabin ? ` — ${acceptedCabin.category}` : ""}
+              </div>
+              <div className="mt-2 text-sm text-gray-700">
+                We&apos;ll call to confirm. No card charged online — pay by mailed
+                check to 3501 Winnie St, Galveston, TX 77550 or directly with the
+                cruise line.
+              </div>
+            </div>
+          )}
+
+          {!isInvoice && !isAccepted && (
+            <QuoteAccept quoteId={q.id} cabinOptions={cabins} />
           )}
 
           {/* Footer */}

@@ -6,7 +6,10 @@ import { fmt$ } from "@/lib/sea-pay";
 import {
   type Quote,
   type QuoteLine,
+  type QuoteCabin,
+  type QuoteDay,
   blankQuote,
+  newCabinId,
   getAllQuotes,
   saveQuote,
   deleteQuote,
@@ -71,6 +74,83 @@ export default function AdminQuotesPage() {
 
   function removeLine(i: number) {
     setQ((prev) => ({ ...prev, lines: prev.lines.filter((_, idx) => idx !== i) }));
+  }
+
+  // ── Cabin options ──
+  function updateCabin(i: number, patch: Partial<QuoteCabin>) {
+    setQ((prev) => ({
+      ...prev,
+      cabinOptions: prev.cabinOptions.map((c, idx) =>
+        idx === i ? { ...c, ...patch } : c,
+      ),
+    }));
+  }
+
+  function setRecommended(i: number) {
+    setQ((prev) => ({
+      ...prev,
+      cabinOptions: prev.cabinOptions.map((c, idx) => ({
+        ...c,
+        recommended: idx === i,
+      })),
+    }));
+  }
+
+  function addCabin() {
+    setQ((prev) => ({
+      ...prev,
+      cabinOptions: [
+        ...prev.cabinOptions,
+        {
+          id: newCabinId(),
+          category: "",
+          perPerson: 0,
+          perks: "",
+          recommended: prev.cabinOptions.length === 0,
+        },
+      ],
+    }));
+  }
+
+  function removeCabin(i: number) {
+    setQ((prev) => ({
+      ...prev,
+      cabinOptions: prev.cabinOptions.filter((_, idx) => idx !== i),
+    }));
+  }
+
+  // ── Itinerary days ──
+  function updateDay(i: number, patch: Partial<QuoteDay>) {
+    setQ((prev) => ({
+      ...prev,
+      days: prev.days.map((d, idx) => (idx === i ? { ...d, ...patch } : d)),
+    }));
+  }
+
+  function addDay() {
+    setQ((prev) => ({
+      ...prev,
+      days: [
+        ...prev.days,
+        { day: `Day ${prev.days.length + 1}`, port: "", note: "" },
+      ],
+    }));
+  }
+
+  function removeDay(i: number) {
+    setQ((prev) => ({ ...prev, days: prev.days.filter((_, idx) => idx !== i) }));
+  }
+
+  // ── Includes / Excludes (textarea, one item per line) ──
+  function listToText(items: string[]): string {
+    return items.join("\n");
+  }
+
+  function textToList(text: string): string[] {
+    return text
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
 
   async function handleSave() {
@@ -324,6 +404,172 @@ export default function AdminQuotesPage() {
                 <span className="text-2xl font-extrabold text-holo">
                   {fmt$(total)}
                 </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Cabin options */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">
+              {"// Cabin options the client can choose"}
+            </div>
+            <p className="text-white/40 text-xs mb-3">
+              The headline feature — give the client side-by-side staterooms to
+              compare. Per-person pricing.
+            </p>
+            <div className="space-y-3">
+              {q.cabinOptions.map((cab, i) => (
+                <div
+                  key={cab.id}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-white/5 border border-white/10 rounded-xl p-3"
+                >
+                  <div className="md:col-span-3">
+                    <label className={FIELD_LABEL}>Category</label>
+                    <input
+                      className={INPUT}
+                      value={cab.category}
+                      onChange={(e) =>
+                        updateCabin(i, { category: e.target.value })
+                      }
+                      placeholder="Balcony"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className={FIELD_LABEL}>Per person</label>
+                    <input
+                      type="number"
+                      className={INPUT}
+                      value={cab.perPerson || ""}
+                      onChange={(e) =>
+                        updateCabin(i, { perPerson: Number(e.target.value) })
+                      }
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="md:col-span-4">
+                    <label className={FIELD_LABEL}>Perks</label>
+                    <input
+                      className={INPUT}
+                      value={cab.perks}
+                      onChange={(e) => updateCabin(i, { perks: e.target.value })}
+                      placeholder="Priority boarding, drinks pkg"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className={FIELD_LABEL}>Recommended</label>
+                    <label className="flex items-center gap-2 h-[42px] px-3 rounded-xl bg-white/5 border border-white/15 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="recommended-cabin"
+                        checked={cab.recommended}
+                        onChange={() => setRecommended(i)}
+                        className="accent-sky-400"
+                      />
+                      <span className="text-xs text-white/70">Pick</span>
+                    </label>
+                  </div>
+                  <div className="md:col-span-1">
+                    <button
+                      onClick={() => removeCabin(i)}
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-red-300 hover:border-red-400/30 text-sm"
+                      aria-label="Remove cabin"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={addCabin}
+              className="mt-3 text-sky-400 hover:text-sky-300 font-semibold text-sm"
+            >
+              + Add cabin option
+            </button>
+          </div>
+
+          {/* Itinerary (day by day) */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// Itinerary (day by day)"}
+            </div>
+            <div className="space-y-3">
+              {q.days.map((d, i) => (
+                <div key={i} className="flex gap-3 items-end">
+                  <div className="w-28">
+                    <label className={FIELD_LABEL}>Day</label>
+                    <input
+                      className={INPUT}
+                      value={d.day}
+                      onChange={(e) => updateDay(i, { day: e.target.value })}
+                      placeholder="Day 1"
+                    />
+                  </div>
+                  <div className="w-56">
+                    <label className={FIELD_LABEL}>Port</label>
+                    <input
+                      className={INPUT}
+                      value={d.port}
+                      onChange={(e) => updateDay(i, { port: e.target.value })}
+                      placeholder="Galveston, TX"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className={FIELD_LABEL}>Note</label>
+                    <input
+                      className={INPUT}
+                      value={d.note}
+                      onChange={(e) => updateDay(i, { note: e.target.value })}
+                      placeholder="Embarkation · sail away 4:00 PM"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeDay(i)}
+                    className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-red-300 hover:border-red-400/30 text-sm"
+                    aria-label="Remove day"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={addDay}
+              className="mt-3 text-sky-400 hover:text-sky-300 font-semibold text-sm"
+            >
+              + Add day
+            </button>
+          </div>
+
+          {/* Includes / Excludes */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// What's included / Not included"}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={FIELD_LABEL}>
+                  What&apos;s included (one per line)
+                </label>
+                <textarea
+                  className={`${INPUT} min-h-32`}
+                  value={listToText(q.includes)}
+                  onChange={(e) =>
+                    update("includes", textToList(e.target.value))
+                  }
+                  placeholder={"Stateroom\nAll meals in main dining\nOnboard entertainment"}
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Not included (one per line)</label>
+                <textarea
+                  className={`${INPUT} min-h-32`}
+                  value={listToText(q.excludes)}
+                  onChange={(e) =>
+                    update("excludes", textToList(e.target.value))
+                  }
+                  placeholder={"Gratuities\nShore excursions\nTravel protection"}
+                />
               </div>
             </div>
           </div>
