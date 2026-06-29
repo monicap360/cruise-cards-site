@@ -3,6 +3,8 @@ import { supabase } from "@/lib/supabase";
 // Group signup tracker — the agency's own roster of families signed up for a
 // group sailing (e.g. "Thanksgiving 2026 — Liberty of the Seas"). ADMIN-ONLY:
 // holds PII (DOB, phone, email, reservation #s). Never shown on the public site.
+export type SignupGuest = { name: string; dob: string };
+
 export type SignupEntry = {
   id: string;
   groupLabel: string; // which group sailing this family belongs to
@@ -15,12 +17,24 @@ export type SignupEntry = {
   totalGuests: number;
   cabins: string; // "1 Balcony", "1 Interior", "1 Ocean View", etc.
   reservationNumber: string;
-  guestNames: string; // full names as on ID (multiline)
+  guestNames: string; // full names as on ID (multiline) — quick free-text
+  guests: SignupGuest[]; // structured per-guest name + DOB (for the rooming list)
   confirmed: string; // "Y" | "N" | ""
   depositStatus: string; // free text, e.g. "N Sent Invoice", "Y Sent Invoice"
   notes: string;
   createdAt?: string;
 };
+
+// Guests for a room: prefer the structured list; otherwise split the free-text
+// names (one per line or comma) and put the lead DOB on the first guest.
+export function roomGuests(s: SignupEntry): SignupGuest[] {
+  if (s.guests && s.guests.length) return s.guests;
+  const names = s.guestNames
+    .split(/[\n,]+/)
+    .map((n) => n.trim())
+    .filter(Boolean);
+  return names.map((name, i) => ({ name, dob: i === 0 ? s.dob : "" }));
+}
 
 export function newSignupId() {
   return "sgn-" + Math.random().toString(36).slice(2, 9);
@@ -40,6 +54,7 @@ export function blankSignup(groupLabel = ""): SignupEntry {
     cabins: "",
     reservationNumber: "",
     guestNames: "",
+    guests: [],
     confirmed: "Y",
     depositStatus: "",
     notes: "",
@@ -60,6 +75,7 @@ function toSignup(r: Record<string, unknown>): SignupEntry {
     cabins: (r.cabins as string) ?? "",
     reservationNumber: (r.reservation_number as string) ?? "",
     guestNames: (r.guest_names as string) ?? "",
+    guests: Array.isArray(r.guests) ? (r.guests as SignupGuest[]) : [],
     confirmed: (r.confirmed as string) ?? "",
     depositStatus: (r.deposit_status as string) ?? "",
     notes: (r.notes as string) ?? "",
@@ -81,6 +97,7 @@ function signupRow(s: SignupEntry): Record<string, unknown> {
     cabins: s.cabins || null,
     reservation_number: s.reservationNumber || null,
     guest_names: s.guestNames || null,
+    guests: s.guests ?? [],
     confirmed: s.confirmed || null,
     deposit_status: s.depositStatus || null,
     notes: s.notes || null,

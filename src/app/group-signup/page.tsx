@@ -83,6 +83,7 @@ export default function GroupSignupPage() {
       cabins: `${f.cabinsNeeded} ${f.cabinPref}`,
       reservationNumber: "",
       guestNames: f.guestNames,
+      guests: [],
       confirmed: "Y",
       depositStatus: "",
       notes: f.notes ? `[Web signup] ${f.notes}` : "[Web signup]",
