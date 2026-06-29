@@ -3,6 +3,7 @@ import ShipImage from "@/components/ShipImage";
 import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
+import { SHOP_ITEMS, CONTACT_EMAIL } from "@/lib/shop";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -351,6 +352,52 @@ export default async function GroupPortalPage({
           </div>
         )}
 
+        {/* Rooming list — by room */}
+        {rooms.length > 0 && (
+          <div>
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+              {"// Rooming List — by room"}
+            </div>
+            <div className="space-y-2">
+              {[...rooms]
+                .sort((a, b) => a.id.localeCompare(b.id))
+                .map((rm, i) => {
+                  const occ = members.find((m) => m.name === rm.bookedBy);
+                  const isGty = !rm.label || rm.label.toUpperCase().startsWith("GTY");
+                  const names = occ?.notes && !/^deposit/i.test(occ.notes) ? occ.notes : "";
+                  const open = rm.status === "available" && !rm.bookedBy;
+                  return (
+                    <div
+                      key={rm.id}
+                      className={`bg-[#0b1020] rounded-xl border p-4 flex items-start justify-between gap-4 ${open ? "border-white/10" : "border-sky-400/25"}`}
+                    >
+                      <div>
+                        <div className="font-bold text-white">
+                          Room {i + 1}
+                          <span className="text-white/45 font-semibold">
+                            {" · "}{isGty ? "Guarantee — cabin # assigned later" : `Cabin ${rm.label}`}
+                          </span>
+                        </div>
+                        <div className="text-white/55 text-sm mt-0.5">
+                          {rm.cabinType}
+                          {open ? " · Open — available to book" : rm.bookedBy ? ` · ${rm.bookedBy}` : ""}
+                        </div>
+                        {names && <div className="text-white/70 text-sm mt-1">👥 {names}</div>}
+                      </div>
+                      <div className="text-right shrink-0">
+                        {open ? (
+                          <span className="text-[10px] font-bold uppercase px-2 py-1 rounded-full bg-green-500/15 text-green-300 border border-green-400/25">Available</span>
+                        ) : (
+                          <span className="text-white/60 text-sm">{occ?.guests ? `${occ.guests} guest${occ.guests === 1 ? "" : "s"}` : "Booked"}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
         {/* Roster */}
         <div>
           <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
@@ -476,6 +523,34 @@ export default async function GroupPortalPage({
           </div>
         )}
 
+        {/* Group store & extras */}
+        <div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+            {"// Group Store & Extras"}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {SHOP_ITEMS.map((it) => (
+              <a
+                key={it.title}
+                href={it.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-[#0b1020] border border-white/10 hover:border-sky-400/40 rounded-2xl p-5 transition-all flex flex-col"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl">{it.emoji}</span>
+                  {it.tag && (
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">{it.tag}</span>
+                  )}
+                </div>
+                <div className="font-bold text-white mt-3">{it.title}</div>
+                <div className="text-white/55 text-sm mt-1 flex-1">{it.desc}</div>
+                <div className="text-sky-400 group-hover:text-sky-300 font-semibold text-xs uppercase tracking-wider mt-3">Shop now →</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
         {/* Leader contact */}
         <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -486,12 +561,18 @@ export default async function GroupPortalPage({
               Questions about the roster or payments? We&rsquo;re here to help.
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <a
               href="tel:+14096322106"
               className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
             >
               Call (409) 632-2106
+            </a>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              ✉️ Email us
             </a>
             <Link
               href="/contact"
