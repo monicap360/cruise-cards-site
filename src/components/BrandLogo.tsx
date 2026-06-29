@@ -1,12 +1,8 @@
-"use client";
-
-import { useState } from "react";
-
 /**
- * "Cruises from Galveston" brand logo. Uses the real logo image at
- * /public/logo.png when present (sharp on invoices/receipts); falls back to a
- * clean SVG wordmark until the file is added. Pass `dark` for the SVG fallback
- * on a dark background.
+ * "Cruises from Galveston" brand logo — a crisp SVG (red ship, blue speed swoosh,
+ * white star) with the wordmark. Renders sharp on screen and in print (invoices,
+ * receipts) with no external file, so it never shows a broken image. Pass `dark`
+ * for light text on a dark background.
  */
 export default function BrandLogo({
   className = "",
@@ -15,20 +11,6 @@ export default function BrandLogo({
   className?: string;
   dark?: boolean;
 }) {
-  const [imgOk, setImgOk] = useState(true);
-
-  if (imgOk) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        src="/logo.png"
-        alt="Cruises from Galveston"
-        onError={() => setImgOk(false)}
-        className={`h-14 w-auto ${className}`}
-      />
-    );
-  }
-
   const navy = dark ? "#ffffff" : "#16357e";
   const red = "#e1232f";
   const blue = dark ? "#9cc2ff" : "#1f4fb0";

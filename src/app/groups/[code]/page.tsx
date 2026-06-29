@@ -447,6 +447,11 @@ export default async function GroupPortalPage({
                           {rm.cabinType}
                           {open ? " · Open — available to book" : rm.bookedBy ? ` · ${rm.bookedBy}` : ""}
                         </div>
+                        {occ?.cabinType && occ.cabinType !== rm.cabinType && (
+                          <div className="text-amber-300/80 text-xs mt-0.5">
+                            ✦ Requested: {occ.cabinType} <span className="text-white/35">(booked {rm.cabinType} — pending balcony block)</span>
+                          </div>
+                        )}
                         {names && (
                           <div className="text-white/70 text-sm mt-1.5 space-y-0.5">
                             {names.split(/,\s*/).filter(Boolean).map((nm, k) => {
