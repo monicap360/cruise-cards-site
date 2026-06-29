@@ -5,6 +5,7 @@ import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
 import { SHOP_ITEMS, CONTACT_EMAIL } from "@/lib/shop";
 import ParkRideScheduler from "@/components/ParkRideScheduler";
+import CruisePackingList from "@/components/CruisePackingList";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -535,6 +536,11 @@ export default async function GroupPortalPage({
         {/* Park & Ride scheduler */}
         <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
           <ParkRideScheduler groupCode={group.code} sailDate={group.sailingDate} />
+        </div>
+
+        {/* Packing list */}
+        <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
+          <CruisePackingList />
         </div>
 
         {/* Group store & extras */}
