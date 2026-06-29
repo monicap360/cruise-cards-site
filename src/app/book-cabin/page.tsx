@@ -17,7 +17,15 @@ function shipSlug(s: string) {
 }
 
 const DEPOSIT_PP = 50;
-const HOTEL_PER_NIGHT = 139; // estimated pre/post-cruise hotel rate per room/night
+
+// Estimated Galveston hotel rate per room/night — peaks in summer (rates run
+// $250+ in Jun–Aug; lower off-season). Specialist confirms the real rate.
+function hotelRateForMonth(m: number): number {
+  if (m >= 6 && m <= 8) return 250; // summer peak
+  if (m === 5 || m === 9) return 219; // late spring / early fall
+  if (m === 3 || m === 4 || m === 10) return 175; // shoulder
+  return 149; // off-peak
+}
 
 // ── Add-ons (NOT inventory — estimated, confirmed by a specialist) ─────────────
 type AddonId =
@@ -320,8 +328,9 @@ function BookCabinContent() {
   const anyDiscount = DISCOUNTS.some((d) => discounts[d.id]);
   const discountAmount = anyDiscount ? cruiseFare * DISCOUNT_RATE : 0;
 
+  const hotelRate = hotelRateForMonth(sailDate ? Number(sailDate.slice(5, 7)) : 7);
   const hotelNights = (preHotel ? preNights : 0) + (postHotel ? postNights : 0);
-  const hotelTotal = hotelNights * HOTEL_PER_NIGHT * Math.max(1, hotelRooms);
+  const hotelTotal = hotelNights * hotelRate * Math.max(1, hotelRooms);
 
   const estimatedTotal =
     Math.max(0, cruiseFare - discountAmount) + addonsTotal + hotelTotal;
@@ -806,7 +815,7 @@ function BookCabinContent() {
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" checked={preHotel} onChange={(e) => setPreHotel(e.target.checked)} className="accent-sky-500 w-4 h-4 flex-shrink-0" />
                     <span className="flex-1 text-white text-sm font-semibold">Pre-cruise hotel (night before)</span>
-                    <span className="text-white/40 text-xs">~{fmt$(HOTEL_PER_NIGHT)}/night/room</span>
+                    <span className="text-white/40 text-xs">~{fmt$(hotelRate)}/night/room</span>
                   </label>
                   {preHotel && (
                     <div className="mt-3 flex items-center gap-2 pl-7">
@@ -820,7 +829,7 @@ function BookCabinContent() {
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" checked={postHotel} onChange={(e) => setPostHotel(e.target.checked)} className="accent-sky-500 w-4 h-4 flex-shrink-0" />
                     <span className="flex-1 text-white text-sm font-semibold">Post-cruise hotel (night after)</span>
-                    <span className="text-white/40 text-xs">~{fmt$(HOTEL_PER_NIGHT)}/night/room</span>
+                    <span className="text-white/40 text-xs">~{fmt$(hotelRate)}/night/room</span>
                   </label>
                   {postHotel && (
                     <div className="mt-3 flex items-center gap-2 pl-7">
