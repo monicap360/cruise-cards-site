@@ -27,6 +27,7 @@ const MORE = [
   { href: "/hold", label: "Hold a Room" },
   { href: "/booking-options", label: "Booking Options" },
   { href: "/reserve", label: "Reserve a Visit" },
+  { href: "/group-cruises", label: "Group & Celebration Cruises" },
   { href: "/group-signup", label: "Start a Group" },
   { href: "/group-leader", label: "Manage My Group" },
   { href: "/request-group-space", label: "Travel Agents" },

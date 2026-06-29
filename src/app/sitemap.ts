@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { POSTS } from "@/lib/news";
 import { allFeederSlugs } from "@/lib/feeder";
+import { GROUP_CRUISES } from "@/lib/group-cruises";
 
 const SITE_URL = "https://cruisesfromgalveston.net";
 
@@ -49,6 +50,8 @@ const ROUTES = [
   "/guides/travel-insurance",
   "/transportation",
   "/galveston-cruise-hotels",
+  "/group-cruises",
+  ...GROUP_CRUISES.map((g) => `/group-cruises/${g.slug}`),
   "/cruise-line-apps",
   "/already-booked",
   "/free-cruise",
