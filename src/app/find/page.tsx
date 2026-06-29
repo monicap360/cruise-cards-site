@@ -384,6 +384,13 @@ function FindInner() {
                   </div>
                 )}
               </>
+            ) : contentResults.length > 0 ? (
+              <p className="text-white/55 text-lg max-w-2xl">
+                No live sailings are loaded for{" "}
+                <span className="text-white font-semibold">“{q}”</span> right now —
+                here&apos;s the ship &amp; pages we found below. Tell us your dates
+                and we&apos;ll pull live inventory for you.
+              </p>
             ) : (
               <div className="text-center py-12 max-w-xl mx-auto">
                 <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] mb-3">

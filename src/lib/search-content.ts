@@ -25,7 +25,9 @@ const ships: SearchItem[] = GALVESTON_FLEET.map((s) => ({
   type: "Ship",
   title: s.ship,
   subtitle: `${s.cruiseLine} · ${s.durationLabel} · ${s.itinerary}`,
-  href: `/sailings?ship=${encodeURIComponent(s.ship)}`,
+  // Link to the ship's own page ("all about the ship" + its sailings) rather
+  // than a bare sailings query, so a ship search always lands somewhere useful.
+  href: `/ships-from-galveston/${slugify(s.ship)}`,
   keywords:
     `${s.ship} ${s.cruiseLine} ${s.itinerary} ${s.durationLabel}`.toLowerCase(),
   image: `/ships/${slugify(s.ship)}.jpg`,
