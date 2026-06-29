@@ -57,6 +57,58 @@ export default function GroupDepositsPage() {
   const [g, setG] = useState<GroupDeposit>(() => blankGroupDeposit());
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [importBusy, setImportBusy] = useState(false);
+  const [importMsg, setImportMsg] = useState("");
+
+  async function importFromPdf(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportBusy(true);
+    setImportMsg("Reading the contract with AI…");
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      const b64 = btoa(bin);
+      const mediaType = file.type === "image/png" ? "image/png" : file.type === "image/jpeg" ? "image/jpeg" : "application/pdf";
+      const r = await fetch("/api/parse-group", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ pdfBase64: b64, mediaType }),
+      });
+      const d = await r.json();
+      if (!r.ok) { setImportMsg(d.error || "Could not read that document."); setImportBusy(false); return; }
+      const sched = Array.isArray(d.schedule)
+        ? d.schedule.map((m: Record<string, unknown>) => ({ dueDate: String(m.dueDate ?? ""), depositRequired: Number(m.depositRequired) || 0, cumulativeDue: Number(m.cumulativeDue) || 0, paidToDate: Number(m.paidToDate) || 0 }))
+        : [];
+      const cabins = Array.isArray(d.cabins)
+        ? d.cabins.map((c: Record<string, unknown>) => ({ cabinNumber: String(c.cabinNumber ?? ""), bookingId: String(c.bookingId ?? ""), category: String(c.category ?? ""), occupancy: String(c.occupancy ?? ""), deposit: Number(c.deposit) || 0, paid: Number(c.paid) || 0 }))
+        : [];
+      setG({
+        ...blankGroupDeposit(),
+        groupName: String(d.groupName ?? ""),
+        cruiseGroupId: String(d.cruiseGroupId ?? ""),
+        cruiseLine: String(d.cruiseLine ?? ""),
+        ship: String(d.ship ?? ""),
+        sailingDate: String(d.sailingDate ?? ""),
+        itinerary: String(d.itinerary ?? ""),
+        issueDate: String(d.issueDate ?? ""),
+        partnerAdvocate: String(d.partnerAdvocate ?? ""),
+        advocateExt: String(d.advocateExt ?? ""),
+        rep: String(d.rep ?? ""),
+        groupEmail: String(d.groupEmail ?? ""),
+        notes: String(d.notes ?? ""),
+        schedule: sched,
+        cabins,
+      });
+      setEditing(false);
+      setImportMsg(`✓ Read ${cabins.length} cabin(s) + ${sched.length} deposit milestone(s). Review below, then Save.`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setImportMsg("Could not read that document.");
+    }
+    setImportBusy(false);
+  }
 
   async function refresh() {
     setList(await getGroupDeposits());
@@ -208,6 +260,23 @@ export default function GroupDepositsPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* ── Import from PDF ─────────────────────────────────────────────── */}
+        <div className="bg-[#0b1020] rounded-2xl border border-sky-400/25 p-6 mb-6">
+          <h2 className="font-extrabold text-lg mb-1">📄 Import group from a contract / confirmation PDF</h2>
+          <p className="text-white/50 text-sm mb-3">
+            Upload the cruise‑line group contract, booking confirmation, or deposit reminder — AI reads it and
+            fills in the group, ship, dates, cabins, and deposit schedule below. Review, then Save to put it in the system.
+          </p>
+          <input
+            type="file"
+            accept=".pdf,image/*"
+            onChange={importFromPdf}
+            disabled={importBusy}
+            className="block w-full text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-white file:text-black file:font-semibold file:px-4 file:py-2 file:text-xs file:uppercase file:tracking-wider disabled:opacity-50"
+          />
+          {importMsg && <p className="text-sky-300 text-sm mt-2">{importMsg}</p>}
+        </div>
+
         {/* ── Group details ───────────────────────────────────────────────── */}
         <div className={card}>
           <h2 className="text-lg font-extrabold uppercase tracking-wider mb-5">
