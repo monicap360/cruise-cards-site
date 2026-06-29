@@ -1,0 +1,479 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { fmt$ } from "@/lib/sea-pay";
+import {
+  type Quote,
+  type QuoteLine,
+  blankQuote,
+  getAllQuotes,
+  saveQuote,
+  deleteQuote,
+  quoteTotal,
+} from "@/lib/quotes";
+
+const DEST_SLUGS = [
+  "cozumel",
+  "costa-maya",
+  "progreso",
+  "roatan",
+  "belize",
+  "grand-cayman",
+  "nassau",
+  "key-west",
+  "san-juan",
+  "st-thomas",
+  "cococay",
+  "celebration-key",
+  "half-moon-cay",
+  "ocean-cay",
+  "castaway-cay",
+  "harvest-caye",
+  "great-stirrup-cay",
+];
+
+const INPUT =
+  "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+const FIELD_LABEL =
+  "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
+
+export default function AdminQuotesPage() {
+  const [q, setQ] = useState<Quote>(blankQuote());
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [savedId, setSavedId] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  function refresh() {
+    getAllQuotes().then(setQuotes);
+  }
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  const total = quoteTotal(q);
+
+  function update<K extends keyof Quote>(key: K, value: Quote[K]) {
+    setQ((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function updateLine(i: number, patch: Partial<QuoteLine>) {
+    setQ((prev) => ({
+      ...prev,
+      lines: prev.lines.map((l, idx) => (idx === i ? { ...l, ...patch } : l)),
+    }));
+  }
+
+  function addLine() {
+    setQ((prev) => ({ ...prev, lines: [...prev.lines, { label: "", amount: 0 }] }));
+  }
+
+  function removeLine(i: number) {
+    setQ((prev) => ({ ...prev, lines: prev.lines.filter((_, idx) => idx !== i) }));
+  }
+
+  async function handleSave() {
+    const ok = await saveQuote(q);
+    if (ok) {
+      setSavedId(q.id);
+      setCopied(false);
+      refresh();
+    }
+  }
+
+  function newDoc() {
+    setQ(blankQuote());
+    setSavedId("");
+    setCopied(false);
+  }
+
+  async function handleDelete(id: string) {
+    await deleteQuote(id);
+    if (savedId === id) setSavedId("");
+    refresh();
+  }
+
+  const shareUrl =
+    savedId && typeof window !== "undefined"
+      ? `${window.location.origin}/quote/${savedId}`
+      : savedId
+        ? `/quote/${savedId}`
+        : "";
+
+  function copyLink() {
+    if (!shareUrl) return;
+    navigator.clipboard?.writeText(shareUrl);
+    setCopied(true);
+  }
+
+  const typeBadge: Record<string, string> = {
+    quote: "bg-sky-500/15 text-sky-300 border border-sky-400/25",
+    invoice: "bg-green-500/15 text-green-300 border border-green-400/25",
+  };
+
+  return (
+    <div className="min-h-screen bg-[#05070d] text-white">
+      {/* Header */}
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">
+                {"// Quotes & Invoices"}
+              </div>
+              <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
+                Quote &amp; Invoice Builder
+              </h1>
+            </div>
+            <Link
+              href="/admin"
+              className="text-sky-400 hover:text-sky-300 font-semibold text-sm self-center"
+            >
+              ← Admin
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Builder */}
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            {/* Type toggle */}
+            <div className="flex gap-2">
+              {(["quote", "invoice"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => update("type", t)}
+                  className={`px-5 py-2 rounded-full text-sm font-bold capitalize transition-all ${
+                    q.type === t
+                      ? "bg-white text-black"
+                      : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={newDoc}
+              className="text-sky-400 hover:text-sky-300 font-semibold text-sm"
+            >
+              + New document
+            </button>
+          </div>
+
+          {/* Client */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// Client"}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className={FIELD_LABEL}>Client name</label>
+                <input
+                  className={INPUT}
+                  value={q.clientName}
+                  onChange={(e) => update("clientName", e.target.value)}
+                  placeholder="Jane Doe"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Email</label>
+                <input
+                  className={INPUT}
+                  value={q.clientEmail}
+                  onChange={(e) => update("clientEmail", e.target.value)}
+                  placeholder="jane@email.com"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Phone</label>
+                <input
+                  className={INPUT}
+                  value={q.clientPhone}
+                  onChange={(e) => update("clientPhone", e.target.value)}
+                  placeholder="(409) 555-0100"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sailing */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// Sailing"}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className={FIELD_LABEL}>Cruise line</label>
+                <input
+                  className={INPUT}
+                  value={q.cruiseLine}
+                  onChange={(e) => update("cruiseLine", e.target.value)}
+                  placeholder="Carnival Cruise Line"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Ship</label>
+                <input
+                  className={INPUT}
+                  value={q.ship}
+                  onChange={(e) => update("ship", e.target.value)}
+                  placeholder="Carnival Jubilee"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Sail date</label>
+                <input
+                  type="date"
+                  className={INPUT}
+                  value={q.sailDate}
+                  onChange={(e) => update("sailDate", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Nights</label>
+                <input
+                  type="number"
+                  className={INPUT}
+                  value={q.nights || ""}
+                  onChange={(e) => update("nights", Number(e.target.value))}
+                  placeholder="7"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Itinerary</label>
+                <input
+                  className={INPUT}
+                  value={q.itinerary}
+                  onChange={(e) => update("itinerary", e.target.value)}
+                  placeholder="Western Caribbean"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Destination (hero photo)</label>
+                <select
+                  className={INPUT}
+                  value={q.destSlug}
+                  onChange={(e) => update("destSlug", e.target.value)}
+                >
+                  {DEST_SLUGS.map((d) => (
+                    <option key={d} value={d} className="bg-[#0b1020]">
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Line items */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// Line items"}
+            </div>
+            <div className="space-y-3">
+              {q.lines.map((line, i) => (
+                <div key={i} className="flex gap-3 items-end">
+                  <div className="flex-1">
+                    <label className={FIELD_LABEL}>Description</label>
+                    <input
+                      className={INPUT}
+                      value={line.label}
+                      onChange={(e) => updateLine(i, { label: e.target.value })}
+                      placeholder="Balcony stateroom — 2 guests"
+                    />
+                  </div>
+                  <div className="w-40">
+                    <label className={FIELD_LABEL}>Amount</label>
+                    <input
+                      type="number"
+                      className={INPUT}
+                      value={line.amount || ""}
+                      onChange={(e) =>
+                        updateLine(i, { amount: Number(e.target.value) })
+                      }
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeLine(i)}
+                    className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-red-300 hover:border-red-400/30 text-sm"
+                    aria-label="Remove line"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-4">
+              <button
+                onClick={addLine}
+                className="text-sky-400 hover:text-sky-300 font-semibold text-sm"
+              >
+                + Add line
+              </button>
+              <div className="text-right">
+                <span className="text-white/45 label-mono text-[10px] uppercase tracking-wider mr-2">
+                  Total
+                </span>
+                <span className="text-2xl font-extrabold text-holo">
+                  {fmt$(total)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Deposit / Expires / Agent / Notes */}
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
+              {"// Details"}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className={FIELD_LABEL}>Deposit</label>
+                <input
+                  type="number"
+                  className={INPUT}
+                  value={q.deposit || ""}
+                  onChange={(e) => update("deposit", Number(e.target.value))}
+                  placeholder="0.00"
+                />
+              </div>
+              {q.type === "quote" && (
+                <div>
+                  <label className={FIELD_LABEL}>Expires on</label>
+                  <input
+                    type="date"
+                    className={INPUT}
+                    value={q.expiresOn}
+                    onChange={(e) => update("expiresOn", e.target.value)}
+                  />
+                </div>
+              )}
+              <div>
+                <label className={FIELD_LABEL}>Agent name</label>
+                <input
+                  className={INPUT}
+                  value={q.agentName}
+                  onChange={(e) => update("agentName", e.target.value)}
+                  placeholder="Monica"
+                />
+              </div>
+              <div>
+                <label className={FIELD_LABEL}>Status</label>
+                <select
+                  className={INPUT}
+                  value={q.status}
+                  onChange={(e) =>
+                    update("status", e.target.value as Quote["status"])
+                  }
+                >
+                  {(["draft", "sent", "accepted", "paid"] as const).map((s) => (
+                    <option key={s} value={s} className="bg-[#0b1020]">
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className={FIELD_LABEL}>Notes</label>
+              <textarea
+                className={`${INPUT} min-h-24`}
+                value={q.notes}
+                onChange={(e) => update("notes", e.target.value)}
+                placeholder="Anything the client should know…"
+              />
+            </div>
+          </div>
+
+          {/* Save */}
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <button
+              onClick={handleSave}
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full"
+            >
+              Save &amp; get link
+            </button>
+
+            {savedId && (
+              <div className="flex flex-wrap items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
+                <code className="text-sm text-sky-300 break-all">{shareUrl}</code>
+                <button
+                  onClick={copyLink}
+                  className="text-sky-400 hover:text-sky-300 font-semibold text-sm"
+                >
+                  {copied ? "Copied ✓" : "Copy"}
+                </button>
+                <Link
+                  href={`/quote/${savedId}`}
+                  target="_blank"
+                  className="text-sky-400 hover:text-sky-300 font-semibold text-sm"
+                >
+                  Open ↗
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-4">
+            {"// Saved quotes & invoices"}
+          </div>
+          {quotes.length === 0 ? (
+            <p className="text-white/45 text-sm">Nothing saved yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {quotes.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between flex-wrap gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3"
+                >
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded-full capitalize ${typeBadge[item.type]}`}
+                    >
+                      {item.type}
+                    </span>
+                    <span className="font-extrabold text-white">
+                      {item.clientName || "—"}
+                    </span>
+                    <span className="text-white/55 text-sm">{item.ship}</span>
+                    <span className="text-white/35 text-xs capitalize">
+                      {item.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-lg font-extrabold text-holo">
+                      {fmt$(quoteTotal(item))}
+                    </span>
+                    <Link
+                      href={`/quote/${item.id}`}
+                      target="_blank"
+                      className="text-sky-400 hover:text-sky-300 font-semibold text-sm"
+                    >
+                      Open ↗
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-white/40 hover:text-red-300 font-semibold text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

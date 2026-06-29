@@ -29,9 +29,11 @@ const TOOLS = [
   { href: "/admin/documents", label: "📄 Documents" },
   { href: "/admin/groups", label: "👥 Groups" },
   { href: "/admin/rfp", label: "📩 Agent RFPs" },
+  { href: "/admin/quotes", label: "📝 Quotes" },
   { href: "/admin/invoice", label: "🧾 Invoice" },
   { href: "/admin/notify", label: "✉️ Updates" },
   { href: "/admin/activity", label: "📡 Activity" },
+  { href: "/admin/tasks", label: "✅ Tasks" },
 ];
 
 export default function AdminPage() {
