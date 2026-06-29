@@ -429,14 +429,21 @@ export default async function GroupPortalPage({
                   const names = occ?.notes && !/^deposit/i.test(occ.notes) ? occ.notes : "";
                   const open = rm.status === "available" && !rm.bookedBy;
                   const cabinLabel = isGty ? "Guarantee cabin" : `Cabin ${rm.label}`;
+                  const cabinImg = (rm.cabinType || "interior").toLowerCase().replace(/[^a-z0-9]+/g, "-");
                   const orderHref = (item: string) =>
                     `/groups/${group.code}/order?item=${item}&room=${i + 1}&cabin=${encodeURIComponent(cabinLabel)}&guests=${occ?.guests || 2}&nights=${group.nights || 0}`;
                   return (
                     <div
                       key={rm.id}
-                      className={`bg-[#0b1020] rounded-xl border p-4 flex items-start justify-between gap-4 ${open ? "border-white/10" : "border-sky-400/25"}`}
+                      className={`bg-[#0b1020] rounded-xl border p-4 flex items-start gap-4 ${open ? "border-white/10" : "border-sky-400/25"}`}
                     >
-                      <div>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/cabins/${cabinImg}.jpg`}
+                        alt={rm.cabinType || "Cabin"}
+                        className="w-24 h-20 sm:w-28 sm:h-24 rounded-lg object-cover shrink-0 border border-white/10"
+                      />
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-baseline gap-2 flex-wrap">
                           <span className="text-xl sm:text-2xl font-extrabold text-white">Room {i + 1}</span>
                           <span className="text-white/50 font-semibold text-sm">
