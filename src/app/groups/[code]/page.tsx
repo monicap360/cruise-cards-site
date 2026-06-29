@@ -417,6 +417,8 @@ export default async function GroupPortalPage({
                   const order = (subject: string, lines: string) =>
                     `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines)}`;
                   const who = `${cabinLabel}${rm.bookedBy ? `, ${rm.bookedBy}` : ""} — ${group.name}`;
+                  const orderHref = (item: string) =>
+                    `/groups/${group.code}/order?item=${item}&room=${i + 1}&cabin=${encodeURIComponent(cabinLabel)}&guests=${occ?.guests || 2}`;
                   return (
                     <div
                       key={rm.id}
@@ -447,12 +449,12 @@ export default async function GroupPortalPage({
                           <div className="mt-3 space-y-1.5 text-xs font-semibold">
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
                               <span className="text-white/35 uppercase tracking-wider text-[10px]">Add-ons:</span>
-                              <a href={order(`Soda 12-pack — ${who}`, `Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${who}.`)} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</a>
-                              <a href={order(`Drink package — ${who}`, `Please add a drink package for ${who}. Send the daily price options (Deluxe Beverage / Refreshment / Classic Soda) so we can confirm.`)} className="text-sky-400 hover:text-sky-300">🍹 Drink package</a>
-                              <a href={order(`Pre-cruise hotel (Harbor House) — ${who}`, `We'd like to add a pre-cruise night at the Harbor House Hotel & Marina (Pier 21) for ${who}${group.sailingDate ? ` before sailing ${group.sailingDate}` : ""}. (Group rates pending — please send pricing.)\n\nNumber of rooms: ____\nNight(s): ____`)} className="text-sky-400 hover:text-sky-300">🏨 Pre-cruise hotel</a>
-                              <a href={order(`Prepay gratuities — ${who}`, `Please prepay gratuities for ${who}: $${gratPerGuest}/guest × ${occ?.guests || 2} guests = $${gratTotal} total ($18 per guest, per day for ${group.nights || 5} nights).`)} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</a>
+                              <Link href={orderHref("soda")} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</Link>
+                              <Link href={orderHref("drink")} className="text-sky-400 hover:text-sky-300">🍹 Drink package</Link>
+                              <Link href={orderHref("hotel")} className="text-sky-400 hover:text-sky-300">🏨 Pre-cruise hotel</Link>
+                              <Link href={orderHref("tips")} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</Link>
                               <span className="text-white/40">🛡️ Protection:</span>
-                              <a href={order(`ADD vacation protection — ${who}`, `Please ADD vacation protection (travel insurance) for ${who}. Send me the price per guest to confirm.`)} className="text-green-300 hover:text-green-200">Add</a>
+                              <Link href={orderHref("protection")} className="text-green-300 hover:text-green-200">Add</Link>
                               <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/50 hover:text-white/80">Decline</a>
                             </div>
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
