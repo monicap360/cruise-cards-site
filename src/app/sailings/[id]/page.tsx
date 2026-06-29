@@ -97,8 +97,31 @@ export default async function SailingOptionsPage({
   const ports = portsFromItinerary(block.itinerary);
   const rateMap = await getRateMap();
 
+  const cabinPrices = block.cabins.map((c) => c.price).filter((p) => p > 0);
+  const fromPrice = cabinPrices.length ? Math.min(...cabinPrices) : 0;
+  const tripLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    name: `${block.nights}-Night ${block.itinerary} on ${block.ship}`,
+    description: `Round-trip ${block.nights}-night cruise from Galveston, TX on ${block.ship} (${block.cruiseLine}) visiting ${block.itinerary}. Per person, double occupancy — government taxes, port expenses & fees included.`,
+    provider: { "@type": "TravelAgency", name: "Cruises from Galveston", telephone: "+1-409-632-2106" },
+    departureTime: block.sailingDate,
+    ...(fromPrice > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: fromPrice,
+            priceCurrency: "USD",
+            availability: "https://schema.org/InStock",
+            url: `https://cruisesfromgalveston.net/sailings/${block.id}`,
+          },
+        }
+      : {}),
+  };
+
   return (
     <div className="bg-[#05070d] text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(tripLd) }} />
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-white/10">
         <ShipImage ship={block.ship} overlay={false} className="absolute inset-0" />

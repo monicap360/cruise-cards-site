@@ -67,8 +67,26 @@ export default async function ArticlePage({
     );
   }
 
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: post.title,
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.date).toISOString(),
+    description: post.excerpt,
+    articleSection: post.category,
+    author: { "@type": "Organization", name: "Cruises from Galveston" },
+    publisher: {
+      "@type": "Organization",
+      name: "Cruises from Galveston",
+      logo: { "@type": "ImageObject", url: "https://cruisesfromgalveston.net/logo.png" },
+    },
+    mainEntityOfPage: `https://cruisesfromgalveston.net/news/${post.slug}`,
+  };
+
   return (
     <div className="bg-[#05070d] text-white min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
       {/* Article header */}
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 grid-bg" />
