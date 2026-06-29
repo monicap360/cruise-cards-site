@@ -21,6 +21,8 @@ const GROUP = {
 
 const CABIN_PREFS = ["Interior", "Ocean View", "Balcony", "Not sure yet"];
 
+type Guest = { name: string; dob: string };
+
 type Form = {
   leadName: string;
   email: string;
@@ -30,7 +32,7 @@ type Form = {
   kids: number;
   cabinsNeeded: number;
   cabinPref: string;
-  guestNames: string;
+  guests: Guest[];
   notes: string;
 };
 
@@ -43,7 +45,7 @@ const blank: Form = {
   kids: 0,
   cabinsNeeded: 1,
   cabinPref: "Balcony",
-  guestNames: "",
+  guests: [],
   notes: "",
 };
 
@@ -56,6 +58,35 @@ export default function GroupSignupPage() {
 
   const set = (p: Partial<Form>) => setF((x) => ({ ...x, ...p }));
   const totalGuests = (f.adults || 0) + (f.kids || 0);
+
+  // When moving into the Guests step, make a row per guest (seed row 1 = lead).
+  function syncGuests() {
+    setF((x) => {
+      const need = Math.max((x.adults || 0) + (x.kids || 0), 1);
+      const list = [...x.guests];
+      if (list.length === 0) list.push({ name: x.leadName, dob: x.dob });
+      while (list.length < need) list.push({ name: "", dob: "" });
+      return { ...x, guests: list };
+    });
+  }
+  function setGuest(i: number, p: Partial<Guest>) {
+    setF((x) => {
+      const l = [...x.guests];
+      l[i] = { ...l[i], ...p };
+      return { ...x, guests: l };
+    });
+  }
+  function addGuest() {
+    setF((x) => ({ ...x, guests: [...x.guests, { name: "", dob: "" }] }));
+  }
+  function removeGuest(i: number) {
+    setF((x) => ({ ...x, guests: x.guests.filter((_, j) => j !== i) }));
+  }
+  function goNext() {
+    if (!canNext) return;
+    if (step === 2) syncGuests();
+    setStep(step + 1);
+  }
 
   const input =
     "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
@@ -70,6 +101,7 @@ export default function GroupSignupPage() {
   async function submit() {
     setSubmitting(true);
     setError("");
+    const cleanGuests = f.guests.filter((g) => g.name.trim());
     const entry: SignupEntry = {
       id: newSignupId(),
       groupLabel: GROUP.label,
@@ -82,8 +114,8 @@ export default function GroupSignupPage() {
       totalGuests,
       cabins: `${f.cabinsNeeded} ${f.cabinPref}`,
       reservationNumber: "",
-      guestNames: f.guestNames,
-      guests: [],
+      guestNames: cleanGuests.map((g) => g.name).join("\n"),
+      guests: cleanGuests,
       confirmed: "Y",
       depositStatus: "",
       notes: f.notes ? `[Web signup] ${f.notes}` : "[Web signup]",
@@ -214,8 +246,20 @@ export default function GroupSignupPage() {
             <div className="space-y-4">
               <h2 className="text-xl font-extrabold mb-1">Guests & anything else</h2>
               <div>
-                <label className={lbl}>Guest full names (as on ID, if known)</label>
-                <textarea className={input} rows={5} value={f.guestNames} onChange={(e) => set({ guestNames: e.target.value })} placeholder={"One guest per line\nFirst Last\nFirst Last"} />
+                <label className={lbl}>Guests — full name + date of birth (as on ID)</label>
+                <p className="text-white/40 text-xs mb-2">The cruise line requires every guest&rsquo;s legal name and DOB.</p>
+                <div className="space-y-2">
+                  {f.guests.map((g, i) => (
+                    <div key={i} className="flex gap-2 items-center">
+                      <input className={input} value={g.name} onChange={(e) => setGuest(i, { name: e.target.value })} placeholder={i === 0 ? "Lead guest full name" : "Guest full name"} />
+                      <input className={`${input} sm:w-44 flex-shrink-0`} value={g.dob} onChange={(e) => setGuest(i, { dob: e.target.value })} placeholder="MM/DD/YYYY" />
+                      {f.guests.length > 1 && (
+                        <button type="button" onClick={() => removeGuest(i)} className="text-red-300 hover:text-red-200 text-sm font-bold px-1" aria-label="Remove guest">✕</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button type="button" onClick={addGuest} className="text-sky-400 hover:text-sky-300 text-sm font-bold mt-2">+ Add guest</button>
               </div>
               <div><label className={lbl}>Notes / requests</label><textarea className={input} rows={3} value={f.notes} onChange={(e) => set({ notes: e.target.value })} placeholder="Drink packages, who rooms with whom, accessibility needs…" /></div>
               {error && <p className="text-red-300 text-sm">{error}</p>}
@@ -234,7 +278,7 @@ export default function GroupSignupPage() {
             ) : <span />}
             {step < 3 ? (
               <button
-                onClick={() => canNext && setStep(step + 1)}
+                onClick={goNext}
                 disabled={!canNext}
                 className="bg-white text-black hover:bg-white/90 disabled:opacity-40 font-semibold uppercase tracking-wider text-sm px-8 py-3.5 rounded-full transition-all"
               >
