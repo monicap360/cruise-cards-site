@@ -23,17 +23,18 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // Next.js needs unsafe-inline for hydration scripts
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      // Next.js hydration + the Facebook SDK (comments/share)
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net",
       // Tailwind inline styles
       "style-src 'self' 'unsafe-inline'",
-      // Images: allow self, data URIs, and blob for Next/Image
-      "img-src 'self' data: blob:",
+      // Images: self, data/blob (Next/Image) + https for FB & map tiles
+      "img-src 'self' data: blob: https:",
       "font-src 'self'",
-      "connect-src 'self'",
+      // Supabase + Facebook
+      "connect-src 'self' https://*.supabase.co https://connect.facebook.net https://*.facebook.com",
       "media-src 'self'",
-      // No iframes at all
-      "frame-src 'none'",
+      // Embeds we use: Facebook comments, Jotform e-sign, Google Maps
+      "frame-src https://www.facebook.com https://web.facebook.com https://*.facebook.com https://www.jotform.com https://form.jotform.com https://maps.google.com https://www.google.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",
@@ -54,6 +55,12 @@ const nextConfig: NextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+    ];
+  },
+  async rewrites() {
+    return [
+      // Vanity group link → hosted-group page
+      { source: "/thanksgiving-alston-group", destination: "/groups/thanksgiving-alston-group" },
     ];
   },
 };
