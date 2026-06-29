@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { ORDER_ITEMS, newOrderId, saveOrder, parkingPrice, GRATUITY_PER_DAY, PARK_OVERRIDE, PROTECTION_OVERRIDE, type GroupOrder } from "@/lib/orders";
+import { ORDER_ITEMS, newOrderId, saveOrder, parkingPrice, GRATUITY_PER_DAY, PARK_OVERRIDE, PROTECTION_OVERRIDE, UPGRADE_OVERRIDE, type GroupOrder } from "@/lib/orders";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/shop";
 import BrandLogo from "@/components/BrandLogo";
 
@@ -37,7 +37,8 @@ function OrderInner() {
   const tipsTotal = itemKey === "tips" ? Math.round(GRATUITY_PER_DAY * (nights || 5) * guests) : 0;
   const parkingCost = itemKey === "parking" ? (PARK_OVERRIDE[code] || parkingPrice(nights)) : 0;
   const protectionCost = itemKey === "protection" ? (PROTECTION_OVERRIDE[code] || 0) : 0;
-  const est = tipsTotal || parkingCost || protectionCost;
+  const upgradeCost = itemKey === "upgrade" ? (UPGRADE_OVERRIDE[code] || 0) * guests : 0;
+  const est = tipsTotal || parkingCost || protectionCost || upgradeCost;
 
   const input =
     "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
@@ -225,7 +226,7 @@ function OrderInner() {
               </div>
               {est > 0 && (
                 <div className="flex justify-between gap-3">
-                  <span className="text-white/45">{parkingCost > 0 ? "Parking (per vehicle)" : protectionCost > 0 ? "Protection (cabin)" : "Gratuities"}</span>
+                  <span className="text-white/45">{parkingCost > 0 ? "Parking (per vehicle)" : protectionCost > 0 ? "Protection (cabin)" : upgradeCost > 0 ? "Upgrade (cabin)" : "Gratuities"}</span>
                   <span className="text-holo font-extrabold">${est}</span>
                 </div>
               )}

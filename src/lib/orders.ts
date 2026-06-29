@@ -38,6 +38,8 @@ export const PARK_OVERRIDE: Record<string, number> = {
 export const PROTECTION_OVERRIDE: Record<string, number> = {
   "mistry-family-2026": 308,
 };
+// Per-group cabin upgrade price (per person). Set per group when offered.
+export const UPGRADE_OVERRIDE: Record<string, number> = {};
 
 export type OrderItem = {
   label: string;
@@ -94,12 +96,20 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     priceNote: "Per vehicle · by cruise length",
   },
   move: {
-    label: "Move / upgrade room",
+    label: "Move room",
     emoji: "🔀",
-    desc: "Request to move or upgrade your stateroom, subject to availability.",
-    priceNote: "Upgrade fee / rate difference may apply",
-    notePrompt: "What you'd like (e.g. upgrade to balcony, move near another cabin)…",
-    ack: "I understand any room move or upgrade is subject to availability and I'll pay the quoted rate difference or upgrade fee.",
+    desc: "Request to move your stateroom (different deck or location), subject to availability.",
+    priceNote: "Subject to availability",
+    notePrompt: "Where you'd like to move (deck, near another cabin)…",
+    ack: "I understand any room move is subject to availability and any rate difference applies.",
+  },
+  upgrade: {
+    label: "Request a cabin upgrade",
+    emoji: "⬆️",
+    desc: "Upgrade your stateroom to a higher category, subject to availability.",
+    priceNote: "Per-person upgrade price",
+    notePrompt: "What you'd like to upgrade to (Ocean View, Balcony, Suite, higher deck)…",
+    ack: "I understand a cabin upgrade is subject to availability and I'll pay the quoted upgrade price plus any cruise-line fees.",
   },
   namechange: {
     label: "Name change",

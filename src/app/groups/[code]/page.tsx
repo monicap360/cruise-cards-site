@@ -71,8 +71,10 @@ export default async function GroupPortalPage({
   const outstanding = members.reduce((s, m) => s + memberBalance(m), 0);
   const depositsReceived = members.reduce((s, m) => s + (m.depositPaid || 0), 0);
 
-  // Destination hero photo (Western Caribbean from Galveston → Cozumel)
-  const destSlug = "cozumel";
+  // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
+  // otherwise Western Caribbean → Cozumel).
+  const destHay = `${group.name} ${group.notes || ""}`.toLowerCase();
+  const destSlug = /bahama|nassau|eastern/.test(destHay) ? "nassau" : "cozumel";
   const shipPhotoSlug = group.ship.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const stat = (v: string | number, l: string) => (
@@ -494,15 +496,31 @@ export default async function GroupPortalPage({
                                 </Link>
                               ))}
                             </div>
-                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2.5 text-[11px] font-semibold">
-                              <span className="uppercase tracking-wider text-[10px] text-white/35">Need a change?</span>
-                              <Link href={orderHref("move")} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</Link>
-                              <Link href={orderHref("correction")} className="text-sky-300/90 hover:text-sky-200">🪪 Correct name/DOB</Link>
-                              <Link href={orderHref("namechange")} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</Link>
-                              <Link href={orderHref("cancel")} className="text-red-300/90 hover:text-red-200">⚠️ Cancel passenger</Link>
-                              <Link href={orderHref("cancelroom")} className="text-red-300/90 hover:text-red-200">❌ Cancel room</Link>
-                              <Link href={orderHref("rebook")} className="text-amber-300/90 hover:text-amber-200">🔄 Rebook room</Link>
-                              <Link href={orderHref("decline")} className="text-white/45 hover:text-white/80">Decline protection</Link>
+                            <div className="mt-3">
+                              <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold mb-2">Need a change?</div>
+                              <div className="flex flex-wrap gap-2">
+                                {[
+                                  { item: "upgrade", emoji: "⬆️", label: "Request upgrade", c: "amber" },
+                                  { item: "move", emoji: "🔀", label: "Move room", c: "amber" },
+                                  { item: "correction", emoji: "🪪", label: "Correct name / DOB", c: "sky" },
+                                  { item: "namechange", emoji: "✏️", label: "Name change ($150)", c: "amber" },
+                                  { item: "cancel", emoji: "⚠️", label: "Cancel passenger", c: "red" },
+                                  { item: "cancelroom", emoji: "❌", label: "Cancel room", c: "red" },
+                                  { item: "rebook", emoji: "🔄", label: "Rebook room", c: "amber" },
+                                  { item: "decline", emoji: "🛡️", label: "Decline protection", c: "muted" },
+                                ].map((rq) => {
+                                  const cls =
+                                    rq.c === "amber" ? "border-amber-400/30 text-amber-200 hover:bg-amber-500/10"
+                                    : rq.c === "sky" ? "border-sky-400/30 text-sky-200 hover:bg-sky-500/10"
+                                    : rq.c === "red" ? "border-red-400/30 text-red-200 hover:bg-red-500/10"
+                                    : "border-white/15 text-white/55 hover:bg-white/5";
+                                  return (
+                                    <Link key={rq.item} href={orderHref(rq.item)} className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2.5 text-sm font-semibold transition-all ${cls}`}>
+                                      <span>{rq.emoji}</span>{rq.label}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </div>
                         )}
