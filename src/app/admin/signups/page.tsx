@@ -79,7 +79,10 @@ export default function SignupsPage() {
         <div className="absolute inset-0 grid-bg opacity-40" />
         <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
+            <Link href="/admin/group-deposits" className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 hover:text-sky-300">🏦 Group Deposits →</Link>
+          </div>
           <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1 mt-2">{"// Group Signups"}</div>
           <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Group Signup Tracker</h1>
           <p className="text-white/55 text-sm max-w-2xl mt-1">
