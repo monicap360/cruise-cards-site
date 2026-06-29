@@ -30,6 +30,7 @@ const TOOLS = [
   { href: "/admin/groups", label: "👥 Groups" },
   { href: "/admin/group-deposits", label: "🏦 Group Deposits" },
   { href: "/admin/rfp", label: "📩 Agent RFPs" },
+  { href: "/admin/partners", label: "🤝 Partners" },
   { href: "/admin/quotes", label: "📝 Quotes" },
   { href: "/admin/invoice", label: "🧾 Invoice" },
   { href: "/admin/notify", label: "✉️ Updates" },

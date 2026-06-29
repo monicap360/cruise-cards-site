@@ -266,7 +266,7 @@ export default function Home() {
             </h2>
             <p className="text-white/55 text-lg">
               Turquoise water, white sand, and ancient ruins — all on a round-trip
-              cruise from Galveston. No flights required.
+              cruise from Galveston. Drive in or fly into Houston.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

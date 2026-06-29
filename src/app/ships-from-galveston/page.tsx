@@ -248,9 +248,9 @@ export default function ShipsFromGalvestonPage() {
             Ships from Galveston
           </h1>
           <p className="text-white/55 text-xl max-w-2xl mx-auto">
-            Galveston is one of America&apos;s top cruise ports. Skip the airport
-            and drive straight to your vacation — all major cruise lines depart
-            from right here in Texas.
+            Galveston is one of America&apos;s top cruise ports. Drive in and
+            park, or fly into Houston (IAH/HOU) and we&apos;ll arrange your
+            transfer — all major cruise lines depart from right here in Texas.
           </p>
         </div>
       </section>
@@ -293,8 +293,8 @@ export default function ShipsFromGalvestonPage() {
           {[
             {
               icon: "✈️",
-              title: "Skip the Airport",
-              body: "No flights, no TSA lines, no baggage fees, no delays. Just drive to the port and board your ship — saving you hundreds per family.",
+              title: "Easy to Reach",
+              body: "Many guests drive to the port and park, while those farther out fly into Houston (IAH/HOU) and we arrange the transfer. Either way, getting to your ship is simple.",
             },
             {
               icon: "🚗",

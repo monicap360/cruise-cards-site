@@ -2,6 +2,7 @@ User-agent: *
 Disallow: /admin/
 Disallow: /admin/login
 Disallow: /api/
+Disallow: /quote/
 Allow: /
 
-Sitemap: https://cruisesfromgalveston.com/sitemap.xml
+Sitemap: https://cruisesfromgalveston.net/sitemap.xml

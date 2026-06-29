@@ -70,7 +70,7 @@ export default async function ShipLandingPage({
   const faqs = [
     {
       q: `Where does ${f.ship} sail from?`,
-      a: `${f.ship} departs round-trip from the Port of Galveston, Texas — a drive-up homeport with no flights required (though we can also book your flights and transfers). ${
+      a: `${f.ship} departs round-trip from the Port of Galveston, Texas — a homeport you can drive to or fly into via Houston, and we book flights and transfers either way. ${
         terminal
           ? `On sail day, enter at ${terminal.entryStreet}.`
           : ""
@@ -191,10 +191,10 @@ export default async function ShipLandingPage({
         <p>
           {f.ship} is part of the {f.cruiseLine} fleet sailing year-round from the
           Port of Galveston — one of the most convenient cruise homeports in the
-          country. Galveston is a drive-up port for millions of Texans and
-          neighboring states, so most guests skip the airport entirely. Flying
-          in? We also book your flights, hotel, and transfers as a Fly &amp;
-          Cruise package.
+          country. Millions of Texans and neighboring-state guests drive in and
+          park, while those farther out fly into Houston and we arrange the
+          transfer. Flying in? We also book your flights, hotel, and transfers as
+          a Fly &amp; Cruise package.
         </p>
         <p>
           Every {f.ship} cruise from Galveston is a round-trip,{" "}

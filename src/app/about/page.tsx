@@ -19,7 +19,7 @@ const reasons = [
   },
   {
     title: "Drive & Cruise",
-    desc: "We specialize in the unique advantage of Galveston cruising — drive to the port, park, and sail. No flying required.",
+    desc: "We specialize in the ease of Galveston cruising — drive in and park, or fly into Houston (IAH/HOU) and we'll arrange your transfer to the port.",
   },
   {
     title: "After-Sale Support",

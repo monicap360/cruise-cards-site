@@ -143,7 +143,7 @@ export default async function DealsPage({
           <p className="text-white/55 text-xl max-w-2xl mx-auto">
             {port
               ? `Every sailing below visits ${port} and departs directly from the Port of Galveston.`
-              : "Every cruise below departs directly from the Port of Galveston — no airports, no hassle, just set sail!"}
+              : "Every cruise below departs directly from the Port of Galveston — drive in and park, or fly into Houston (IAH/HOU) and we'll handle your transfer!"}
           </p>
           {port && (
             <div className="mt-6">

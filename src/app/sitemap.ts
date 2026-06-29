@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { GALVESTON_FLEET } from "@/lib/seed-inventory";
 import { POSTS } from "@/lib/news";
+import { allFeederSlugs } from "@/lib/feeder";
 
 const SITE_URL = "https://cruisesfromgalveston.net";
 
@@ -68,9 +69,11 @@ const ROUTES = [
   "/terms",
   "/legal",
   "/deck-plans",
+  "/cruises-from",
   ...DESTINATION_SLUGS.map((s) => `/destinations/${s}`),
   ...POSTS.map((p) => `/news/${p.slug}`),
   ...GALVESTON_FLEET.map((f) => `/ships-from-galveston/${shipSlug(f.ship)}`),
+  ...allFeederSlugs().map((slug) => `/cruises-from/${slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

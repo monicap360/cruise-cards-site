@@ -268,7 +268,7 @@ export default function ContactPage() {
               </h3>
               <ul className="space-y-3 text-sm text-white/55">
                 {[
-                  "100% Galveston departures — no flying required",
+                  "100% Galveston departures — drive in or fly into Houston",
                   "Free expert consultation with a cruise specialist",
                   "Best price matching on all cruise lines",
                   "All major cruise lines: Carnival, Royal Caribbean, Norwegian & Disney",
@@ -281,12 +281,12 @@ export default function ContactPage() {
 
             <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
               <h3 className="font-extrabold uppercase tracking-[-0.01em] text-sky-400 mb-2">
-                Drive-to-Cruise Advantage
+                Getting to Your Galveston Cruise
               </h3>
               <p className="text-white/55 text-sm">
-                Houston is just ~50 miles from Galveston. Drive to the port,
-                park your car, and sail away — no airports, no delays, no
-                stress. We&apos;ll help you make the most of it.
+                Drive in and park at the port, or fly into Houston (IAH/HOU) —
+                just ~50 miles away — and we&apos;ll arrange your transfer to the
+                ship. We&apos;ll help you make the most of it.
               </p>
             </div>
           </div>
