@@ -17,6 +17,11 @@ export const CONTACT_PHONE_DISPLAY = "(409) 632-2106";
 export const BOOKING_CALENDAR_URL =
   process.env.NEXT_PUBLIC_BOOKING_CALENDAR_URL || "https://calendly.com/cruisesfromgalveston-texas/book-a-call";
 
+// Jotform Credit Card Authorization form — card data goes directly to Jotform
+// (PCI-handled there), never to our server/database. Swap the URL to your own form.
+export const CC_AUTH_FORM_URL =
+  process.env.NEXT_PUBLIC_CC_AUTH_FORM_URL || "https://form.jotform.com/261796516689073";
+
 export type ShopItem = { title: string; desc: string; emoji: string; href: string; tag?: string };
 
 export const SHOP_ITEMS: ShopItem[] = [

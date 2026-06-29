@@ -752,6 +752,12 @@ export default async function GroupPortalPage({
               ✉️ Email us
             </a>
             <Link
+              href="/credit-card-authorization"
+              className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+            >
+              🔒 Card authorization
+            </Link>
+            <Link
               href="/contact"
               className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
             >
