@@ -110,9 +110,16 @@ export default async function GroupReceiptPage({
           </tbody>
         </table>
 
-        <div className="rounded-xl bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm font-semibold mb-6">
+        <div className="rounded-xl bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm font-semibold mb-4">
           ✓ Deposit received — your cabin is held. {member.paidInFull ? "Paid in full." : "Balance due ~120 days before sailing."}
         </div>
+
+        {member.notes && (
+          <div className="mb-6 text-xs text-gray-500 border border-gray-200 rounded-xl px-4 py-3">
+            <span className="font-bold uppercase tracking-wider text-gray-400">Payment detail</span>
+            <div className="mt-1 text-gray-600">{member.notes}</div>
+          </div>
+        )}
 
         <div className="border-2 border-gray-900 rounded-xl p-4 text-sm">
           <div className="font-extrabold">No card is charged online.</div>
