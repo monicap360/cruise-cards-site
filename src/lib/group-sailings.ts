@@ -3,6 +3,7 @@
 export type GroupSailing = {
   key: string;
   label: string; // must match the group_label stored on signups rows
+  depositId?: string; // links to a group_deposits row for live deposit/balance
   ship: string;
   line: string;
   sailDate: string; // YYYY-MM-DD
@@ -18,6 +19,7 @@ export const GROUP_SAILINGS: GroupSailing[] = [
   {
     key: "thanksgiving-2026",
     label: "Thanksgiving 2026 — Liberty of the Seas",
+    depositId: "gd-yenalston",
     ship: "Liberty of the Seas",
     line: "Royal Caribbean",
     sailDate: "2026-11-23",

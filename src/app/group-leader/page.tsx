@@ -9,6 +9,13 @@ import {
   roomGuests,
 } from "@/lib/signups";
 import { getGroupSailing, getGroupByPin } from "@/lib/group-sailings";
+import {
+  type GroupDeposit,
+  getGroupDeposit,
+  totalDue,
+  paidToDate,
+  nextDue,
+} from "@/lib/group-deposits";
 
 export default function GroupLeaderPage() {
   const [pin, setPin] = useState("");
@@ -16,6 +23,7 @@ export default function GroupLeaderPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [group, setGroup] = useState("");
   const [rows, setRows] = useState<SignupEntry[]>([]);
+  const [dep, setDep] = useState<GroupDeposit | null>(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -31,6 +39,9 @@ export default function GroupLeaderPage() {
     }
     setGroup(g.label);
     setRows(await getSignupsByGroup(g.label));
+    if (g.depositId) {
+      try { setDep(await getGroupDeposit(g.depositId)); } catch { setDep(null); }
+    }
     setLoggedIn(true);
     setLoading(false);
   }
@@ -38,6 +49,18 @@ export default function GroupLeaderPage() {
   const sailing = group ? getGroupSailing(group) : null;
   const t = signupTotals(rows);
   const yes = (v: string) => v.toUpperCase().startsWith("Y");
+  const usd = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+
+  // Countdown to sail day
+  const daysToSail = sailing?.sailDate
+    ? Math.max(0, Math.ceil((new Date(sailing.sailDate + "T00:00:00").getTime() - Date.now()) / 86400000))
+    : null;
+
+  // Deposit summary (from the linked group_deposits tracker, if any)
+  const depTotal = dep ? totalDue(dep) : 0;
+  const depPaid = dep ? paidToDate(dep) : 0;
+  const depBalance = Math.max(0, depTotal - depPaid);
+  const depNext = dep ? nextDue(dep) : null;
 
   function share() {
     const url = `${window.location.origin}/group-signup`;
@@ -106,6 +129,12 @@ export default function GroupLeaderPage() {
             {sailing?.ship ?? group}
           </h1>
           <p className="text-white/60 mt-1">{sailing?.blurb ?? group}</p>
+          {daysToSail !== null && (
+            <div className="mt-4 inline-flex items-baseline gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
+              <span className="text-3xl font-extrabold text-holo">{daysToSail}</span>
+              <span className="text-white/60 text-sm font-semibold uppercase tracking-wider">days until sail away</span>
+            </div>
+          )}
         </div>
       </section>
 
@@ -124,6 +153,26 @@ export default function GroupLeaderPage() {
             </div>
           ))}
         </div>
+
+        {/* Deposit summary (only if a deposit tracker is linked) */}
+        {dep && depTotal > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="bg-[#0b1020] border border-green-400/25 rounded-2xl px-4 py-4">
+              <div className="text-2xl font-extrabold text-green-300">{usd(depPaid)}</div>
+              <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">Deposits collected</div>
+            </div>
+            <div className="bg-[#0b1020] border border-white/10 rounded-2xl px-4 py-4">
+              <div className="text-2xl font-extrabold text-holo">{usd(depBalance)}</div>
+              <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">Balance remaining</div>
+            </div>
+            <div className="bg-[#0b1020] border border-white/10 rounded-2xl px-4 py-4">
+              <div className="text-lg font-extrabold text-white">{depNext ? depNext.dueDate : "—"}</div>
+              <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">
+                {depNext ? `Next payment · ${usd(depNext.depositRequired)}` : "Next payment"}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Invite */}
         <div className="bg-[#0b1020] border border-sky-400/25 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap">
@@ -186,7 +235,7 @@ export default function GroupLeaderPage() {
                     {guests.length > 0 && (
                       <div className="text-white/65 text-sm mt-2 flex flex-wrap gap-x-3 gap-y-1">
                         {guests.map((g, i) => (
-                          <span key={i}>👤 {g.name}{g.dob ? ` · ${g.dob}` : ""}</span>
+                          <span key={i}>👤 {g.name}</span>
                         ))}
                       </div>
                     )}
