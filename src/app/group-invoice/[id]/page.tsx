@@ -23,9 +23,14 @@ export default async function GroupInvoicePage({
     );
   }
 
-  const { member, group } = data;
+  const { member, group, cabinLabel } = data;
   const reqDeposit = 100 * (member.guests || 2);
   const balance = memberBalance(member);
+  // Free-cruise (tour-conductor) credit — one berth's cruise fare comes off; the
+  // free guest still pays port expenses, taxes & government fees.
+  const COMM: Record<string, number> = { Balcony: 1139, "Ocean View": 716, Interior: 806 };
+  const discount = member.freeCruise ? (COMM[member.cabinType] || 0) : 0;
+  const grossFare = member.fare + discount;
   const invNo = "INV-" + id.slice(-6).toUpperCase();
   const status = member.paidInFull
     ? "Paid in full"
@@ -95,14 +100,22 @@ export default async function GroupInvoicePage({
 
         <table className="w-full text-sm mb-6">
           <tbody>
-            <Row label="Cabin" value={`${member.cabinType || "—"}${member.cabinNumber ? ` · ${member.cabinNumber}` : ""}`} />
+            <Row label="Cabin" value={`${member.cabinType || "—"}${cabinLabel ? ` · ${cabinLabel}` : ""}`} />
             <Row label="Guests" value={String(member.guests)} />
-            {member.fare > 0 && <Row label="Cruise fare (incl. taxes & fees)" value={fmt$(member.fare)} />}
+            {grossFare > 0 && <Row label={`Cruise fare${member.freeCruise ? "" : " (incl. taxes & fees)"}`} value={fmt$(grossFare)} />}
+            {discount > 0 && <Row label="Free cruise credit (tour conductor)" value={`– ${fmt$(discount)}`} green />}
+            {member.fare > 0 && member.freeCruise && <Row label="Total (incl. port, taxes & gov fees)" value={fmt$(member.fare)} strong />}
             <Row label="Deposit due" value={fmt$(reqDeposit)} />
             <Row label="Deposit received" value={fmt$(member.depositPaid)} green />
             <Row label="Balance remaining" value={fmt$(balance)} strong />
           </tbody>
         </table>
+
+        {member.freeCruise && (
+          <div className="rounded-xl bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm font-semibold mb-6">
+            ✦ Free cruise applied (tour-conductor credit). The free guest still pays port expenses, taxes &amp; government fees.
+          </div>
+        )}
 
         <div className={`rounded-xl px-4 py-3 text-sm font-semibold mb-6 border ${member.paidInFull ? "bg-green-50 border-green-200 text-green-800" : member.depositPaid > 0 ? "bg-sky-50 border-sky-200 text-sky-800" : "bg-amber-50 border-amber-200 text-amber-800"}`}>
           {member.paidInFull ? "✓ Paid in full — you're all set." : member.depositPaid > 0 ? "✓ Deposit received — balance due ~120 days before sailing." : "📄 Invoice sent — secure your cabin with your deposit."}

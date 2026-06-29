@@ -8,6 +8,8 @@ import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
+import HeroImage from "@/components/HeroImage";
+import { shipSlug } from "@/components/ShipImage";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -68,6 +70,7 @@ export default async function GroupPortalPage({
   ).length;
   const fullCount = members.filter((m) => m.paidInFull).length;
   const outstanding = members.reduce((s, m) => s + memberBalance(m), 0);
+  const depositsReceived = members.reduce((s, m) => s + (m.depositPaid || 0), 0);
 
   // Destination hero photo (Western Caribbean from Galveston → Cozumel)
   const destSlug = "cozumel";
@@ -85,10 +88,9 @@ export default async function GroupPortalPage({
     <div className="bg-[#05070d] text-white min-h-screen">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-white/10 min-h-[340px] flex items-end">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`/destinations/${destSlug}.jpg`}
-          alt={`${group.ship} — Western Caribbean from Galveston`}
+        <HeroImage
+          candidates={[`/ships/${shipSlug(group.ship)}.jpg`, "/galveston-cruise-terminal.jpg", `/destinations/${destSlug}.jpg`]}
+          alt={`${group.ship} at the Galveston cruise terminal`}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-[#05070d]/30" />
@@ -171,7 +173,7 @@ export default async function GroupPortalPage({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stat(members.length, "Cabins booked")}
           {stat(totalGuests, "Total guests")}
-          {stat(`${depositCount}/${members.length}`, "Deposits paid")}
+          {stat(fmt$(depositsReceived), `Deposits received (${depositCount}/${members.length})`)}
           {stat(`${fullCount}/${members.length}`, "Paid in full")}
         </div>
 
@@ -474,23 +476,34 @@ export default async function GroupPortalPage({
                           </div>
                         )}
                         {!open && (
-                          <div className="mt-3 space-y-1.5 text-xs font-semibold">
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                              <span className="text-white/35 uppercase tracking-wider text-[10px]">Add-ons:</span>
-                              <Link href={orderHref("soda")} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</Link>
-                              <Link href={orderHref("drink")} className="text-sky-400 hover:text-sky-300">🍹 Drink package</Link>
-                              <Link href={orderHref("hotel")} className="text-sky-400 hover:text-sky-300">🏨 Pre-cruise hotel</Link>
-                              <Link href={orderHref("travel")} className="text-sky-400 hover:text-sky-300">🧭 Flying or driving?</Link>
-                              <Link href={orderHref("tips")} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</Link>
-                              <span className="text-white/40">🛡️ Protection:</span>
-                              <Link href={orderHref("protection")} className="text-green-300 hover:text-green-200">Add</Link>
-                              <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/50 hover:text-white/80">Decline</a>
+                          <div className="mt-4">
+                            <div className="text-[10px] uppercase tracking-wider text-white/45 font-bold mb-2">✨ Add to this room — tap an item to add &amp; check out</div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                              {[
+                                { item: "soda", emoji: "🥤", label: "Soda 12-pack" },
+                                { item: "drink", emoji: "🍹", label: "Drink package" },
+                                { item: "tips", emoji: "💵", label: `Prepay tips` },
+                                { item: "protection", emoji: "🛡️", label: "Vacation protection" },
+                                { item: "hotel", emoji: "🏨", label: "Pre-cruise hotel" },
+                                { item: "travel", emoji: "🧭", label: "Flying / driving" },
+                              ].map((a) => (
+                                <Link
+                                  key={a.item}
+                                  href={orderHref(a.item)}
+                                  className="group/add flex items-center gap-2 rounded-xl border border-white/12 bg-white/[0.03] hover:border-sky-400/50 hover:bg-sky-500/10 px-3 py-2.5 text-xs font-semibold text-white transition-all"
+                                >
+                                  <span className="text-base leading-none">{a.emoji}</span>
+                                  <span className="truncate">{a.label}</span>
+                                  <span className="ml-auto text-sky-400 opacity-60 group-hover/add:opacity-100">＋</span>
+                                </Link>
+                              ))}
                             </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                              <span className="text-white/35 uppercase tracking-wider text-[10px]">Requests:</span>
-                              <a href={order(`Move / upgrade room — ${who}`, `We'd like to move or upgrade our room for ${who}. Please send availability and any upgrade fee.`)} className="text-amber-300 hover:text-amber-200">🔀 Move / upgrade (fee)</a>
-                              <a href={order(`Name change ($150) — ${who}`, `We need to change a guest name for ${who}. We understand a $150 name-change fee applies.\n\nName to remove: __________\nNew name (as on ID): __________\nDOB: __________`)} className="text-amber-300 hover:text-amber-200">✏️ Change a name ($150)</a>
-                              <a href={order(`Cancel a passenger — ${who}`, `We need to cancel a passenger for ${who}.\n\nPassenger name: __________\n\nPlease advise any cancellation penalty per the schedule (25% 89–75d / 50% 74–61d / 75% 60–31d / 100% 30–0d).`)} className="text-red-300 hover:text-red-200">➖ Cancel a passenger</a>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2.5 text-[11px] font-semibold">
+                              <span className="uppercase tracking-wider text-[10px] text-white/35">Need a change?</span>
+                              <a href={order(`Move / upgrade room — ${who}`, `We'd like to move or upgrade our room for ${who}. Please send availability and any upgrade fee.`)} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</a>
+                              <a href={order(`Name change ($150) — ${who}`, `We need to change a guest name for ${who}. We understand a $150 name-change fee applies.\n\nName to remove: __________\nNew name (as on ID): __________\nDOB: __________`)} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</a>
+                              <a href={order(`Cancel a passenger — ${who}`, `We need to cancel a passenger for ${who}.\n\nPassenger name: __________\n\nPlease advise any cancellation penalty per the schedule (25% 89–75d / 50% 74–61d / 75% 60–31d / 100% 30–0d).`)} className="text-red-300/90 hover:text-red-200">➖ Cancel passenger</a>
+                              <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/45 hover:text-white/80">Decline protection</a>
                             </div>
                           </div>
                         )}

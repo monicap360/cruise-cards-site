@@ -23,7 +23,7 @@ export default async function GroupReceiptPage({
     );
   }
 
-  const { member, group } = data;
+  const { member, group, cabinLabel } = data;
   const balance = memberBalance(member);
   const receiptNo = "RCPT-" + id.slice(-6).toUpperCase();
   const subject = `Your deposit receipt — ${group.name}`;
@@ -85,7 +85,7 @@ export default async function GroupReceiptPage({
           <tbody>
             <tr className="border-b border-gray-200">
               <td className="py-2 text-gray-500">Cabin</td>
-              <td className="py-2 text-right font-semibold">{member.cabinType || "—"}{member.cabinNumber ? ` · ${member.cabinNumber}` : ""}</td>
+              <td className="py-2 text-right font-semibold">{member.cabinType || "—"}{cabinLabel ? ` · ${cabinLabel}` : ""}</td>
             </tr>
             <tr className="border-b border-gray-200">
               <td className="py-2 text-gray-500">Guests</td>

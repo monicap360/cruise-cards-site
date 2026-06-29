@@ -14,6 +14,7 @@ export type GroupMember = {
   paidInFull: boolean;
   confirmationNumber: string;
   notes: string;
+  freeCruise?: boolean; // free cruise (tour-conductor credit) — pays taxes/fees only
 };
 
 export type Group = {
@@ -151,6 +152,7 @@ function toMember(r: Record<string, unknown>): GroupMember {
     paidInFull: (r.paid_in_full as boolean) ?? false,
     confirmationNumber: (r.confirmation_number as string) ?? "",
     notes: (r.notes as string) ?? "",
+    freeCruise: Boolean(r.free_cruise),
   };
 }
 function memberRow(m: GroupMember): Record<string, unknown> {
@@ -168,6 +170,7 @@ function memberRow(m: GroupMember): Record<string, unknown> {
     paid_in_full: m.paidInFull,
     confirmation_number: m.confirmationNumber || null,
     notes: m.notes || null,
+    free_cruise: m.freeCruise ?? false,
   };
 }
 
@@ -264,12 +267,25 @@ export async function getMembers(groupId: string): Promise<GroupMember[]> {
 // A single member + its group — for the printable receipt.
 export async function getMemberById(
   id: string
-): Promise<{ member: GroupMember; group: Group } | null> {
+): Promise<{ member: GroupMember; group: Group; cabinLabel: string } | null> {
   const { data: m } = await supabase.from("group_members").select("*").eq("id", id).single();
   if (!m) return null;
-  const { data: g } = await supabase.from("groups").select("*").eq("id", (m as Record<string, unknown>).group_id as string).single();
+  const gid = (m as Record<string, unknown>).group_id as string;
+  const { data: g } = await supabase.from("groups").select("*").eq("id", gid).single();
   if (!g) return null;
-  return { member: toMember(m), group: toGroup(g) };
+  const member = toMember(m);
+  // Find this member's assigned cabin number from the room block
+  let cabinLabel = member.cabinNumber || "";
+  if (!cabinLabel) {
+    const { data: rm } = await supabase
+      .from("group_rooms")
+      .select("label")
+      .eq("group_id", gid)
+      .eq("booked_by", member.name)
+      .limit(1);
+    if (rm && rm[0]) cabinLabel = (rm[0] as Record<string, unknown>).label as string;
+  }
+  return { member, group: toGroup(g), cabinLabel };
 }
 
 export async function saveGroup(g: Group): Promise<boolean> {
