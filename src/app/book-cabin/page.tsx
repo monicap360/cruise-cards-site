@@ -479,15 +479,14 @@ function BookCabinContent() {
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left text-sm text-white/60 space-y-2">
             <div className="font-extrabold text-white">What happens next?</div>
             <div>
-              We&rsquo;ll email your{" "}
-              <strong className="text-white/80">
-                cruise-line secure payment link
-              </strong>{" "}
-              to <strong className="text-white/80">{lead.email}</strong> and a
-              specialist will confirm availability.{" "}
-              <strong className="text-white/80">
-                No card is charged on this website.
-              </strong>
+              A specialist will contact{" "}
+              <strong className="text-white/80">{lead.email}</strong> to confirm
+              availability and your total.{" "}
+              <strong className="text-white/80">No card is charged on this website.</strong>{" "}
+              To reserve, mail a check to{" "}
+              <strong className="text-white/80">3501 Winnie St, Galveston, TX 77550</strong>,
+              or pay the cruise line directly. Your balance is due about{" "}
+              <strong className="text-white/80">120 days before you sail</strong>.
             </div>
           </div>
           <div className="flex gap-3 justify-center flex-wrap">

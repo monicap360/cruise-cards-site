@@ -125,7 +125,8 @@ export default function QuotePreviewPage() {
             <div className="font-extrabold text-gray-900 mb-1">Ready to book?</div>
             <div className="text-sm text-gray-600 mb-3">
               Your pick: <span className="font-semibold text-gray-900">{recommended.category} — {fmt$(recommended.perPerson)}/person</span>.
-              Deposit just {fmt$(SAMPLE.deposit)}/person to hold it. No card charged online — we&rsquo;ll send your cruise-line secure payment link.
+              A deposit holds your cabin. <span className="font-semibold">No card is charged online</span> — reserve by mailing a check to
+              3501 Winnie St, Galveston, TX 77550, or pay the cruise line directly. Your balance is due about 120 days before you sail.
             </div>
             <span className="inline-block bg-gray-300 text-gray-600 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full cursor-not-allowed">Accept this quote (sample)</span>
             <div className="text-xs text-sky-700 mt-3 font-semibold">Valid until {fmtDate(SAMPLE.expiresOn)}</div>
