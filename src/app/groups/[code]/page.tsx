@@ -84,7 +84,7 @@ export default async function GroupPortalPage({
   return (
     <div className="bg-[#05070d] text-white min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-white/10 min-h-[520px] flex items-end">
+      <section className="relative overflow-hidden border-b border-white/10 min-h-[340px] flex items-end">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/destinations/${destSlug}.jpg`}
@@ -94,7 +94,7 @@ export default async function GroupPortalPage({
         <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-[#05070d]/30" />
         <div className="absolute inset-0 grid-bg opacity-20" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-400/70 to-transparent" />
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80">
               {"// Group Portal"}
