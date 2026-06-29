@@ -4,6 +4,7 @@ import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
 import { SHOP_ITEMS, CONTACT_EMAIL } from "@/lib/shop";
+import ParkRideScheduler from "@/components/ParkRideScheduler";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -383,6 +384,14 @@ export default async function GroupPortalPage({
                           {open ? " · Open — available to book" : rm.bookedBy ? ` · ${rm.bookedBy}` : ""}
                         </div>
                         {names && <div className="text-white/70 text-sm mt-1">👥 {names}</div>}
+                        {!open && (
+                          <a
+                            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Soda 12-pack — ${group.name}, ${isGty ? "Guarantee cabin" : "Cabin " + rm.label}`)}&body=${encodeURIComponent(`Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${isGty ? "my guarantee cabin" : "Cabin " + rm.label}${rm.bookedBy ? `, ${rm.bookedBy}` : ""} in the ${group.name}.`)}`}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 hover:text-sky-300 mt-2"
+                          >
+                            🥤 Order soda 12-pack
+                          </a>
+                        )}
                       </div>
                       <div className="text-right shrink-0">
                         {open ? (
@@ -522,6 +531,11 @@ export default async function GroupPortalPage({
             )}
           </div>
         )}
+
+        {/* Park & Ride scheduler */}
+        <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
+          <ParkRideScheduler groupCode={group.code} sailDate={group.sailingDate} />
+        </div>
 
         {/* Group store & extras */}
         <div>

@@ -25,10 +25,17 @@ export const SHOP_ITEMS: ShopItem[] = [
     href: `${SHOP_URL}/products/soda-12-pack`,
   },
   {
-    title: "Cruise parking",
-    desc: "Reserve your Galveston cruise terminal parking for the week.",
+    title: "Park & Ride",
+    desc: "Reserve Galveston park-and-ride cruise parking for the week.",
     emoji: "🅿️",
     tag: "Book it",
-    href: `${SHOP_URL}/products/cruise-parking`,
+    href: `${SHOP_URL}/products/park-and-ride`,
   },
+];
+
+// Per-room add-ons that can be ordered for each cabin (emailed to the agency
+// until the Shopify store URL is set).
+export const ROOM_EXTRAS = [
+  { emoji: "🅿️", label: "Park & Ride", item: "Park & Ride cruise parking" },
+  { emoji: "🥤", label: "Soda 12-pack", item: "12-pack of canned sodas (pickup at the Experience Center)" },
 ];
