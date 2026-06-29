@@ -5,13 +5,12 @@ import { useState } from "react";
 import {
   type SignupEntry,
   getSignupsByGroup,
-  findLeaderGroup,
   signupTotals,
 } from "@/lib/signups";
-import { getGroupSailing } from "@/lib/group-sailings";
+import { getGroupSailing, getGroupByPin } from "@/lib/group-sailings";
 
 export default function GroupLeaderPage() {
-  const [email, setEmail] = useState("");
+  const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [group, setGroup] = useState("");
@@ -20,19 +19,17 @@ export default function GroupLeaderPage() {
   const [copied, setCopied] = useState(false);
 
   async function login() {
-    if (!email.trim()) return;
+    if (!pin.trim()) return;
     setLoading(true);
     setError("");
-    const label = await findLeaderGroup(email);
-    if (!label) {
+    const g = getGroupByPin(pin);
+    if (!g) {
       setLoading(false);
-      setError(
-        "We couldn't find a group for that email. Use the email you signed up with, or call (409) 632-2106."
-      );
+      setError("That group PIN isn't recognized. Check with your specialist or call (409) 632-2106.");
       return;
     }
-    setGroup(label);
-    setRows(await getSignupsByGroup(label));
+    setGroup(g.label);
+    setRows(await getSignupsByGroup(g.label));
     setLoggedIn(true);
     setLoading(false);
   }
@@ -64,17 +61,17 @@ export default function GroupLeaderPage() {
             Manage Your Group
           </h1>
           <p className="text-white/55 text-center text-sm mb-6">
-            Organizing a group cruise? Sign in with the email on your booking to see who&rsquo;s
-            in, track cabins and deposits, and invite more families.
+            Organizing a group cruise? Enter your group PIN to see who&rsquo;s in, track
+            cabins and deposits, and invite more families. Your specialist gives you the PIN.
           </p>
           <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 space-y-3">
             <input
-              className={input}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              className={`${input} text-center tracking-[0.4em] text-lg`}
+              inputMode="numeric"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && login()}
-              placeholder="you@example.com"
+              placeholder="Group PIN"
             />
             {error && <p className="text-red-300 text-sm">{error}</p>}
             <button
@@ -174,7 +171,7 @@ export default function GroupLeaderPage() {
         <div className="text-center text-white/40 text-sm">
           Questions about your group? Call <a href="tel:+14096322106" className="text-sky-400">(409) 632-2106</a> or your specialist will reach out.
           <div className="mt-3">
-            <button onClick={() => { setLoggedIn(false); setEmail(""); setRows([]); }} className="text-white/45 hover:text-white text-xs font-bold uppercase tracking-wider">Sign out</button>
+            <button onClick={() => { setLoggedIn(false); setPin(""); setRows([]); }} className="text-white/45 hover:text-white text-xs font-bold uppercase tracking-wider">Sign out</button>
           </div>
         </div>
       </div>

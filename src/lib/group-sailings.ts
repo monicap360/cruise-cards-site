@@ -3,6 +3,7 @@
 export type GroupSailing = {
   key: string;
   label: string; // must match the group_label stored on signups rows
+  pin: string; // leader portal access PIN (lightweight gate)
   ship: string;
   line: string;
   sailDate: string; // YYYY-MM-DD
@@ -18,6 +19,7 @@ export const GROUP_SAILINGS: GroupSailing[] = [
   {
     key: "thanksgiving-2026",
     label: "Thanksgiving 2026 — Liberty of the Seas",
+    pin: "1123",
     ship: "Liberty of the Seas",
     line: "Royal Caribbean",
     sailDate: "2026-11-23",
@@ -32,6 +34,12 @@ export const GROUP_SAILINGS: GroupSailing[] = [
 
 export function getGroupSailing(label: string): GroupSailing | null {
   return GROUP_SAILINGS.find((g) => g.label === label) ?? null;
+}
+
+export function getGroupByPin(pin: string): GroupSailing | null {
+  const clean = pin.trim();
+  if (!clean) return null;
+  return GROUP_SAILINGS.find((g) => g.pin === clean) ?? null;
 }
 
 export const FEATURED_GROUP = GROUP_SAILINGS[0];
