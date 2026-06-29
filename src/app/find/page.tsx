@@ -303,6 +303,15 @@ function FindInner() {
                       (c) => c.status === "available"
                     ).length;
                     const dest = destinationWithPhoto(b.itinerary);
+                    const rooms = Array.from(new Set(b.cabins.map((c) => c.type)))
+                      .map((type) => {
+                        const ps = b.cabins
+                          .filter((c) => c.type === type && c.price > 0)
+                          .map((c) => c.price);
+                        return ps.length ? { type, from: Math.min(...ps) } : null;
+                      })
+                      .filter((x): x is { type: string; from: number } => x !== null)
+                      .sort((a, c) => a.from - c.from);
                     return (
                       <Link
                         key={b.id}
@@ -344,6 +353,19 @@ function FindInner() {
                             {b.itinerary} →{" "}
                             <span className="text-sky-400/80">Galveston</span>
                           </p>
+                          {rooms.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {rooms.map((r) => (
+                                <span
+                                  key={r.type}
+                                  className="text-[10px] bg-white/5 border border-white/10 rounded-full px-2 py-0.5 text-white/70"
+                                >
+                                  {r.type}{" "}
+                                  <span className="text-holo font-bold">{fmt$(r.from)}</span>
+                                </span>
+                              ))}
+                            </div>
+                          )}
                           <div className="flex items-end justify-between border-t border-white/10 pt-3 mt-3">
                             <div>
                               {from < Infinity && (
