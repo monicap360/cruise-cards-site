@@ -77,6 +77,11 @@ export default function AccountingPage() {
   });
   const [importResult, setImportResult] = useState("");
 
+  // AI PDF import
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfMsg, setPdfMsg] = useState("");
+  const [pdfEntries, setPdfEntries] = useState<LedgerEntry[]>([]);
+
   async function refresh() {
     setEntries(await getLedger());
   }
@@ -227,6 +232,70 @@ export default function AccountingPage() {
     setCsvHeaders([]);
     setCsvRows([]);
     setColMap({ date: -1, amount: -1, description: -1, client: -1, category: -1 });
+    refresh();
+  }
+
+  async function handlePdf(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPdfBusy(true);
+    setPdfMsg("Reading document with AI…");
+    setPdfEntries([]);
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      let binary = "";
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      const b64 = btoa(binary);
+      const mediaType =
+        file.type === "image/png" ? "image/png" : file.type === "image/jpeg" ? "image/jpeg" : "application/pdf";
+      const r = await fetch("/api/parse-accounting", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ pdfBase64: b64, mediaType }),
+      });
+      const d = await r.json();
+      if (!r.ok) {
+        setPdfMsg(d.error || "Could not read that document.");
+        setPdfBusy(false);
+        return;
+      }
+      const raw = Array.isArray(d.entries) ? (d.entries as Record<string, unknown>[]) : [];
+      const extracted: LedgerEntry[] = raw
+        .map((x) => ({
+          id: newLedgerId(),
+          date: String(x.date ?? "").slice(0, 10),
+          type: (x.type === "expense" ? "expense" : "income") as LedgerType,
+          category: String(x.category ?? ""),
+          client: String(x.client ?? ""),
+          description: String(x.description ?? ""),
+          amount: Math.abs(Number(x.amount) || 0),
+          method: String(x.method ?? METHODS[0]),
+          status: "paid",
+          invoiceNumber: String(x.invoiceNumber ?? ""),
+          source: "pdf",
+        }))
+        .filter((en) => en.amount > 0);
+      setPdfEntries(extracted);
+      setPdfMsg(
+        extracted.length
+          ? `Found ${extracted.length} transaction(s) — review, edit, then import.`
+          : "No transactions found in that document."
+      );
+    } catch {
+      setPdfMsg("Could not read that document.");
+    }
+    setPdfBusy(false);
+  }
+
+  function setPdfEntry(i: number, p: Partial<LedgerEntry>) {
+    setPdfEntries((arr) => arr.map((en, j) => (j === i ? { ...en, ...p } : en)));
+  }
+
+  async function importPdf() {
+    if (!pdfEntries.length) return;
+    const count = await saveEntries(pdfEntries);
+    setPdfMsg(`Imported ${count} to the ledger.`);
+    setPdfEntries([]);
     refresh();
   }
 
@@ -486,6 +555,44 @@ export default function AccountingPage() {
               </button>
             )}
           </div>
+        </div>
+
+        {/* AI: Import from PDF */}
+        <div className="bg-[#0b1020] rounded-2xl border border-sky-400/25 p-6">
+          <h2 className="text-lg font-extrabold uppercase tracking-wider mb-1">
+            📄 Import from PDF (AI)
+          </h2>
+          <p className="text-white/45 text-sm mb-4">
+            Upload an invoice, receipt, commission statement, or bank statement (PDF or photo).
+            Claude reads it and pulls out the transactions — review, edit, then import to your ledger.
+          </p>
+          <input
+            type="file"
+            accept=".pdf,image/*"
+            onChange={handlePdf}
+            disabled={pdfBusy}
+            className="text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-white file:text-black file:font-semibold file:px-4 file:py-2 file:text-xs file:uppercase file:tracking-wider disabled:opacity-50"
+          />
+          {pdfMsg && <p className="text-sky-300 text-sm mt-3">{pdfMsg}</p>}
+          {pdfEntries.length > 0 && (
+            <div className="mt-5 space-y-2">
+              {pdfEntries.map((en, i) => (
+                <div key={en.id} className="grid grid-cols-2 sm:grid-cols-6 gap-2 items-center bg-white/5 border border-white/10 rounded-xl p-2">
+                  <input value={en.date} onChange={(ev) => setPdfEntry(i, { date: ev.target.value })} className={inputClass} />
+                  <select value={en.type} onChange={(ev) => setPdfEntry(i, { type: ev.target.value as LedgerType })} className={inputClass}>
+                    <option className="bg-[#0b1020]" value="income">Income</option>
+                    <option className="bg-[#0b1020]" value="expense">Expense</option>
+                  </select>
+                  <input value={en.category} onChange={(ev) => setPdfEntry(i, { category: ev.target.value })} placeholder="Category" className={inputClass} />
+                  <input value={en.description} onChange={(ev) => setPdfEntry(i, { description: ev.target.value })} placeholder="Description" className={`${inputClass} sm:col-span-2`} />
+                  <input value={String(en.amount)} onChange={(ev) => setPdfEntry(i, { amount: Math.abs(Number(ev.target.value) || 0) })} className={`${inputClass} text-right`} />
+                </div>
+              ))}
+              <button onClick={importPdf} className="mt-2 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full">
+                Import {pdfEntries.length} to ledger
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Import from FreshBooks */}
