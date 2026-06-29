@@ -83,6 +83,7 @@ export default function SignupsPage() {
             <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
             <Link href="/admin/group-deposits" className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 hover:text-sky-300">🏦 Group Deposits →</Link>
             <Link href="/admin/rooming-list" className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 hover:text-sky-300">🛏️ Rooming List →</Link>
+            <Link href={`/admin/documents?scope=group&group=${encodeURIComponent(group)}`} className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 hover:text-sky-300">📎 Upload Doc →</Link>
           </div>
           <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1 mt-2">{"// Group Signups"}</div>
           <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Group Signup Tracker</h1>

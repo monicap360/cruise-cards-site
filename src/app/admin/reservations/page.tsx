@@ -114,6 +114,12 @@ export default function ReservationsPage() {
                 📥 Online Requests
               </Link>
               <Link
+                href="/admin/documents?scope=individual"
+                className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold uppercase tracking-wider px-5 py-3 rounded-full transition-all text-xs"
+              >
+                📎 Upload Doc
+              </Link>
+              <Link
                 href="/admin/reservations/new"
                 className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all text-xs"
               >
