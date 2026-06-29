@@ -49,15 +49,15 @@ export default function AdminRatesPage() {
   }
 
   const input =
-    "w-24 bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-500";
+    "w-24 bg-white/5 border border-white/15 rounded-xl px-2 py-1.5 text-sm text-right text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">Cabin Rates</h1>
-            <p className="text-gray-500 text-sm max-w-2xl">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Cabin Rates</h1>
+            <p className="text-white/55 text-sm max-w-2xl">
               Enter the cruise-line starting fare (per person, double occupancy)
               for each ship + cabin type. These override the seeded prices
               everywhere on the site. Leave blank to keep the existing price.
@@ -65,7 +65,7 @@ export default function AdminRatesPage() {
           </div>
           <Link
             href="/admin"
-            className="text-sm font-bold text-blue-700 hover:underline"
+            className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
           >
             ← Admin
           </Link>
@@ -75,24 +75,24 @@ export default function AdminRatesPage() {
           <button
             onClick={saveAll}
             disabled={saving}
-            className="bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white font-bold text-sm px-6 py-2.5 rounded-full"
+            className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full"
           >
             {saving ? "Saving…" : "Save all rates"}
           </button>
           {savedAt && (
-            <span className="text-green-600 text-sm font-semibold">
+            <span className="text-green-300 text-sm font-semibold">
               Saved at {savedAt}
             </span>
           )}
         </div>
 
         {loading ? (
-          <p className="text-gray-500">Loading…</p>
+          <p className="text-white/45">Loading…</p>
         ) : (
-          <div className="overflow-x-auto bg-white rounded-2xl border border-gray-200">
+          <div className="overflow-x-auto bg-[#0b1020] rounded-2xl border border-white/10">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-white/10 bg-white/5 text-white/45">
                   <th className="text-left font-bold px-4 py-3">Ship</th>
                   {CABIN_TYPES.map((t) => (
                     <th key={t} className="text-right font-bold px-3 py-3">
@@ -105,16 +105,16 @@ export default function AdminRatesPage() {
                 {SHIPS.map(({ ship, cruiseLine }) => (
                   <tr
                     key={ship}
-                    className="border-b border-gray-100 hover:bg-gray-50"
+                    className="border-b border-white/10 hover:bg-white/5"
                   >
                     <td className="px-4 py-2.5">
                       <div className="font-bold">{ship}</div>
-                      <div className="text-gray-400 text-xs">{cruiseLine}</div>
+                      <div className="text-white/40 text-xs">{cruiseLine}</div>
                     </td>
                     {CABIN_TYPES.map((type) => (
                       <td key={type} className="px-3 py-2.5 text-right">
                         <div className="inline-flex items-center gap-1">
-                          <span className="text-gray-400">$</span>
+                          <span className="text-white/40">$</span>
                           <input
                             className={input}
                             inputMode="decimal"
@@ -132,7 +132,7 @@ export default function AdminRatesPage() {
           </div>
         )}
 
-        <p className="text-gray-400 text-xs mt-4">
+        <p className="text-white/40 text-xs mt-4">
           Tip: rates are per person at double occupancy — the same number the
           cruise line shows as “from” for that cabin. 3rd/4th-guest pricing is
           calculated automatically from this base.

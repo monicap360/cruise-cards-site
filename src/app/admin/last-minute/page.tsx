@@ -47,32 +47,32 @@ export default function AdminLastMinutePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
               Last-Minute Listings
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-white/55 text-sm">
               Seller submissions. Set the buyer price + seller refund, then mark{" "}
               <strong>Listed</strong> to publish on the public board.
             </p>
           </div>
           <Link
             href="/admin"
-            className="text-sm font-bold text-blue-700 hover:underline"
+            className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
           >
             ← Admin
           </Link>
         </div>
 
         {loading ? (
-          <p className="text-gray-400">Loading…</p>
+          <p className="text-white/45">Loading…</p>
         ) : listings.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-10 text-center text-white/55">
             No listings yet. Submissions from{" "}
-            <Link href="/list-your-cruise" className="text-blue-700 underline">
+            <Link href="/list-your-cruise" className="text-sky-400 hover:text-sky-300 underline">
               /list-your-cruise
             </Link>{" "}
             appear here.
@@ -102,35 +102,35 @@ function ListingCard({
   const [sellerRefund, setSellerRefund] = useState(String(l.sellerRefund || ""));
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-5">
+    <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-extrabold text-blue-900">
+            <span className="font-extrabold text-white">
               {l.ship || "—"}
             </span>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">
               {STATUS_LABEL[l.status]}
             </span>
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-white/55">
             {l.cruiseLine} · {l.itinerary || "—"} · {l.nights} nights ·{" "}
             {l.cabinType || "—"} · up to {l.guests} guests
           </div>
-          <div className="text-sm text-gray-500 mt-1">
+          <div className="text-sm text-white/55 mt-1">
             Sails {l.sailDate || "—"} · Cabin #{l.cabinNumber || "—"} · Booking #
             {l.bookingRef || "—"} ·{" "}
             {l.paidInFull ? "Paid in full" : "Balance owed"}
           </div>
-          <div className="text-sm text-gray-700 mt-2">
+          <div className="text-sm text-white/70 mt-2">
             <strong>{l.sellerName}</strong> · {l.sellerPhone} · {l.sellerEmail}
           </div>
-          <div className="text-sm text-gray-500 mt-1">
+          <div className="text-sm text-white/55 mt-1">
             Paid {fmt$(l.pricePaid)} · penalty {fmt$(l.penaltyAmount ?? 0)} · wants{" "}
             {fmt$(l.desiredBack ?? 0)} back
           </div>
           {l.passengers && l.passengers.length > 0 && (
-            <div className="text-sm text-gray-500 mt-1">
+            <div className="text-sm text-white/55 mt-1">
               Guests:{" "}
               {l.passengers
                 .map((p) => `${p.name || "—"}${p.dob ? ` (${p.dob})` : ""}`)
@@ -141,22 +141,22 @@ function ListingCard({
 
         <div className="flex flex-col gap-2 items-end">
           <div className="flex gap-2">
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-white/55">
               Buyer price
               <input
                 type="number"
                 value={buyerPrice}
                 onChange={(e) => setBuyerPrice(e.target.value)}
-                className="block w-28 mt-1 border border-gray-300 rounded-lg px-2 py-1 text-sm"
+                className="block w-28 mt-1 bg-white/5 border border-white/15 rounded-xl px-2 py-1 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
               />
             </label>
-            <label className="text-xs text-gray-500">
+            <label className="text-xs text-white/55">
               Seller refund
               <input
                 type="number"
                 value={sellerRefund}
                 onChange={(e) => setSellerRefund(e.target.value)}
-                className="block w-28 mt-1 border border-gray-300 rounded-lg px-2 py-1 text-sm"
+                className="block w-28 mt-1 bg-white/5 border border-white/15 rounded-xl px-2 py-1 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
               />
             </label>
           </div>
@@ -166,10 +166,10 @@ function ListingCard({
               onChange={(e) =>
                 onPatch(l.id, { status: e.target.value as ListingStatus })
               }
-              className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+              className="bg-white/5 border border-white/15 rounded-xl px-2 py-1.5 text-sm text-white focus:outline-none focus:border-sky-400/60"
             >
               {STATUSES.map((s) => (
-                <option key={s} value={s}>
+                <option key={s} value={s} className="bg-[#0b1020]">
                   {STATUS_LABEL[s]}
                 </option>
               ))}
@@ -181,19 +181,19 @@ function ListingCard({
                   seller_refund: parseFloat(sellerRefund) || 0,
                 })
               }
-              className="bg-blue-900 text-white text-sm font-bold px-4 py-1.5 rounded-lg hover:bg-blue-800"
+              className="bg-white text-black hover:bg-white/90 text-sm font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full"
             >
               Save
             </button>
             <button
               onClick={() => onPatch(l.id, { status: "listed" })}
-              className="bg-green-600 text-white text-sm font-bold px-4 py-1.5 rounded-lg hover:bg-green-700"
+              className="bg-green-500/15 text-green-300 border border-green-400/25 hover:bg-green-500/25 text-sm font-bold px-4 py-1.5 rounded-full"
             >
               Publish
             </button>
             <button
               onClick={() => onDelete(l.id)}
-              className="text-red-600 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-red-50"
+              className="text-red-300 hover:text-red-200 text-sm font-bold px-3 py-1.5 rounded-full hover:bg-red-500/10"
             >
               Delete
             </button>

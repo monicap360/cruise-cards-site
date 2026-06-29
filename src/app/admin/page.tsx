@@ -17,6 +17,22 @@ async function handleLogout() {
   window.location.href = "/admin/login";
 }
 
+const TOOLS = [
+  { href: "/admin/reservations", label: "🛎️ Front Desk" },
+  { href: "/admin/sales", label: "📈 Sales" },
+  { href: "/admin/room-blocks", label: "🛏️ Room Blocks" },
+  { href: "/admin/waivers", label: "⚖️ Waivers" },
+  { href: "/admin/offers", label: "🎁 Offers" },
+  { href: "/admin/rates", label: "💲 Rates" },
+  { href: "/admin/credits", label: "💳 Credits" },
+  { href: "/admin/contacts", label: "📇 Comm Log" },
+  { href: "/admin/groups", label: "👥 Groups" },
+  { href: "/admin/rfp", label: "📩 Agent RFPs" },
+  { href: "/admin/invoice", label: "🧾 Invoice" },
+  { href: "/admin/notify", label: "✉️ Updates" },
+  { href: "/admin/activity", label: "📡 Activity" },
+];
+
 export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [search, setSearch] = useState("");
@@ -42,112 +58,47 @@ export default function AdminPage() {
   ).length;
 
   const statusColor: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-700",
-    confirmed: "bg-blue-100 text-blue-700",
-    paid: "bg-green-100 text-green-700",
-    cancelled: "bg-red-100 text-red-700",
+    pending: "bg-yellow-400/15 text-yellow-300 border border-yellow-400/25",
+    confirmed: "bg-sky-500/15 text-sky-300 border border-sky-400/25",
+    paid: "bg-green-500/15 text-green-300 border border-green-400/25",
+    cancelled: "bg-red-500/15 text-red-300 border border-red-400/25",
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#05070d] text-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <div className="text-blue-300 text-sm font-semibold uppercase tracking-wide mb-1">
-                Cruises from Galveston
+              <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">
+                {"// Cruises from Galveston · Staff"}
               </div>
-              <h1 className="text-3xl font-extrabold">Sea Pay Admin</h1>
+              <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
+                Sea Pay Admin
+              </h1>
             </div>
-            <div className="flex gap-3 flex-wrap">
-              <Link
-                href="/admin/reservations"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                🛎️ Front Desk
-              </Link>
-              <Link
-                href="/admin/sales"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                📈 Sales
-              </Link>
-              <Link
-                href="/admin/room-blocks"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                🛏️ Room Blocks
-              </Link>
-              <Link
-                href="/admin/waivers"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                ⚖️ Waivers
-              </Link>
-              <Link
-                href="/admin/offers"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                🎁 Offers
-              </Link>
-              <Link
-                href="/admin/rates"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                💲 Rates
-              </Link>
-              <Link
-                href="/admin/credits"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                💳 Credits
-              </Link>
-              <Link
-                href="/admin/contacts"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                📇 Comm Log
-              </Link>
-              <Link
-                href="/admin/groups"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                👥 Groups
-              </Link>
-              <Link
-                href="/admin/invoice"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                🧾 Invoice
-              </Link>
-              <Link
-                href="/admin/notify"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                ✉️ Updates
-              </Link>
-              <Link
-                href="/admin/activity"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                📡 Activity
-              </Link>
-              <Link
-                href="/admin/rfp"
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all"
-              >
-                📩 Agent RFPs
-              </Link>
+            <div className="flex gap-2 flex-wrap">
+              {TOOLS.map((t) => (
+                <Link
+                  key={t.href}
+                  href={t.href}
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold px-4 py-2.5 rounded-full transition-all text-[13px]"
+                >
+                  {t.label}
+                </Link>
+              ))}
               <Link
                 href="/admin/new-booking"
-                className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
+                className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all text-xs"
               >
                 + New Booking
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-5 py-3 rounded-full transition-all text-sm"
+                className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white font-semibold px-4 py-2.5 rounded-full transition-all text-[13px]"
               >
                 🔒 Log Out
               </button>
@@ -169,20 +120,22 @@ export default function AdminPage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className={`rounded-xl p-4 ${
-                  stat.alert ? "bg-red-600" : "bg-white/10"
+                className={`rounded-2xl p-4 border ${
+                  stat.alert
+                    ? "bg-red-500/15 border-red-400/30"
+                    : "bg-[#0b1020] border-white/10"
                 }`}
               >
                 <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-2xl font-extrabold">{stat.value}</div>
-                <div className="text-blue-200 text-xs font-semibold mt-0.5">
+                <div className="text-2xl font-extrabold text-holo">{stat.value}</div>
+                <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Bookings list */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -193,7 +146,7 @@ export default function AdminPage() {
             placeholder="Search name, booking #, ship…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-48 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-48 bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
           />
           {["all", "pending", "confirmed", "paid", "cancelled"].map((f) => (
             <button
@@ -201,8 +154,8 @@ export default function AdminPage() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${
                 filter === f
-                  ? "bg-blue-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-white text-black"
+                  : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
               }`}
             >
               {f}
@@ -211,12 +164,12 @@ export default function AdminPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-16 text-center">
             <div className="text-6xl mb-4">🚢</div>
-            <p className="text-gray-400 text-lg font-bold">No bookings yet</p>
+            <p className="text-white/45 text-lg font-bold">No bookings yet</p>
             <Link
               href="/admin/new-booking"
-              className="mt-4 inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-full text-sm"
+              className="mt-4 inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm"
             >
               Create First Booking
             </Link>
@@ -230,19 +183,19 @@ export default function AdminPage() {
                 <Link
                   key={b.id}
                   href={`/admin/bookings/${b.id}`}
-                  className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow"
+                  className="block bg-[#0b1020] rounded-2xl border border-white/10 p-5 hover:border-sky-400/40 transition-colors"
                 >
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                      <div className="w-12 h-12 bg-sky-500/15 border border-sky-400/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
                         🚢
                       </div>
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-extrabold text-blue-900 text-base">
+                          <span className="font-extrabold text-white text-base">
                             {b.customerName}
                           </span>
-                          <span className="text-xs text-gray-400 font-mono">
+                          <span className="text-xs text-white/40 font-mono">
                             {b.bookingNumber}
                           </span>
                           <span
@@ -251,36 +204,35 @@ export default function AdminPage() {
                             {b.status}
                           </span>
                           {hasOverdue && (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-500/15 text-red-300 border border-red-400/25">
                               ⚠️ Overdue
                             </span>
                           )}
                         </div>
-                        <div className="text-gray-500 text-sm mt-0.5">
+                        <div className="text-white/55 text-sm mt-0.5">
                           {b.ship} — {b.itinerary}
                         </div>
-                        <div className="text-gray-400 text-xs mt-0.5">
+                        <div className="text-white/35 text-xs mt-0.5">
                           Sailing {fmtDateShort(b.sailingDate)} ·{" "}
                           {b.numberOfGuests} guest
-                          {b.numberOfGuests !== 1 ? "s" : ""} ·{" "}
-                          {b.cabinType}
+                          {b.numberOfGuests !== 1 ? "s" : ""} · {b.cabinType}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-extrabold text-blue-900">
+                      <div className="text-2xl font-extrabold text-holo">
                         {fmt$(b.totalPrice)}
                       </div>
                       <div
                         className={`text-sm font-bold ${
-                          balance === 0 ? "text-green-600" : "text-red-500"
+                          balance === 0 ? "text-green-300" : "text-red-300"
                         }`}
                       >
                         {balance === 0
                           ? "✅ Paid in Full"
                           : `${fmt$(balance)} remaining`}
                       </div>
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-white/35 text-xs">
                         Created {fmtDateShort(b.createdAt.split("T")[0])}
                       </div>
                     </div>

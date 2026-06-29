@@ -126,22 +126,24 @@ export default function SalesDashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#05070d] text-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <Link
                 href="/admin"
-                className="text-blue-300 hover:text-white text-sm font-semibold"
+                className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
               >
                 ← Admin
               </Link>
-              <div className="text-blue-300 text-sm font-semibold uppercase tracking-wide mb-1 mt-2">
-                Cruises from Galveston
+              <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1 mt-2">
+                {"// Cruises from Galveston"}
               </div>
-              <h1 className="text-3xl font-extrabold">Travel Agent Sales</h1>
+              <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Travel Agent Sales</h1>
             </div>
             <div className="flex gap-2 flex-wrap">
               {(["month", "quarter", "year", "all"] as Period[]).map((p) => (
@@ -150,8 +152,8 @@ export default function SalesDashboardPage() {
                   onClick={() => setPeriod(p)}
                   className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
                     period === p
-                      ? "bg-white text-blue-900"
-                      : "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                      ? "bg-white text-black"
+                      : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
                   }`}
                 >
                   {periodLabel[p]}
@@ -176,17 +178,17 @@ export default function SalesDashboardPage() {
                 icon: "🏆",
               },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-xl p-4 bg-white/10">
+              <div key={stat.label} className="rounded-2xl p-4 bg-[#0b1020] border border-white/10">
                 <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-2xl font-extrabold">{stat.value}</div>
-                <div className="text-blue-200 text-xs font-semibold mt-0.5">
+                <div className="text-2xl font-extrabold text-holo">{stat.value}</div>
+                <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Secondary stats + commission control */}
@@ -194,8 +196,8 @@ export default function SalesDashboardPage() {
           <StatCard label="Bookings" value={String(totals.count)} />
           <StatCard label="Avg Booking Value" value={fmt$(totals.avg)} />
           <StatCard label="Cancelled" value={String(totals.cancelled)} />
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-5">
+            <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-2">
               Commission Rate
             </label>
             <div className="flex items-center gap-2">
@@ -209,32 +211,32 @@ export default function SalesDashboardPage() {
                     Math.max(0, Math.min(100, parseFloat(e.target.value) || 0))
                   )
                 }
-                className="w-20 border border-gray-200 rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-sky-400/60"
               />
-              <span className="text-gray-500 font-bold">%</span>
+              <span className="text-white/55 font-bold">%</span>
             </div>
           </div>
         </div>
 
         {/* Agent leaderboard */}
         <div>
-          <h2 className="font-extrabold text-blue-900 text-xl mb-4">
+          <h2 className="font-extrabold text-white text-xl mb-4">
             Agent Leaderboard · {periodLabel[period]}
           </h2>
           {loading ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center text-gray-400 font-bold">
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-12 text-center text-white/45 font-bold">
               Loading…
             </div>
           ) : agentBoard.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center text-gray-400 font-bold">
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-12 text-center text-white/45 font-bold">
               No bookings in this period.
             </div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                    <tr className="bg-white/5 text-white/45 text-xs uppercase tracking-wide">
                       <th className="text-left font-bold px-5 py-3">Agent</th>
                       <th className="text-right font-bold px-5 py-3">Bookings</th>
                       <th className="text-right font-bold px-5 py-3">Gross Sales</th>
@@ -246,43 +248,43 @@ export default function SalesDashboardPage() {
                       <th className="px-5 py-3 w-32" />
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-white/10">
                     {agentBoard.map((a, i) => (
-                      <tr key={a.agent} className="hover:bg-gray-50">
+                      <tr key={a.agent} className="hover:bg-white/5">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
                             <span className="text-lg">
                               {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "·"}
                             </span>
-                            <span className="font-extrabold text-blue-900">
+                            <span className="font-extrabold text-white">
                               {a.agent}
                             </span>
                             {a.cancelled > 0 && (
-                              <span className="text-xs text-red-500 font-semibold">
+                              <span className="text-xs text-red-300 font-semibold">
                                 {a.cancelled} cancelled
                               </span>
                             )}
                           </div>
                         </td>
-                        <td className="px-5 py-4 text-right font-bold text-gray-700">
+                        <td className="px-5 py-4 text-right font-bold text-white/70">
                           {a.bookings}
                         </td>
-                        <td className="px-5 py-4 text-right font-extrabold text-blue-900">
+                        <td className="px-5 py-4 text-right font-extrabold text-white">
                           {fmt$(a.gross)}
                         </td>
-                        <td className="px-5 py-4 text-right text-green-600 font-bold">
+                        <td className="px-5 py-4 text-right text-green-300 font-bold">
                           {fmt$(a.collected)}
                         </td>
-                        <td className="px-5 py-4 text-right text-gray-500 font-semibold">
+                        <td className="px-5 py-4 text-right text-white/55 font-semibold">
                           {fmt$(a.outstanding)}
                         </td>
-                        <td className="px-5 py-4 text-right font-bold text-gray-700">
+                        <td className="px-5 py-4 text-right font-bold text-white/70">
                           {fmt$(a.commission)}
                         </td>
                         <td className="px-5 py-4">
-                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-blue-600 rounded-full"
+                              className="h-full bg-sky-400 rounded-full"
                               style={{
                                 width: `${topGross ? (a.gross / topGross) * 100 : 0}%`,
                               }}
@@ -300,11 +302,11 @@ export default function SalesDashboardPage() {
 
         {/* Recent sales */}
         <div>
-          <h2 className="font-extrabold text-blue-900 text-xl mb-4">
+          <h2 className="font-extrabold text-white text-xl mb-4">
             Recent Bookings
           </h2>
           {recent.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center text-gray-400 font-bold">
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-12 text-center text-white/45 font-bold">
               No bookings yet.
             </div>
           ) : (
@@ -313,30 +315,30 @@ export default function SalesDashboardPage() {
                 <Link
                   key={b.id}
                   href={`/admin/bookings/${b.id}`}
-                  className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
+                  className="block bg-[#0b1020] rounded-2xl border border-white/10 p-4 hover:border-sky-400/40 transition-colors"
                 >
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     <div>
-                      <span className="font-extrabold text-blue-900">
+                      <span className="font-extrabold text-white">
                         {b.customerName}
                       </span>
-                      <span className="text-gray-400 text-xs ml-2">
+                      <span className="text-white/40 text-xs ml-2">
                         {b.agentName?.trim() || UNASSIGNED} ·{" "}
                         {fmtDateShort(b.createdAt.split("T")[0])}
                       </span>
-                      <div className="text-gray-500 text-sm">
+                      <div className="text-white/55 text-sm">
                         {b.ship} — {b.itinerary}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-extrabold text-blue-900">
+                      <div className="font-extrabold text-white">
                         {fmt$(b.totalPrice)}
                       </div>
                       <div
                         className={`text-xs font-bold capitalize ${
                           b.status === "cancelled"
-                            ? "text-red-500"
-                            : "text-gray-400"
+                            ? "text-red-300"
+                            : "text-white/40"
                         }`}
                       >
                         {b.status}
@@ -355,11 +357,11 @@ export default function SalesDashboardPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-      <div className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+    <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-5">
+      <div className="label-mono text-[10px] font-bold text-white/45 uppercase tracking-wider">
         {label}
       </div>
-      <div className="text-2xl font-extrabold text-blue-900 mt-1">{value}</div>
+      <div className="text-2xl font-extrabold text-holo mt-1">{value}</div>
     </div>
   );
 }

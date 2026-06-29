@@ -45,35 +45,37 @@ export default function ReservationDetailPage() {
 
   if (!r) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-400 font-bold">
+      <div className="min-h-screen bg-[#05070d] flex items-center justify-center text-white/45 font-bold">
         Loading…
       </div>
     );
   }
 
   const labelCls =
-    "block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1";
+    "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
   const inputCls =
-    "w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+    "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-900 text-white px-6 py-6">
-        <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#05070d] text-white">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Link
             href="/admin/reservations"
-            className="text-blue-300 hover:text-white text-sm font-semibold"
+            className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
           >
             ← Reservations
           </Link>
           <div className="flex items-center justify-between flex-wrap gap-3 mt-3">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-3xl">
+              <div className="w-14 h-14 bg-sky-500/15 border border-sky-400/20 rounded-2xl flex items-center justify-center text-3xl">
                 {SERVICE_ICON[r.serviceType] ?? "⚓"}
               </div>
               <div>
-                <h1 className="text-2xl font-extrabold">{r.guestName}</h1>
-                <div className="text-blue-300 text-sm font-mono">
+                <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">{r.guestName}</h1>
+                <div className="text-white/40 text-sm font-mono">
                   {r.reservationNumber}
                 </div>
               </div>
@@ -85,12 +87,12 @@ export default function ReservationDetailPage() {
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Status workflow */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-extrabold text-blue-900 text-lg mb-4">Status</h2>
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <h2 className="font-extrabold text-white text-lg mb-4">Status</h2>
           <div className="flex flex-wrap gap-2">
             {RESERVATION_STATUSES.map((s) => (
               <button
@@ -98,8 +100,8 @@ export default function ReservationDetailPage() {
                 onClick={() => update({ status: s })}
                 className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
                   r.status === s
-                    ? "bg-blue-900 text-white"
-                    : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+                    ? "bg-white text-black"
+                    : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
                 }`}
               >
                 {STATUS_LABEL[s]}
@@ -109,11 +111,11 @@ export default function ReservationDetailPage() {
         </div>
 
         {/* Identity check (physical ID verified at the desk — no image stored) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-extrabold text-blue-900 text-lg mb-1">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <h2 className="font-extrabold text-white text-lg mb-1">
             Identity Check
           </h2>
-          <p className="text-gray-400 text-xs mb-4">
+          <p className="text-white/40 text-xs mb-4">
             Staff safety — verify the guest&apos;s physical government photo ID in
             person at check-in. No ID image is ever stored.
           </p>
@@ -121,8 +123,8 @@ export default function ReservationDetailPage() {
             onClick={() => update({ idVerified: !r.idVerified })}
             className={`flex items-center gap-3 px-5 py-3 rounded-full font-bold text-sm transition-all ${
               r.idVerified
-                ? "bg-green-100 text-green-700 border border-green-200"
-                : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+                ? "bg-green-500/15 text-green-300 border border-green-400/25"
+                : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
             }`}
           >
             <span className="text-lg">{r.idVerified ? "✅" : "🪪"}</span>
@@ -134,23 +136,23 @@ export default function ReservationDetailPage() {
 
         {/* Guest request + AI prep brief */}
         {(r.requestSummary || r.aiBrief) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 space-y-4">
             {r.requestSummary && (
               <div>
-                <h2 className="font-extrabold text-blue-900 text-lg mb-2">
+                <h2 className="font-extrabold text-white text-lg mb-2">
                   What the guest asked for
                 </h2>
-                <p className="text-gray-700 text-sm bg-gray-50 border border-gray-100 rounded-xl p-4 whitespace-pre-wrap">
+                <p className="text-white/70 text-sm bg-white/5 border border-white/10 rounded-xl p-4 whitespace-pre-wrap">
                   {r.requestSummary}
                 </p>
               </div>
             )}
             {r.aiBrief && (
               <div>
-                <h2 className="font-extrabold text-blue-900 text-lg mb-2 flex items-center gap-2">
+                <h2 className="font-extrabold text-white text-lg mb-2 flex items-center gap-2">
                   <span>✨</span> AI prep brief
                 </h2>
-                <p className="text-gray-700 text-sm bg-blue-50 border border-blue-100 rounded-xl p-4 whitespace-pre-wrap">
+                <p className="text-white/70 text-sm bg-sky-500/15 border border-sky-400/25 rounded-xl p-4 whitespace-pre-wrap">
                   {r.aiBrief}
                 </p>
               </div>
@@ -159,12 +161,12 @@ export default function ReservationDetailPage() {
         )}
 
         {/* Details */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-extrabold text-blue-900 text-lg">Details</h2>
+            <h2 className="font-extrabold text-white text-lg">Details</h2>
             <button
               onClick={() => setEditing((v) => !v)}
-              className="text-blue-600 hover:text-blue-800 text-sm font-bold"
+              className="text-sky-400 hover:text-sky-300 text-sm font-bold"
             >
               {editing ? "Done" : "Edit"}
             </button>
@@ -271,8 +273,8 @@ export default function ReservationDetailPage() {
         </div>
 
         {/* Notes */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="font-extrabold text-blue-900 text-lg mb-4">Notes</h2>
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <h2 className="font-extrabold text-white text-lg mb-4">Notes</h2>
           <textarea
             value={r.notes}
             onChange={(e) => update({ notes: e.target.value })}
@@ -283,22 +285,22 @@ export default function ReservationDetailPage() {
         </div>
 
         {/* Danger zone */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
           {confirmDelete ? (
             <div className="flex items-center justify-between flex-wrap gap-3">
-              <span className="text-sm font-bold text-red-600">
+              <span className="text-sm font-bold text-red-300">
                 Delete this reservation permanently?
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setConfirmDelete(false)}
-                  className="px-4 py-2 rounded-full border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50"
+                  className="px-4 py-2 rounded-full border border-white/15 text-white/80 font-semibold text-sm hover:border-white/40 hover:bg-white/5"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm"
+                  className="px-4 py-2 rounded-full bg-red-500/15 border border-red-400/30 text-red-300 hover:bg-red-500/25 font-bold text-sm"
                 >
                   Delete
                 </button>
@@ -307,7 +309,7 @@ export default function ReservationDetailPage() {
           ) : (
             <button
               onClick={() => setConfirmDelete(true)}
-              className="text-red-600 hover:text-red-700 text-sm font-bold"
+              className="text-red-300 hover:text-red-200 text-sm font-bold"
             >
               Delete reservation
             </button>
@@ -321,10 +323,10 @@ export default function ReservationDetailPage() {
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+      <dt className="label-mono text-[10px] uppercase tracking-wider text-white/45">
         {label}
       </dt>
-      <dd className="text-gray-800 font-semibold mt-0.5">{value}</dd>
+      <dd className="text-white font-semibold mt-0.5">{value}</dd>
     </div>
   );
 }

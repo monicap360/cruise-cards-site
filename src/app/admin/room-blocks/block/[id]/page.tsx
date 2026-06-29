@@ -133,11 +133,11 @@ export default function BlockDetailPage() {
 
   if (!block) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center text-gray-400">
+      <div className="min-h-screen flex items-center justify-center bg-[#05070d] text-white">
+        <div className="text-center text-white/45">
           <div className="text-5xl mb-3">🚢</div>
           <p className="font-bold">Room block not found.</p>
-          <Link href="/admin/room-blocks" className="text-blue-500 text-sm mt-2 inline-block">← Back to Room Blocks</Link>
+          <Link href="/admin/room-blocks" className="text-sky-400 hover:text-sky-300 text-sm mt-2 inline-block">← Back to Room Blocks</Link>
         </div>
       </div>
     );
@@ -163,106 +163,108 @@ export default function BlockDetailPage() {
   }, {});
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#05070d] text-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-          <Link href="/admin/room-blocks" className="text-blue-300 hover:text-white text-sm font-semibold">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Link href="/admin/room-blocks" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">
             ← Room Blocks
           </Link>
           <div className="flex items-start justify-between flex-wrap gap-4 mt-2">
             <div>
-              <h1 className="text-3xl font-extrabold">{block.ship}</h1>
-              <p className="text-blue-200 text-sm mt-0.5">
+              <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">{block.ship}</h1>
+              <p className="text-white/55 text-sm mt-0.5">
                 {block.cruiseLine} · {fmtDateShort(block.sailingDate)} · {block.nights} nights · {block.itinerary}
               </p>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="bg-green-600 text-white text-sm font-bold px-4 py-1.5 rounded-full">
+              <span className="bg-green-500/15 text-green-300 border border-green-400/25 text-sm font-bold px-4 py-1.5 rounded-full">
                 {counts.available} Available
               </span>
               {counts.held > 0 && (
-                <span className="bg-yellow-500 text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                <span className="bg-yellow-400/15 text-yellow-300 border border-yellow-400/25 text-sm font-bold px-4 py-1.5 rounded-full">
                   {counts.held} Held
                 </span>
               )}
               {counts.booked > 0 && (
-                <span className="bg-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full">
+                <span className="bg-red-500/15 text-red-300 border border-red-400/25 text-sm font-bold px-4 py-1.5 rounded-full">
                   {counts.booked} Booked
                 </span>
               )}
               <button
                 onClick={() => setAddingCabin(true)}
-                className="bg-white text-blue-900 font-bold px-4 py-2 rounded-full text-sm hover:bg-blue-50 transition-all"
+                className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-4 py-2 rounded-full text-sm transition-all"
               >
                 + Add Room
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Add cabin form */}
         {addingCabin && (
-          <div className="bg-white rounded-2xl shadow-sm border border-blue-200 p-6">
-            <h3 className="font-extrabold text-blue-900 mb-4">Add New Room</h3>
+          <div className="bg-[#0b1020] rounded-2xl border border-sky-400/30 p-6">
+            <h3 className="font-extrabold text-white mb-4">Add New Room</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Room # *</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Room # *</label>
                 <input value={cabinForm.roomNumber} onChange={(e) => setC("roomNumber", e.target.value)}
-                  placeholder="4121" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  placeholder="4121" className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Deck *</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Deck *</label>
                 <input type="number" value={cabinForm.deck} onChange={(e) => setC("deck", e.target.value)}
-                  placeholder="4" min="1" max="25" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  placeholder="4" min="1" max="25" className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Type</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Type</label>
                 <select value={cabinForm.type} onChange={(e) => setC("type", e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                  {CABIN_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60">
+                  {CABIN_CATEGORIES.map((c) => <option key={c} value={c} className="bg-[#0b1020]">{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">$/person *</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">$/person *</label>
                 <input type="number" value={cabinForm.price} onChange={(e) => setC("price", e.target.value)}
-                  placeholder="649" min="0" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  placeholder="649" min="0" className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Location</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Location</label>
                 <select value={cabinForm.location} onChange={(e) => setC("location", e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                  {CABIN_LOCATIONS.map((l) => <option key={l} value={l}>{l}</option>)}
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60">
+                  {CABIN_LOCATIONS.map((l) => <option key={l} value={l} className="bg-[#0b1020]">{l}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Side</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Side</label>
                 <select value={cabinForm.side} onChange={(e) => setC("side", e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                  {CABIN_SIDES.map((s) => <option key={s} value={s}>{s}</option>)}
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60">
+                  {CABIN_SIDES.map((s) => <option key={s} value={s} className="bg-[#0b1020]">{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Max Guests</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Max Guests</label>
                 <select value={cabinForm.maxGuests} onChange={(e) => setC("maxGuests", e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                  {[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} guest{n > 1 ? "s" : ""}</option>)}
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60">
+                  {[1,2,3,4,5,6].map((n) => <option key={n} value={n} className="bg-[#0b1020]">{n} guest{n > 1 ? "s" : ""}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Sq Ft</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Sq Ft</label>
                 <input type="number" value={cabinForm.sqft} onChange={(e) => setC("sqft", e.target.value)}
-                  placeholder="185" min="0" className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  placeholder="185" min="0" className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">Notes</label>
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">Notes</label>
                 <input
                   value={cabinForm.notes}
                   onChange={(e) => setC("notes", e.target.value)}
                   placeholder="Connecting…"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
                 />
               </div>
             </div>
@@ -270,13 +272,13 @@ export default function BlockDetailPage() {
               <button
                 onClick={addCabin}
                 disabled={!cabinForm.roomNumber || !cabinForm.deck || !cabinForm.price}
-                className="bg-blue-900 hover:bg-blue-800 disabled:bg-gray-300 text-white font-bold px-5 py-2 rounded-full text-sm"
+                className="bg-white text-black hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-5 py-2 rounded-full text-sm"
               >
                 Add Room
               </button>
               <button
                 onClick={() => { setAddingCabin(false); setCabinForm(blankCabin); }}
-                className="border border-gray-200 text-gray-600 font-bold px-5 py-2 rounded-full text-sm hover:bg-gray-50"
+                className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold px-5 py-2 rounded-full text-sm"
               >
                 Cancel
               </button>
@@ -285,18 +287,18 @@ export default function BlockDetailPage() {
         )}
 
         {/* ── Ship deck map ─────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
             <div>
-              <h3 className="font-extrabold text-blue-900 text-lg">🗺️ Ship Map</h3>
-              <p className="text-gray-400 text-xs">
+              <h3 className="font-extrabold text-white text-lg">🗺️ Ship Map</h3>
+              <p className="text-white/40 text-xs">
                 Pick staterooms on the deck plan. Tap a room to manage it, or “+”
                 in a zone to add one there.
               </p>
             </div>
             <button
               onClick={() => setAddingCabin(true)}
-              className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-full text-sm"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-4 py-2 rounded-full text-sm"
             >
               + Add Room
             </button>
@@ -314,8 +316,8 @@ export default function BlockDetailPage() {
                   }}
                   className={`px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
                     currentDeck === d
-                      ? "bg-blue-900 text-white"
-                      : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+                      ? "bg-white text-black"
+                      : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
                   }`}
                 >
                   Deck {d}
@@ -323,7 +325,7 @@ export default function BlockDetailPage() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-white/40 text-sm mb-4">
               No physical rooms yet — add one to start mapping the deck.
             </p>
           )}
@@ -338,19 +340,19 @@ export default function BlockDetailPage() {
 
           {/* Selected cabin actions */}
           {selectedCabin && !selectedCabin.isGuarantee && (
-            <div className="mt-4 bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3">
+            <div className="mt-4 bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-3 flex-wrap text-sm">
                 <span className="text-xl">{CATEGORY_ICON[selectedCabin.type]}</span>
-                <span className="font-extrabold text-blue-900 font-mono">
+                <span className="font-extrabold text-white font-mono">
                   Room {selectedCabin.roomNumber}
                 </span>
-                <span className="text-gray-500">
+                <span className="text-white/55">
                   Deck {selectedCabin.deck} · {selectedCabin.location} ·{" "}
                   {selectedCabin.side} · {selectedCabin.type}
                 </span>
-                <span className="font-bold text-blue-900">
+                <span className="font-bold text-white">
                   {fmt$(selectedCabin.price)}
-                  <span className="text-gray-400 text-xs font-normal">/pp</span>
+                  <span className="text-white/40 text-xs font-normal">/pp</span>
                 </span>
                 <span
                   className={`text-xs font-bold px-2.5 py-1 rounded-full capitalize ${STATUS_COLOR[selectedCabin.status]}`}
@@ -370,7 +372,7 @@ export default function BlockDetailPage() {
                           heldUntil: new Date(Date.now() + 48 * 3600000).toISOString(),
                         });
                       }}
-                      className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                      className="bg-yellow-400/15 hover:bg-yellow-400/25 text-yellow-300 border border-yellow-400/25 text-xs font-bold px-3 py-1.5 rounded-full"
                     >
                       Hold
                     </button>
@@ -380,7 +382,7 @@ export default function BlockDetailPage() {
                         if (!guest) return;
                         updateStatus(selectedCabin.id, "booked", { guestName: guest });
                       }}
-                      className="bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                      className="bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-400/25 text-xs font-bold px-3 py-1.5 rounded-full"
                     >
                       Book
                     </button>
@@ -394,14 +396,14 @@ export default function BlockDetailPage() {
                         guestName: undefined,
                       })
                     }
-                    className="bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full"
+                    className="bg-green-500/15 hover:bg-green-500/25 text-green-300 border border-green-400/25 text-xs font-bold px-3 py-1.5 rounded-full"
                   >
                     Release
                   </button>
                 )}
                 <button
                   onClick={() => removeCabin(selectedCabin.id)}
-                  className="text-red-400 hover:text-red-600 text-xs font-bold px-2"
+                  className="text-red-300 hover:text-red-200 text-xs font-bold px-2"
                 >
                   Remove ✕
                 </button>
@@ -411,13 +413,13 @@ export default function BlockDetailPage() {
         </div>
 
         {/* ── Guarantee (GTY) inventory ─────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
             <div>
-              <h3 className="font-extrabold text-blue-900 text-lg">
+              <h3 className="font-extrabold text-white text-lg">
                 🎟️ Guarantee (GTY) Inventory
               </h3>
-              <p className="text-gray-400 text-xs">
+              <p className="text-white/40 text-xs">
                 Sell a guaranteed category without a specific room — the cruise
                 line assigns the exact cabin later. Great for “available anywhere
                 on the ship.”
@@ -425,16 +427,16 @@ export default function BlockDetailPage() {
             </div>
             <button
               onClick={() => setAddingGty((v) => !v)}
-              className="bg-blue-900 hover:bg-blue-800 text-white font-bold px-4 py-2 rounded-full text-sm"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-4 py-2 rounded-full text-sm"
             >
               {addingGty ? "Cancel" : "+ Add GTY"}
             </button>
           </div>
 
           {addingGty && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end mt-3 mb-4 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end mt-3 mb-4 bg-white/5 border border-white/10 rounded-xl p-4">
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
                   Category
                 </label>
                 <select
@@ -442,17 +444,17 @@ export default function BlockDetailPage() {
                   onChange={(e) =>
                     setGtyForm((f) => ({ ...f, type: e.target.value as CabinCategory }))
                   }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60"
                 >
                   {CABIN_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
+                    <option key={c} value={c} className="bg-[#0b1020]">
                       {c}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
                   $/person *
                 </label>
                 <input
@@ -463,11 +465,11 @@ export default function BlockDetailPage() {
                   }
                   placeholder="599"
                   min="0"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
                   Max Guests
                 </label>
                 <select
@@ -475,17 +477,17 @@ export default function BlockDetailPage() {
                   onChange={(e) =>
                     setGtyForm((f) => ({ ...f, maxGuests: e.target.value }))
                   }
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-400/60"
                 >
                   {[1, 2, 3, 4, 5, 6].map((n) => (
-                    <option key={n} value={n}>
+                    <option key={n} value={n} className="bg-[#0b1020]">
                       {n} guest{n > 1 ? "s" : ""}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-600 mb-1">
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
                   How many?
                 </label>
                 <div className="flex gap-2">
@@ -496,12 +498,12 @@ export default function BlockDetailPage() {
                       setGtyForm((f) => ({ ...f, qty: e.target.value }))
                     }
                     min="1"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
                   />
                   <button
                     onClick={addGuarantee}
                     disabled={!gtyForm.price}
-                    className="bg-blue-900 hover:bg-blue-800 disabled:bg-gray-300 text-white font-bold px-4 py-2 rounded-full text-sm whitespace-nowrap"
+                    className="bg-white text-black hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-4 py-2 rounded-full text-sm whitespace-nowrap"
                   >
                     Add
                   </button>
@@ -511,7 +513,7 @@ export default function BlockDetailPage() {
           )}
 
           {guaranteeCabins.length === 0 ? (
-            <p className="text-gray-400 text-sm mt-2">No guarantee inventory yet.</p>
+            <p className="text-white/40 text-sm mt-2">No guarantee inventory yet.</p>
           ) : (
             <div className="flex flex-wrap gap-3 mt-3">
               {CABIN_CATEGORIES.filter((t) => gtyByType[t]?.length).map((type) => {
@@ -521,14 +523,14 @@ export default function BlockDetailPage() {
                 return (
                   <div
                     key={type}
-                    className="bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3 flex items-center gap-3"
+                    className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-3"
                   >
                     <span className="text-2xl">{CATEGORY_ICON[type]}</span>
                     <div>
-                      <div className="font-extrabold text-blue-900 text-sm">
+                      <div className="font-extrabold text-white text-sm">
                         {type} GTY
                       </div>
-                      <div className="text-gray-500 text-xs">
+                      <div className="text-white/55 text-xs">
                         {avail} of {units.length} available · from {fmt$(minPrice)}/pp
                       </div>
                     </div>
@@ -537,7 +539,7 @@ export default function BlockDetailPage() {
                         const last = units[units.length - 1];
                         if (last) removeCabin(last.id);
                       }}
-                      className="text-red-400 hover:text-red-600 text-xs font-bold ml-1"
+                      className="text-red-300 hover:text-red-200 text-xs font-bold ml-1"
                       title="Remove one unit"
                     >
                       −1
@@ -554,49 +556,49 @@ export default function BlockDetailPage() {
           const cabins = byType[type];
           const avail = cabins.filter((c) => c.status === "available").length;
           return (
-            <div key={type} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div key={type} className="bg-[#0b1020] rounded-2xl border border-white/10 overflow-hidden">
+              <div className="bg-white/5 px-6 py-4 border-b border-white/10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{CATEGORY_ICON[type as CabinCategory]}</span>
-                  <h3 className="font-extrabold text-blue-900 text-lg">{type}</h3>
-                  <span className="text-sm text-gray-400">{cabins.length} room{cabins.length !== 1 ? "s" : ""}</span>
+                  <h3 className="font-extrabold text-white text-lg">{type}</h3>
+                  <span className="text-sm text-white/40">{cabins.length} room{cabins.length !== 1 ? "s" : ""}</span>
                 </div>
-                <span className={`text-sm font-bold px-3 py-1 rounded-full ${avail > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                <span className={`text-sm font-bold px-3 py-1 rounded-full ${avail > 0 ? "bg-green-500/15 text-green-300 border border-green-400/25" : "bg-red-500/15 text-red-300 border border-red-400/25"}`}>
                   {avail} of {cabins.length} available
                 </span>
               </div>
 
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-white/10">
                 {cabins.sort((a, b) => a.deck - b.deck || a.roomNumber.localeCompare(b.roomNumber)).map((cabin) => (
                   <div key={cabin.id} className="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-4 flex-wrap">
-                      <span className="font-extrabold text-blue-900 font-mono text-base">
+                      <span className="font-extrabold text-white font-mono text-base">
                         Room {cabin.roomNumber}
                       </span>
-                      <div className="flex items-center gap-1.5 text-sm text-gray-500">
+                      <div className="flex items-center gap-1.5 text-sm text-white/55">
                         <span className="font-semibold">Deck {cabin.deck}</span>
                         <span>·</span>
                         <span>{cabin.location}</span>
                         <span>·</span>
                         <span>{cabin.side}</span>
                       </div>
-                      <span className="text-xs text-gray-400">Sleeps {cabin.maxGuests}</span>
-                      {cabin.sqft > 0 && <span className="text-xs text-gray-400">{cabin.sqft} sq ft</span>}
+                      <span className="text-xs text-white/40">Sleeps {cabin.maxGuests}</span>
+                      {cabin.sqft > 0 && <span className="text-xs text-white/40">{cabin.sqft} sq ft</span>}
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full capitalize ${STATUS_COLOR[cabin.status]}`}>
                         {cabin.status}
                       </span>
                       {cabin.notes && (
-                        <span className="text-xs text-gray-400 italic">{cabin.notes}</span>
+                        <span className="text-xs text-white/40 italic">{cabin.notes}</span>
                       )}
                       {cabin.guestName && (
-                        <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                        <span className="text-xs font-bold text-sky-300 bg-sky-500/15 border border-sky-400/25 px-2 py-0.5 rounded-full">
                           {cabin.guestName}
                         </span>
                       )}
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className="font-extrabold text-blue-900">{fmt$(cabin.price)}<span className="text-gray-400 text-xs font-normal">/pp</span></span>
+                      <span className="font-extrabold text-white">{fmt$(cabin.price)}<span className="text-white/40 text-xs font-normal">/pp</span></span>
 
                       {/* Status controls */}
                       {cabin.status === "available" && (
@@ -606,7 +608,7 @@ export default function BlockDetailPage() {
                               const guest = prompt("Guest name for hold (optional):");
                               updateStatus(cabin.id, "held", { guestName: guest ?? undefined, heldUntil: new Date(Date.now() + 48 * 3600000).toISOString() });
                             }}
-                            className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                            className="bg-yellow-400/15 hover:bg-yellow-400/25 text-yellow-300 border border-yellow-400/25 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
                           >
                             Hold
                           </button>
@@ -616,7 +618,7 @@ export default function BlockDetailPage() {
                               if (!guest) return;
                               updateStatus(cabin.id, "booked", { guestName: guest });
                             }}
-                            className="bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                            className="bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-400/25 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
                           >
                             Book
                           </button>
@@ -625,14 +627,14 @@ export default function BlockDetailPage() {
                       {(cabin.status === "held" || cabin.status === "booked") && (
                         <button
                           onClick={() => updateStatus(cabin.id, "available", { guestName: undefined })}
-                          className="bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
+                          className="bg-green-500/15 hover:bg-green-500/25 text-green-300 border border-green-400/25 text-xs font-bold px-3 py-1.5 rounded-full transition-all"
                         >
                           Release
                         </button>
                       )}
                       <button
                         onClick={() => removeCabin(cabin.id)}
-                        className="text-red-400 hover:text-red-600 text-xs font-bold"
+                        className="text-red-300 hover:text-red-200 text-xs font-bold"
                       >
                         ✕
                       </button>
@@ -645,10 +647,10 @@ export default function BlockDetailPage() {
         })}
 
         {block.cabins.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center text-gray-400">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-16 text-center text-white/40">
             <div className="text-5xl mb-3">🛏️</div>
             <p className="font-bold">No rooms in this block yet</p>
-            <button onClick={() => setAddingCabin(true)} className="mt-4 bg-blue-900 text-white font-bold px-6 py-2 rounded-full text-sm">
+            <button onClick={() => setAddingCabin(true)} className="mt-4 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-2 rounded-full text-sm">
               Add First Room
             </button>
           </div>

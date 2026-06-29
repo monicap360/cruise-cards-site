@@ -95,18 +95,18 @@ export default function AdminOffersPage() {
 
   const set = (patch: Partial<Offer>) => setDraft((d) => ({ ...d, ...patch }));
   const input =
-    "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const label = "block text-xs font-bold uppercase text-gray-500 mb-1";
+    "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+  const label = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
               Promotions &amp; Offers
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="text-white/55 text-sm">
               Create offers and toggle them live. Leave the rules blank to show
               an offer on every sailing, or target a cruise line, length, or
               date window.
@@ -114,14 +114,14 @@ export default function AdminOffersPage() {
           </div>
           <Link
             href="/admin"
-            className="text-sm font-bold text-blue-700 hover:underline"
+            className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
           >
             ← Admin
           </Link>
         </div>
 
         {/* Editor */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 mb-8">
           <h2 className="font-extrabold text-lg mb-4">
             {editing ? "Edit offer" : "New offer"}
           </h2>
@@ -164,8 +164,8 @@ export default function AdminOffersPage() {
               />
             </div>
 
-            <div className="sm:col-span-6 border-t border-gray-100 pt-3">
-              <p className="text-xs font-bold uppercase text-gray-400 mb-3">
+            <div className="sm:col-span-6 border-t border-white/10 pt-3">
+              <p className="text-xs font-bold uppercase text-white/40 mb-3">
                 Targeting rules (optional — blank = all sailings)
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -176,9 +176,9 @@ export default function AdminOffersPage() {
                     value={draft.cruiseLine || ""}
                     onChange={(e) => set({ cruiseLine: e.target.value })}
                   >
-                    <option value="">Any line</option>
+                    <option className="bg-[#0b1020]" value="">Any line</option>
                     {CRUISE_LINES.map((l) => (
-                      <option key={l} value={l}>
+                      <option className="bg-[#0b1020]" key={l} value={l}>
                         {l}
                       </option>
                     ))}
@@ -246,14 +246,14 @@ export default function AdminOffersPage() {
             <button
               onClick={save}
               disabled={saving}
-              className="bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white font-bold text-sm px-6 py-2.5 rounded-full"
+              className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full"
             >
               {saving ? "Saving…" : editing ? "Update offer" : "Add offer"}
             </button>
             {editing && (
               <button
                 onClick={resetDraft}
-                className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-6 py-2.5 rounded-full"
+                className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full"
               >
                 Cancel
               </button>
@@ -263,16 +263,16 @@ export default function AdminOffersPage() {
 
         {/* List */}
         {loading ? (
-          <p className="text-gray-500">Loading…</p>
+          <p className="text-white/45">Loading…</p>
         ) : offers.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-            <p className="text-gray-500 mb-4">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-center">
+            <p className="text-white/45 mb-4">
               No offers yet. The site is showing the 6 built-in starter offers
               until you add your own.
             </p>
             <button
               onClick={seedDefaults}
-              className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-2.5 rounded-full"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full"
             >
               Add the 6 starter offers
             </button>
@@ -282,25 +282,25 @@ export default function AdminOffersPage() {
             {offers.map((o) => (
               <div
                 key={o.id}
-                className="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-4"
+                className="bg-[#0b1020] rounded-xl border border-white/10 hover:border-sky-400/40 transition-colors p-4 flex items-start gap-4"
               >
                 <div className="text-2xl">{o.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-extrabold">{o.title}</span>
                     {o.badge && (
-                      <span className="text-[10px] font-bold uppercase bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">
+                      <span className="text-[10px] font-bold uppercase bg-sky-500/15 text-sky-300 border border-sky-400/25 rounded-full px-2 py-0.5">
                         {o.badge}
                       </span>
                     )}
                     {!o.active && (
-                      <span className="text-[10px] font-bold uppercase bg-gray-200 text-gray-500 rounded-full px-2 py-0.5">
+                      <span className="text-[10px] font-bold uppercase bg-white/10 text-white/55 rounded-full px-2 py-0.5">
                         Hidden
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-500 text-sm mt-0.5">{o.description}</p>
-                  <p className="text-gray-400 text-xs mt-1">
+                  <p className="text-white/55 text-sm mt-0.5">{o.description}</p>
+                  <p className="text-white/40 text-xs mt-1">
                     {o.cruiseLine || "All lines"}
                     {o.nights ? ` · ${o.nights} nights` : ""}
                     {o.dateStart || o.dateEnd
@@ -313,8 +313,8 @@ export default function AdminOffersPage() {
                     onClick={() => toggle(o)}
                     className={`text-xs font-bold px-3 py-1.5 rounded-full ${
                       o.active
-                        ? "bg-green-100 text-green-700 hover:bg-green-200"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        ? "bg-green-500/15 text-green-300 border border-green-400/25 hover:bg-green-500/25"
+                        : "bg-white/5 text-white/55 border border-white/10 hover:bg-white/10"
                     }`}
                   >
                     {o.active ? "Live" : "Off"}
@@ -322,13 +322,13 @@ export default function AdminOffersPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => edit(o)}
-                      className="text-xs font-bold text-blue-700 hover:underline"
+                      className="text-xs font-bold text-sky-400 hover:text-sky-300"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => remove(o.id)}
-                      className="text-xs font-bold text-red-600 hover:underline"
+                      className="text-xs font-bold text-red-300 hover:text-red-200"
                     >
                       Delete
                     </button>

@@ -28,9 +28,7 @@ export default function ReservationsPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [dateFilter, setDateFilter] = useState<"today" | "upcoming" | "all">(
-    "today"
-  );
+  const [dateFilter, setDateFilter] = useState<"today" | "upcoming" | "all">("today");
   const [loading, setLoading] = useState(true);
 
   async function load() {
@@ -46,9 +44,7 @@ export default function ReservationsPage() {
   const today = todayStr();
 
   async function quickAdvance(r: Reservation, next: ReservationStatus) {
-    setReservations((rs) =>
-      rs.map((x) => (x.id === r.id ? { ...x, status: next } : x))
-    );
+    setReservations((rs) => rs.map((x) => (x.id === r.id ? { ...x, status: next } : x)));
     await updateReservationStatus(r.id, next);
   }
 
@@ -70,7 +66,6 @@ export default function ReservationsPage() {
     });
   }, [reservations, search, statusFilter, dateFilter, today]);
 
-  // Sort the visible list by date then time ascending for the desk view
   const sorted = useMemo(
     () =>
       [...filtered].sort((a, b) => {
@@ -90,26 +85,30 @@ export default function ReservationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#05070d] text-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <Link
                 href="/admin"
-                className="text-blue-300 hover:text-white text-sm font-semibold"
+                className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white"
               >
                 ← Admin
               </Link>
-              <div className="text-blue-300 text-sm font-semibold uppercase tracking-wide mb-1 mt-2">
-                Cruise Experience Center
+              <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1 mt-2">
+                {"// Cruise Experience Center"}
               </div>
-              <h1 className="text-3xl font-extrabold">Front Desk Reservations</h1>
+              <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
+                Front Desk Reservations
+              </h1>
             </div>
             <Link
               href="/admin/reservations/new"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-full transition-all shadow-lg"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all text-xs"
             >
               + New Reservation
             </Link>
@@ -118,30 +117,27 @@ export default function ReservationsPage() {
           {/* Today stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             {[
-              {
-                label: "New Online Requests",
-                value: stats.newRequests,
-                icon: "🆕",
-                alert: stats.newRequests > 0,
-              },
+              { label: "New Online Requests", value: stats.newRequests, icon: "🆕", alert: stats.newRequests > 0 },
               { label: "Today's Reservations", value: stats.today, icon: "📅" },
               { label: "In Service", value: stats.inService, icon: "🛎️" },
               { label: "Completed Today", value: stats.completed, icon: "✅" },
             ].map((stat) => (
               <div
                 key={stat.label}
-                className={`rounded-xl p-4 ${stat.alert ? "bg-red-600" : "bg-white/10"}`}
+                className={`rounded-2xl p-4 border ${
+                  stat.alert ? "bg-red-500/15 border-red-400/30" : "bg-[#0b1020] border-white/10"
+                }`}
               >
                 <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-2xl font-extrabold">{stat.value}</div>
-                <div className="text-blue-200 text-xs font-semibold mt-0.5">
+                <div className="text-2xl font-extrabold text-holo">{stat.value}</div>
+                <div className="text-white/45 label-mono text-[10px] uppercase tracking-wider mt-1">
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* List */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -152,7 +148,7 @@ export default function ReservationsPage() {
             placeholder="Search guest, reservation #, service, phone…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-48 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 min-w-48 bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
           />
           {(["today", "upcoming", "all"] as const).map((d) => (
             <button
@@ -160,8 +156,8 @@ export default function ReservationsPage() {
               onClick={() => setDateFilter(d)}
               className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${
                 dateFilter === d
-                  ? "bg-blue-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-white text-black"
+                  : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
               }`}
             >
               {d}
@@ -175,30 +171,28 @@ export default function ReservationsPage() {
               onClick={() => setStatusFilter(f)}
               className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                 statusFilter === f
-                  ? "bg-blue-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  ? "bg-white text-black"
+                  : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
               }`}
             >
-              {f === "all"
-                ? "All Statuses"
-                : STATUS_LABEL[f as ReservationStatus]}
+              {f === "all" ? "All Statuses" : STATUS_LABEL[f as ReservationStatus]}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center text-gray-400 font-bold">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-16 text-center text-white/45 font-bold">
             Loading reservations…
           </div>
         ) : sorted.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-16 text-center">
             <div className="text-6xl mb-4">🛎️</div>
-            <p className="text-gray-400 text-lg font-bold">
+            <p className="text-white/45 text-lg font-bold">
               No reservations {dateFilter === "today" ? "for today" : "found"}
             </p>
             <Link
               href="/admin/reservations/new"
-              className="mt-4 inline-block bg-red-600 text-white font-bold px-6 py-3 rounded-full text-sm"
+              className="mt-4 inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm"
             >
               Create a Reservation
             </Link>
@@ -210,8 +204,8 @@ export default function ReservationsPage() {
               return (
                 <div
                   key={r.id}
-                  className={`bg-white rounded-2xl shadow-sm border p-5 transition-shadow hover:shadow-md ${
-                    isActive(r) ? "border-gray-100" : "border-gray-100 opacity-75"
+                  className={`bg-[#0b1020] rounded-2xl border p-5 transition-colors hover:border-sky-400/40 ${
+                    isActive(r) ? "border-white/10" : "border-white/10 opacity-70"
                   }`}
                 >
                   <div className="flex items-center justify-between flex-wrap gap-3">
@@ -219,15 +213,15 @@ export default function ReservationsPage() {
                       href={`/admin/reservations/${r.id}`}
                       className="flex items-center gap-4 flex-1 min-w-0"
                     >
-                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                      <div className="w-12 h-12 bg-sky-500/15 border border-sky-400/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
                         {SERVICE_ICON[r.serviceType] ?? "⚓"}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-extrabold text-blue-900 text-base">
+                          <span className="font-extrabold text-white text-base">
                             {r.guestName}
                           </span>
-                          <span className="text-xs text-gray-400 font-mono">
+                          <span className="text-xs text-white/40 font-mono">
                             {r.reservationNumber}
                           </span>
                           <span
@@ -236,21 +230,18 @@ export default function ReservationsPage() {
                             {STATUS_LABEL[r.status]}
                           </span>
                           {r.idVerified && (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-500/15 text-green-300 border border-green-400/25">
                               🪪 ID ✓
                             </span>
                           )}
                         </div>
-                        <div className="text-gray-600 text-sm mt-0.5 font-semibold">
+                        <div className="text-white/65 text-sm mt-0.5 font-semibold">
                           {r.serviceType}
                           {r.partySize > 1 && (
-                            <span className="text-gray-400 font-normal">
-                              {" "}
-                              · party of {r.partySize}
-                            </span>
+                            <span className="text-white/40 font-normal"> · party of {r.partySize}</span>
                           )}
                         </div>
-                        <div className="text-gray-400 text-xs mt-0.5">
+                        <div className="text-white/35 text-xs mt-0.5">
                           {fmtDate(r.reservationDate)}
                           {r.reservationTime ? ` · ${fmtTime(r.reservationTime)}` : ""}
                           {r.agentName ? ` · ${r.agentName}` : ""}
@@ -261,14 +252,14 @@ export default function ReservationsPage() {
                       {next && (
                         <button
                           onClick={() => quickAdvance(r, next)}
-                          className="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold px-4 py-2 rounded-full transition-all"
+                          className="bg-white text-black hover:bg-white/90 text-xs font-bold px-4 py-2 rounded-full transition-all"
                         >
                           → {STATUS_LABEL[next]}
                         </button>
                       )}
                       <Link
                         href={`/admin/reservations/${r.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-xs font-bold px-3 py-2"
+                        className="text-sky-400 hover:text-sky-300 text-xs font-bold px-3 py-2"
                       >
                         Open
                       </Link>

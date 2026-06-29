@@ -105,19 +105,19 @@ export default function AdminActivityPage() {
   const shown = filter === "all" ? items : items.filter((i) => i.kind === filter);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">Activity Feed</h1>
-            <p className="text-gray-500 text-sm">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Activity Feed</h1>
+            <p className="text-white/55 text-sm">
               Everything across the site — calls, emails, bookings, holds,
               transportation, questions, and portal messages — newest first.
             </p>
           </div>
           <div className="flex gap-3">
-            <button onClick={load} className="text-sm font-bold text-blue-700 hover:underline">↻ Refresh</button>
-            <Link href="/admin" className="text-sm font-bold text-blue-700 hover:underline">← Admin</Link>
+            <button onClick={load} className="text-sm font-bold text-sky-400 hover:text-sky-300">↻ Refresh</button>
+            <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
           </div>
         </div>
 
@@ -126,8 +126,8 @@ export default function AdminActivityPage() {
             <button
               key={k}
               onClick={() => setFilter(k)}
-              className={`text-xs font-bold uppercase rounded-full px-3 py-1.5 border ${
-                filter === k ? "bg-blue-700 text-white border-blue-700" : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
+              className={`text-xs font-bold uppercase rounded-full px-3 py-1.5 border transition-all ${
+                filter === k ? "bg-white text-black border-white" : "bg-white/5 text-white/60 border-white/10 hover:border-white/30 hover:text-white"
               }`}
             >
               {k}
@@ -136,24 +136,24 @@ export default function AdminActivityPage() {
         </div>
 
         {loading ? (
-          <p className="text-gray-500">Loading…</p>
+          <p className="text-white/45">Loading…</p>
         ) : shown.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center text-gray-500">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-center text-white/45">
             No activity yet for this filter.
           </div>
         ) : (
           <div className="space-y-2">
             {shown.map((it, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-3">
+              <div key={i} className="bg-[#0b1020] rounded-xl border border-white/10 p-4 flex items-start gap-3">
                 <span className="text-xl">{it.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold">{it.who}</span>
-                    {it.contact && <span className="text-gray-400 text-xs">{it.contact}</span>}
+                    <span className="font-bold text-white">{it.who}</span>
+                    {it.contact && <span className="text-white/40 text-xs">{it.contact}</span>}
                   </div>
-                  <div className="text-gray-600 text-sm">{it.detail}</div>
+                  <div className="text-white/55 text-sm">{it.detail}</div>
                 </div>
-                <div className="text-gray-400 text-xs whitespace-nowrap">
+                <div className="text-white/40 text-xs whitespace-nowrap">
                   {it.ts ? new Date(it.ts).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : ""}
                 </div>
               </div>

@@ -118,26 +118,26 @@ export default function AdminGroupsPage() {
     setMembers(await getMembers(groupId));
   }
 
-  const input = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const lbl = "block text-xs font-bold uppercase text-gray-500 mb-1";
+  const input = "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+  const lbl = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">Group Bookings</h1>
-            <p className="text-gray-500 text-sm max-w-2xl">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Group Bookings</h1>
+            <p className="text-white/55 text-sm max-w-2xl">
               Manage group cruises and share a live portal with the group leader —
               roster, cabins, who&rsquo;s paid a deposit, who&rsquo;s paid in full,
               and the contract.
             </p>
           </div>
-          <Link href="/admin" className="text-sm font-bold text-blue-700 hover:underline">← Admin</Link>
+          <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
         </div>
 
         {/* Group editor */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6 mb-8">
           <h2 className="font-extrabold text-lg mb-4">{editingG ? "Edit group" : "New group"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
             <div className="sm:col-span-4"><label className={lbl}>Group name *</label><input className={input} value={g.name} onChange={(e) => setGroupF({ name: e.target.value })} placeholder="Smith Family Reunion 2026" /></div>
@@ -155,46 +155,46 @@ export default function AdminGroupsPage() {
             <div className="sm:col-span-6"><label className={lbl}>Contract / terms (shown on the portal)</label><textarea className={input} rows={3} value={g.contract} onChange={(e) => setGroupF({ contract: e.target.value })} placeholder="Group rate, included perks, deposit & final-payment terms, cancellation policy…" /></div>
           </div>
           <div className="flex gap-3 mt-5">
-            <button onClick={saveG} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-2.5 rounded-full">{editingG ? "Update group" : "Create group"}</button>
-            {editingG && <button onClick={() => { setG(blankGroup()); setEditingG(false); }} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-6 py-2.5 rounded-full">Cancel</button>}
+            <button onClick={saveG} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">{editingG ? "Update group" : "Create group"}</button>
+            {editingG && <button onClick={() => { setG(blankGroup()); setEditingG(false); }} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">Cancel</button>}
           </div>
         </div>
 
         {/* Groups list */}
-        {loading ? <p className="text-gray-500">Loading…</p> : groups.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center text-gray-500">No groups yet.</div>
+        {loading ? <p className="text-white/45">Loading…</p> : groups.length === 0 ? (
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-center text-white/45">No groups yet.</div>
         ) : (
           <div className="space-y-3">
             {groups.map((grp) => (
-              <div key={grp.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={grp.id} className="bg-[#0b1020] rounded-xl border border-white/10 overflow-hidden">
                 <div className="p-4 flex items-start gap-4 flex-wrap">
                   <div className="flex-1 min-w-[12rem]">
                     <div className="font-extrabold">{grp.name}</div>
-                    <div className="text-gray-500 text-sm">{grp.ship}{grp.sailingDate ? ` · ${grp.sailingDate}` : ""}</div>
-                    <div className="text-gray-400 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}</div>
+                    <div className="text-white/55 text-sm">{grp.ship}{grp.sailingDate ? ` · ${grp.sailingDate}` : ""}</div>
+                    <div className="text-white/40 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}</div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-blue-700 text-white hover:bg-blue-800 px-3 py-1.5 rounded-full">Open portal ↗</Link>
+                    <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
                     <div className="flex gap-3">
-                      <button onClick={() => openMembers(grp)} className="text-xs font-bold text-blue-700 hover:underline">{openId === grp.id ? "Hide" : "Manage members"}</button>
-                      <button onClick={() => { setG(grp); setEditingG(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-blue-700 hover:underline">Edit</button>
-                      <button onClick={() => removeG(grp.id)} className="text-xs font-bold text-red-600 hover:underline">Delete</button>
+                      <button onClick={() => openMembers(grp)} className="text-xs font-bold text-sky-400 hover:text-sky-300">{openId === grp.id ? "Hide" : "Manage members"}</button>
+                      <button onClick={() => { setG(grp); setEditingG(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
+                      <button onClick={() => removeG(grp.id)} className="text-xs font-bold text-red-300 hover:text-red-200">Delete</button>
                     </div>
                   </div>
                 </div>
 
                 {openId === grp.id && (
-                  <div className="border-t border-gray-100 p-4 bg-gray-50">
+                  <div className="border-t border-white/10 p-4 bg-white/5">
                     {/* members table */}
                     {members.length > 0 && (
                       <div className="overflow-x-auto mb-4">
                         <table className="w-full text-sm min-w-[640px]">
-                          <thead><tr className="text-gray-400 text-xs uppercase">
+                          <thead><tr className="text-white/45 text-xs uppercase">
                             <th className="text-left py-2">Guest</th><th className="text-left">Cabin</th><th className="text-right">Fare</th><th className="text-right">Deposit</th><th className="text-center">Full</th><th className="text-right">Balance</th><th></th>
                           </tr></thead>
                           <tbody>
                             {members.map((mm) => (
-                              <tr key={mm.id} className="border-t border-gray-200">
+                              <tr key={mm.id} className="border-t border-white/10">
                                 <td className="py-2 font-semibold">{mm.name}</td>
                                 <td>{mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}</td>
                                 <td className="text-right">{fmt$(mm.fare)}</td>
@@ -202,8 +202,8 @@ export default function AdminGroupsPage() {
                                 <td className="text-center">{mm.paidInFull ? "✓" : "—"}</td>
                                 <td className="text-right font-bold">{fmt$(memberBalance(mm))}</td>
                                 <td className="text-right">
-                                  <button onClick={() => { setM(mm); }} className="text-blue-700 font-bold text-xs hover:underline mr-2">Edit</button>
-                                  <button onClick={() => removeM(mm.id, grp.id)} className="text-red-600 font-bold text-xs hover:underline">×</button>
+                                  <button onClick={() => { setM(mm); }} className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">Edit</button>
+                                  <button onClick={() => removeM(mm.id, grp.id)} className="text-red-300 font-bold text-xs hover:text-red-200">×</button>
                                 </td>
                               </tr>
                             ))}
@@ -212,13 +212,13 @@ export default function AdminGroupsPage() {
                       </div>
                     )}
                     {/* member form */}
-                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                    <div className="bg-[#0b1020] rounded-xl border border-white/10 p-4">
                       <div className="font-bold text-sm mb-3">{members.find((x) => x.id === m.id) ? "Edit member" : "Add member"}</div>
                       <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
                         <div className="sm:col-span-2"><label className={lbl}>Name</label><input className={input} value={m.name} onChange={(e) => setMemberF({ name: e.target.value })} /></div>
                         <div className="sm:col-span-2"><label className={lbl}>Email</label><input className={input} value={m.email} onChange={(e) => setMemberF({ email: e.target.value })} /></div>
                         <div className="sm:col-span-2"><label className={lbl}>Confirmation #</label><input className={input} value={m.confirmationNumber} onChange={(e) => setMemberF({ confirmationNumber: e.target.value })} /></div>
-                        <div className="sm:col-span-2"><label className={lbl}>Cabin type</label><select className={input} value={m.cabinType} onChange={(e) => setMemberF({ cabinType: e.target.value })}><option value="">—</option>{CABIN_TYPES.map((c) => <option key={c}>{c}</option>)}</select></div>
+                        <div className="sm:col-span-2"><label className={lbl}>Cabin type</label><select className={input} value={m.cabinType} onChange={(e) => setMemberF({ cabinType: e.target.value })}><option value="" className="bg-[#0b1020]">—</option>{CABIN_TYPES.map((c) => <option key={c} className="bg-[#0b1020]">{c}</option>)}</select></div>
                         <div className="sm:col-span-1"><label className={lbl}>Cabin #</label><input className={input} value={m.cabinNumber} onChange={(e) => setMemberF({ cabinNumber: e.target.value })} /></div>
                         <div className="sm:col-span-1"><label className={lbl}>Guests</label><input type="number" className={input} value={m.guests} onChange={(e) => setMemberF({ guests: Number(e.target.value) })} /></div>
                         <div className="sm:col-span-1"><label className={lbl}>Fare ($)</label><input type="number" className={input} value={m.fare || ""} onChange={(e) => setMemberF({ fare: Number(e.target.value) })} /></div>
@@ -226,34 +226,34 @@ export default function AdminGroupsPage() {
                         <div className="sm:col-span-2 flex items-end"><label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={m.paidInFull} onChange={(e) => setMemberF({ paidInFull: e.target.checked })} /> Paid in full</label></div>
                       </div>
                       <div className="flex gap-2 mt-3">
-                        <button onClick={saveM} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-5 py-2 rounded-full">{members.find((x) => x.id === m.id) ? "Update member" : "Add member"}</button>
-                        <button onClick={() => setM(blankMember(grp.id))} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-5 py-2 rounded-full">Clear</button>
+                        <button onClick={saveM} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-5 py-2 rounded-full">{members.find((x) => x.id === m.id) ? "Update member" : "Add member"}</button>
+                        <button onClick={() => setM(blankMember(grp.id))} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-5 py-2 rounded-full">Clear</button>
                       </div>
                     </div>
 
                     {/* Room inventory — held rooms with per-room hold expiration */}
-                    <div className="bg-white rounded-xl border border-gray-200 p-4 mt-4">
-                      <div className="font-bold text-sm mb-1">Room inventory <span className="text-gray-400 font-normal">— held rooms in this block</span></div>
-                      <p className="text-gray-400 text-xs mb-3">Add rooms with a &ldquo;held until&rdquo; date. Once that passes, an unbooked room shows as <strong>released into inventory</strong> on the group portal.</p>
+                    <div className="bg-[#0b1020] rounded-xl border border-white/10 p-4 mt-4">
+                      <div className="font-bold text-sm mb-1">Room inventory <span className="text-white/40 font-normal">— held rooms in this block</span></div>
+                      <p className="text-white/40 text-xs mb-3">Add rooms with a &ldquo;held until&rdquo; date. Once that passes, an unbooked room shows as <strong>released into inventory</strong> on the group portal.</p>
                       {rooms.length > 0 && (
                         <div className="overflow-x-auto mb-3">
                           <table className="w-full text-sm min-w-[640px]">
-                            <thead><tr className="text-gray-400 text-xs uppercase">
+                            <thead><tr className="text-white/45 text-xs uppercase">
                               <th className="text-left py-2">Room</th><th className="text-right">Rate/pp</th><th className="text-left pl-3">Held until</th><th className="text-left pl-3">Status</th><th></th>
                             </tr></thead>
                             <tbody>
                               {rooms.map((rm) => {
                                 const expired = isRoomReleased(rm, Date.now());
                                 return (
-                                  <tr key={rm.id} className="border-t border-gray-200">
+                                  <tr key={rm.id} className="border-t border-white/10">
                                     <td className="py-2 font-semibold">{rm.cabinType}{rm.label ? ` · ${rm.label}` : ""}</td>
                                     <td className="text-right">{rm.ratePP ? fmt$(rm.ratePP) : "group rate"}</td>
                                     <td className="pl-3">{rm.holdUntil ? new Date(rm.holdUntil).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}</td>
-                                    <td className="pl-3">{rm.status === "booked" ? <span className="text-green-700 font-bold">Booked</span> : expired ? <span className="text-gray-400 font-bold">Released</span> : <span className="text-blue-700 font-bold">Available</span>}</td>
+                                    <td className="pl-3">{rm.status === "booked" ? <span className="text-green-300 font-bold">Booked</span> : expired ? <span className="text-white/40 font-bold">Released</span> : <span className="text-sky-300 font-bold">Available</span>}</td>
                                     <td className="text-right whitespace-nowrap">
-                                      <button onClick={() => setR(rm)} className="text-blue-700 font-bold text-xs hover:underline mr-2">Edit</button>
-                                      {rm.status !== "released" && <button onClick={() => releaseR(rm)} className="text-amber-600 font-bold text-xs hover:underline mr-2">Release</button>}
-                                      <button onClick={() => removeR(rm.id, grp.id)} className="text-red-600 font-bold text-xs hover:underline">Drop</button>
+                                      <button onClick={() => setR(rm)} className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">Edit</button>
+                                      {rm.status !== "released" && <button onClick={() => releaseR(rm)} className="text-amber-300 font-bold text-xs hover:text-amber-200 mr-2">Release</button>}
+                                      <button onClick={() => removeR(rm.id, grp.id)} className="text-red-300 font-bold text-xs hover:text-red-200">Drop</button>
                                     </td>
                                   </tr>
                                 );
@@ -263,15 +263,15 @@ export default function AdminGroupsPage() {
                         </div>
                       )}
                       <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
-                        <div className="sm:col-span-2"><label className={lbl}>Cabin type</label><select className={input} value={r.cabinType} onChange={(e) => setR({ ...r, cabinType: e.target.value })}><option value="">—</option>{CABIN_TYPES.map((c) => <option key={c}>{c}</option>)}</select></div>
+                        <div className="sm:col-span-2"><label className={lbl}>Cabin type</label><select className={input} value={r.cabinType} onChange={(e) => setR({ ...r, cabinType: e.target.value })}><option value="" className="bg-[#0b1020]">—</option>{CABIN_TYPES.map((c) => <option key={c} className="bg-[#0b1020]">{c}</option>)}</select></div>
                         <div className="sm:col-span-2"><label className={lbl}>Label / cabin #</label><input className={input} value={r.label} onChange={(e) => setR({ ...r, label: e.target.value })} placeholder="Balcony #1" /></div>
                         <div className="sm:col-span-2"><label className={lbl}>Rate/pp (blank = group)</label><input type="number" className={input} value={r.ratePP || ""} onChange={(e) => setR({ ...r, ratePP: Number(e.target.value) })} /></div>
                         <div className="sm:col-span-3"><label className={lbl}>Held until (release if unbooked)</label><input type="datetime-local" className={input} value={r.holdUntil} onChange={(e) => setR({ ...r, holdUntil: e.target.value })} /></div>
-                        <div className="sm:col-span-3"><label className={lbl}>Status</label><select className={input} value={r.status} onChange={(e) => setR({ ...r, status: e.target.value as GroupRoom["status"] })}><option value="available">Available</option><option value="booked">Booked</option><option value="released">Released</option></select></div>
+                        <div className="sm:col-span-3"><label className={lbl}>Status</label><select className={input} value={r.status} onChange={(e) => setR({ ...r, status: e.target.value as GroupRoom["status"] })}><option value="available" className="bg-[#0b1020]">Available</option><option value="booked" className="bg-[#0b1020]">Booked</option><option value="released" className="bg-[#0b1020]">Released</option></select></div>
                       </div>
                       <div className="flex gap-2 mt-3">
-                        <button onClick={saveR} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-5 py-2 rounded-full">{rooms.find((x) => x.id === r.id) ? "Update room" : "Add room"}</button>
-                        <button onClick={() => setR(blankRoom(grp.id))} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-5 py-2 rounded-full">Clear</button>
+                        <button onClick={saveR} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-5 py-2 rounded-full">{rooms.find((x) => x.id === r.id) ? "Update room" : "Add room"}</button>
+                        <button onClick={() => setR(blankRoom(grp.id))} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-5 py-2 rounded-full">Clear</button>
                       </div>
                     </div>
                   </div>

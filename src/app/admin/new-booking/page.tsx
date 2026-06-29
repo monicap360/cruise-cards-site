@@ -101,8 +101,8 @@ export default function NewBookingPage() {
     half?: boolean;
   }) => (
     <div className={half ? "col-span-1" : "col-span-2"}>
-      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
+        {label} {required && <span className="text-red-400">*</span>}
       </label>
       <input
         type={type}
@@ -110,7 +110,7 @@ export default function NewBookingPage() {
         onChange={(e) => set(name, e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
       />
     </div>
   );
@@ -129,18 +129,18 @@ export default function NewBookingPage() {
     half?: boolean;
   }) => (
     <div className={half ? "col-span-1" : "col-span-2"}>
-      <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
+        {label} {required && <span className="text-red-400">*</span>}
       </label>
       <select
         value={form[name]}
         onChange={(e) => set(name, e.target.value)}
         required={required}
-        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-sky-400/60"
       >
-        <option value="">Select…</option>
+        <option value="" className="bg-[#0b1020]">Select…</option>
         {options.map((o) => (
-          <option key={o} value={o}>
+          <option key={o} value={o} className="bg-[#0b1020]">
             {o}
           </option>
         ))}
@@ -149,21 +149,23 @@ export default function NewBookingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-blue-900 text-white px-6 py-6">
-        <div className="max-w-4xl mx-auto flex items-center gap-4">
-          <a href="/admin" className="text-blue-300 hover:text-white text-sm font-semibold">
+    <div className="min-h-screen bg-[#05070d] text-white">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0 grid-bg opacity-40" />
+        <div className="aurora bg-sky-500 w-[40rem] h-[40rem] -top-72 right-0 opacity-[0.10]" />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <a href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">
             ← Admin
           </a>
-          <h1 className="text-2xl font-extrabold">New Sea Pay Booking</h1>
+          <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em] mt-2">New Sea Pay Booking</h1>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Customer Info */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-extrabold text-blue-900 text-lg mb-5">Customer Information</h2>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <h2 className="font-extrabold text-white text-lg mb-5">Customer Information</h2>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Full Name" name="customerName" required half />
               <Field label="Email" name="customerEmail" type="email" required half />
@@ -173,8 +175,8 @@ export default function NewBookingPage() {
           </div>
 
           {/* Cruise Details */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-extrabold text-blue-900 text-lg mb-5">Cruise Details</h2>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <h2 className="font-extrabold text-white text-lg mb-5">Cruise Details</h2>
             <div className="grid grid-cols-2 gap-4">
               <Select label="Cruise Line" name="cruiseLine" options={CRUISE_LINES} required half />
               <Field label="Ship Name" name="ship" required half />
@@ -191,8 +193,8 @@ export default function NewBookingPage() {
           </div>
 
           {/* Sea Pay Pricing */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-extrabold text-blue-900 text-lg mb-5">Sea Pay Pricing</h2>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <h2 className="font-extrabold text-white text-lg mb-5">Sea Pay Pricing</h2>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Total Cruise Price ($)" name="totalPrice" type="number" placeholder="2498.00" required half />
               <Field label="Deposit Amount ($)" name="depositAmount" type="number" placeholder="500.00" required half />
@@ -200,29 +202,29 @@ export default function NewBookingPage() {
 
             {/* Payment Plan Preview */}
             {plan.length > 0 && (
-              <div className="mt-6 bg-blue-50 rounded-xl p-5 border border-blue-100">
+              <div className="mt-6 bg-sky-500/15 rounded-xl p-5 border border-sky-400/25">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wide">
+                  <h3 className="font-bold text-white text-sm uppercase tracking-wide">
                     Sea Pay Plan Preview
                   </h3>
-                  <span className="text-xs text-blue-600 font-semibold">
+                  <span className="text-xs text-sky-300 font-semibold">
                     {plan.length} installment{plan.length !== 1 ? "s" : ""}
                   </span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Deposit (due now)</span>
-                    <span className="font-bold text-blue-900">{fmt$(deposit)}</span>
+                    <span className="text-white/55">Deposit (due now)</span>
+                    <span className="font-bold text-white">{fmt$(deposit)}</span>
                   </div>
                   {plan.map((p, i) => (
                     <div key={p.id} className="flex justify-between text-sm">
-                      <span className="text-gray-600">
+                      <span className="text-white/55">
                         Payment {i + 1} — {fmtDate(p.dueDate)}
                       </span>
-                      <span className="font-bold text-blue-900">{fmt$(p.amount)}</span>
+                      <span className="font-bold text-white">{fmt$(p.amount)}</span>
                     </div>
                   ))}
-                  <div className="border-t border-blue-200 pt-2 flex justify-between font-extrabold text-blue-900">
+                  <div className="border-t border-white/15 pt-2 flex justify-between font-extrabold text-white">
                     <span>Total</span>
                     <span>{fmt$(total)}</span>
                   </div>
@@ -232,12 +234,12 @@ export default function NewBookingPage() {
           </div>
 
           {/* Agent & Notes */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-extrabold text-blue-900 text-lg mb-5">Agent & Notes</h2>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <h2 className="font-extrabold text-white text-lg mb-5">Agent & Notes</h2>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Agent Name" name="agentName" placeholder="Your name" half />
               <div className="col-span-2">
-                <label className="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-1">
+                <label className="block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1">
                   Internal Notes
                 </label>
                 <textarea
@@ -245,7 +247,7 @@ export default function NewBookingPage() {
                   onChange={(e) => set("notes", e.target.value)}
                   rows={3}
                   placeholder="Preferences, special requests, follow-up notes…"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 resize-none"
                 />
               </div>
             </div>
@@ -254,13 +256,13 @@ export default function NewBookingPage() {
           <div className="flex gap-4 justify-end">
             <a
               href="/admin"
-              className="px-6 py-3 rounded-full border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50"
+              className="px-6 py-3 rounded-full border border-white/15 text-white/80 font-semibold text-sm hover:border-white/40 hover:bg-white/5"
             >
               Cancel
             </a>
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full text-sm transition-all shadow-lg"
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-8 py-3 rounded-full text-sm transition-all"
             >
               Create Booking & Generate Sea Pay Plan →
             </button>

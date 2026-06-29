@@ -97,35 +97,35 @@ export default function AdminCreditsPage() {
   }
 
   const input =
-    "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const lbl = "block text-xs font-bold uppercase text-gray-500 mb-1";
+    "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+  const lbl = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
               Customer Credits
             </h1>
-            <p className="text-gray-500 text-sm max-w-2xl">
+            <p className="text-white/55 text-sm max-w-2xl">
               Issue a credit to a customer, set a rebook-by (expiration) date,
               and email them a notification. They can look it up on the public
               Already Booked page.
             </p>
           </div>
           <div className="flex gap-3">
-            <Link href="/admin/contacts" className="text-sm font-bold text-blue-700 hover:underline">
+            <Link href="/admin/contacts" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">
               Comm Log →
             </Link>
-            <Link href="/admin" className="text-sm font-bold text-blue-700 hover:underline">
+            <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">
               ← Admin
             </Link>
           </div>
         </div>
 
         {/* Editor */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 mb-8">
           <h2 className="font-extrabold text-lg mb-4">
             {editing ? "Edit credit" : "Issue a credit"}
           </h2>
@@ -157,9 +157,9 @@ export default function AdminCreditsPage() {
             <div className="sm:col-span-2">
               <label className={lbl}>Status</label>
               <select className={input} value={draft.status} onChange={(e) => set({ status: e.target.value as CustomerCredit["status"] })}>
-                <option value="active">Active</option>
-                <option value="used">Used</option>
-                <option value="expired">Expired</option>
+                <option className="bg-[#0b1020]" value="active">Active</option>
+                <option className="bg-[#0b1020]" value="used">Used</option>
+                <option className="bg-[#0b1020]" value="expired">Expired</option>
               </select>
             </div>
             <div className="sm:col-span-6">
@@ -168,11 +168,11 @@ export default function AdminCreditsPage() {
             </div>
           </div>
           <div className="flex gap-3 mt-5">
-            <button onClick={save} disabled={saving} className="bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white font-bold text-sm px-6 py-2.5 rounded-full">
+            <button onClick={save} disabled={saving} className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">
               {saving ? "Saving…" : editing ? "Update credit" : "Issue credit"}
             </button>
             {editing && (
-              <button onClick={reset} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-6 py-2.5 rounded-full">
+              <button onClick={reset} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">
                 Cancel
               </button>
             )}
@@ -181,36 +181,36 @@ export default function AdminCreditsPage() {
 
         {/* List */}
         {loading ? (
-          <p className="text-gray-500">Loading…</p>
+          <p className="text-white/45">Loading…</p>
         ) : credits.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center text-gray-500">
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-center text-white/45">
             No credits issued yet.
           </div>
         ) : (
           <div className="space-y-3">
             {credits.map((c) => (
-              <div key={c.id} className="bg-white rounded-xl border border-gray-200 p-4 flex items-start gap-4 flex-wrap">
+              <div key={c.id} className="bg-[#0b1020] rounded-xl border border-white/10 hover:border-sky-400/40 transition-colors p-4 flex items-start gap-4 flex-wrap">
                 <div className="flex-1 min-w-[12rem]">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-extrabold text-lg text-green-700">{fmt$(c.amount)}</span>
+                    <span className="font-extrabold text-lg text-green-300">{fmt$(c.amount)}</span>
                     <span className="font-bold">{c.customerName || c.email}</span>
-                    <span className={`text-[10px] font-bold uppercase rounded-full px-2 py-0.5 ${c.status === "active" ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-500"}`}>
+                    <span className={`text-[10px] font-bold uppercase rounded-full px-2 py-0.5 ${c.status === "active" ? "bg-green-500/15 text-green-300 border border-green-400/25" : "bg-white/10 text-white/55"}`}>
                       {c.status}
                     </span>
                   </div>
-                  <div className="text-gray-500 text-sm">{c.email}{c.bookingRef ? ` · ${c.bookingRef}` : ""}</div>
-                  {c.reason && <div className="text-gray-500 text-sm mt-0.5">{c.reason}</div>}
-                  <div className="text-gray-400 text-xs mt-1">
+                  <div className="text-white/55 text-sm">{c.email}{c.bookingRef ? ` · ${c.bookingRef}` : ""}</div>
+                  {c.reason && <div className="text-white/55 text-sm mt-0.5">{c.reason}</div>}
+                  <div className="text-white/40 text-xs mt-1">
                     {c.expiresOn ? `Rebook by ${c.expiresOn}` : "No expiration set"}
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <a href={mailto(c)} className="text-xs font-bold bg-blue-700 text-white hover:bg-blue-800 px-3 py-1.5 rounded-full">
+                  <a href={mailto(c)} className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">
                     ✉ Email customer
                   </a>
                   <div className="flex gap-2">
-                    <button onClick={() => { setDraft(c); setEditing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-blue-700 hover:underline">Edit</button>
-                    <button onClick={() => remove(c.id)} className="text-xs font-bold text-red-600 hover:underline">Delete</button>
+                    <button onClick={() => { setDraft(c); setEditing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
+                    <button onClick={() => remove(c.id)} className="text-xs font-bold text-red-300 hover:text-red-200">Delete</button>
                   </div>
                 </div>
               </div>

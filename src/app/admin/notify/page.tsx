@@ -74,24 +74,24 @@ export default function AdminNotifyPage() {
     setTimeout(() => setLogged(""), 4000);
   }
 
-  const input = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const lbl = "block text-xs font-bold uppercase text-gray-500 mb-1";
+  const input = "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+  const lbl = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl font-extrabold text-blue-900">Customer Updates</h1>
-            <p className="text-gray-500 text-sm max-w-2xl">
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Customer Updates</h1>
+            <p className="text-white/55 text-sm max-w-2xl">
               Pick a situation, personalize the message, and email it to the
               customer. Log it to the communication history with one click.
             </p>
           </div>
-          <Link href="/admin" className="text-sm font-bold text-blue-700 hover:underline">← Admin</Link>
+          <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className={lbl}>Customer name</label><input className={input} value={name} onChange={(e) => onNameChange(e.target.value)} placeholder="Jane Smith" /></div>
             <div><label className={lbl}>Customer email</label><input className={input} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jane@example.com" /></div>
@@ -100,7 +100,7 @@ export default function AdminNotifyPage() {
           <div>
             <label className={lbl}>Situation / template</label>
             <select className={input} value={tid} onChange={(e) => applyTemplate(e.target.value)}>
-              {TEMPLATES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+              {TEMPLATES.map((t) => <option className="bg-[#0b1020]" key={t.id} value={t.id}>{t.label}</option>)}
             </select>
           </div>
 
@@ -114,11 +114,11 @@ export default function AdminNotifyPage() {
           </div>
 
           <div className="flex flex-wrap gap-3 items-center">
-            <a href={mailto} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-2.5 rounded-full">✉ Send email</a>
-            <button onClick={logIt} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-6 py-2.5 rounded-full">Log to comm history</button>
-            {logged && <span className="text-green-600 text-sm font-semibold">{logged}</span>}
+            <a href={mailto} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">✉ Send email</a>
+            <button onClick={logIt} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">Log to comm history</button>
+            {logged && <span className="text-green-300 text-sm font-semibold">{logged}</span>}
           </div>
-          <p className="text-gray-400 text-xs">
+          <p className="text-white/40 text-xs">
             Tip: select a template to auto-fill, then tweak the wording. Links to
             the customer&rsquo;s credit, check-in guide, and free-cruise page are
             inserted automatically.

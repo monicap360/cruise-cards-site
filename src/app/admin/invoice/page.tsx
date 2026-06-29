@@ -61,21 +61,21 @@ export default function AdminInvoicePage() {
     )}&body=${encodeURIComponent(body)}`;
   }
 
-  const input = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const lbl = "block text-xs font-bold uppercase text-gray-500 mb-1";
+  const input = "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
+  const lbl = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900">
+    <div className="min-h-screen bg-[#05070d] text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Controls (not printed) */}
         <div className="print:hidden">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h1 className="text-2xl font-extrabold text-blue-900">Invoice / Receipt</h1>
-            <Link href="/admin" className="text-sm font-bold text-blue-700 hover:underline">← Admin</Link>
+            <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">Invoice / Receipt</h1>
+            <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 grid grid-cols-1 sm:grid-cols-6 gap-4">
-            <div className="sm:col-span-2"><label className={lbl}>Document</label><select className={input} value={docType} onChange={(e) => setDocType(e.target.value)}><option>Invoice</option><option>Booking Confirmation</option><option>Receipt</option></select></div>
+          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6 mb-6 grid grid-cols-1 sm:grid-cols-6 gap-4">
+            <div className="sm:col-span-2"><label className={lbl}>Document</label><select className={input} value={docType} onChange={(e) => setDocType(e.target.value)}><option className="bg-[#0b1020]">Invoice</option><option className="bg-[#0b1020]">Booking Confirmation</option><option className="bg-[#0b1020]">Receipt</option></select></div>
             <div className="sm:col-span-2"><label className={lbl}>Number</label><input className={input} value={number} onChange={(e) => setNumber(e.target.value)} /></div>
             <div className="sm:col-span-2"><label className={lbl}>Date</label><input type="date" className={input} value={date} onChange={(e) => setDate(e.target.value)} /></div>
 
@@ -96,18 +96,18 @@ export default function AdminInvoicePage() {
                 <div key={i} className="flex gap-2 mb-2">
                   <input className={input} value={l.desc} onChange={(e) => setLine(i, { desc: e.target.value })} placeholder="Description" />
                   <input type="number" className={`${input} w-40`} value={l.amount || ""} onChange={(e) => setLine(i, { amount: Number(e.target.value) })} placeholder="0.00" />
-                  <button onClick={() => setLines((s) => s.filter((_, idx) => idx !== i))} className="text-red-600 font-bold px-2">×</button>
+                  <button onClick={() => setLines((s) => s.filter((_, idx) => idx !== i))} className="text-red-300 font-bold px-2 hover:text-red-200">×</button>
                 </div>
               ))}
-              <button onClick={() => setLines((s) => [...s, { desc: "", amount: 0 }])} className="text-blue-700 font-bold text-sm hover:underline">+ Add line</button>
+              <button onClick={() => setLines((s) => [...s, { desc: "", amount: 0 }])} className="text-sky-400 font-bold text-sm hover:text-sky-300">+ Add line</button>
             </div>
             <div className="sm:col-span-2"><label className={lbl}>Amount paid ($)</label><input type="number" className={input} value={paid || ""} onChange={(e) => setPaid(Number(e.target.value))} /></div>
             <div className="sm:col-span-4"><label className={lbl}>Notes</label><input className={input} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Deposit received, thank you!" /></div>
           </div>
 
           <div className="flex gap-3 mb-8">
-            <button onClick={() => window.print()} className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-2.5 rounded-full">🖨 Print / Save PDF</button>
-            <a href={emailHref()} className="border border-gray-300 hover:bg-gray-100 font-bold text-sm px-6 py-2.5 rounded-full">✉ Email customer</a>
+            <button onClick={() => window.print()} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">🖨 Print / Save PDF</button>
+            <a href={emailHref()} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">✉ Email customer</a>
           </div>
         </div>
 
