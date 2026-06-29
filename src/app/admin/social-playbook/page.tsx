@@ -79,6 +79,20 @@ const PHASES: Phase[] = [
     ],
   },
   {
+    week: "Do Tomorrow",
+    title: "📸 'Caption This' (instant engagement)",
+    why: "Post a fun/intriguing Galveston or cruise photo NATIVELY and ask for captions — engagement floods in and the algorithm pushes your page to new feeds. Next day, feature the best caption in a short article (credit the user) and share it back: fresh unique content + new followers.",
+    tasks: [
+      { id: "ct1", do: "Post a fun Galveston/cruise photo natively (not a link)." },
+      { id: "ct2", do: "Ask: 'Caption this for a chance to be featured tomorrow!'" },
+      { id: "ct3", do: "Next day: pick the best, credit the user, publish a short 'Best Caption' article, share it back." },
+    ],
+    snippets: [
+      { label: "Prompt", text: "Caption this 👇 Best one gets featured on our site AND page tomorrow! 🚢" },
+      { label: "Article title", text: "Our Cruise Community Has Jokes — Here's the Best Caption of the Week" },
+    ],
+  },
+  {
     week: "Ongoing",
     title: "🔁 Publish → Share Loop (Instant Index)",
     why: "Publish on your site FIRST, then share to Facebook with a UNIQUE 50-word summary (never copy-paste). Your followers click within minutes; Google sees real-time interest from a reputable source and favors your URL. Doubles your indexed entries per story.",
@@ -92,6 +106,29 @@ const PHASES: Phase[] = [
       { label: "Tool", text: "Admin → 📰 Deep-Dive = turn your most-engaged post into a 1,000-word article quoting your top commenters." },
     ],
   },
+];
+
+// 90-day follower + SEO tracker.
+const TRACKER = [
+  { id: "t12", week: "1–2", action: "Post 3 Cruise Scorecard visual assets", target: "+500", seo: "Social signals boost domain trust" },
+  { id: "t34", week: "3–4", action: "Tag 5 local businesses/officials per post", target: "+1,000", seo: "Backlinks from tagged businesses" },
+  { id: "t56", week: "5–6", action: "Run 2 Facebook Polls → convert to site articles", target: "+1,500", seo: "'Original Data' ranking boost" },
+  { id: "t78", week: "7–8", action: "Execute 3 Cross-Promotion Takeovers", target: "+2,000", seo: "New audience → traffic, lower bounce" },
+  { id: "t912", week: "9–12", action: "Launch a 'Galveston Cruise Alerts' Group; promote weekly", target: "+2,500", seo: "More brand searches on Google" },
+];
+
+// 10 high-viral templates for the Galveston cruise niche.
+const VIRAL_TEMPLATES: Snippet[] = [
+  { label: "Caption This", text: "Caption this 👇 Best one gets featured on our site + page tomorrow! 🚢" },
+  { label: "Tag", text: "Tag your cruise crew 👇 Who are you dragging on your next Galveston sailing? 🍹" },
+  { label: "This or That", text: "This or That: Balcony 🛏️ or Suite 👑? Cozumel 🇲🇽 or Roatán 🇭🇳? Drop your combo below!" },
+  { label: "Fill in the blank", text: "Fill in the blank: My favorite thing about cruising from Galveston is ______." },
+  { label: "Hot take", text: "Unpopular cruise opinion: the buffet beats the dining room. Agree or disagree? 👇" },
+  { label: "POV", text: "POV: it's 7am and you're pulling into Cozumel 🌅 Drop a 🌴 if you're ready to sail." },
+  { label: "Countdown", text: "Who's got a Galveston cruise booked?! 🚢 Tell us your ship + month and let's count down together ⬇️" },
+  { label: "First vs 10th", text: "First cruise 😅 vs. 10th cruise 😎 — which are you? Tell us in the comments." },
+  { label: "Rate it", text: "Rate this cabin 1–10 🛏️ Be honest 👇 (full cabin guide in comments)" },
+  { label: "Hidden gem", text: "Galveston cruise tip most people miss: ______ 📌 Save this for your next sailing (full guide in comments)." },
 ];
 
 export default function SocialPlaybookPage() {
@@ -139,6 +176,29 @@ export default function SocialPlaybookPage() {
       </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* 90-day tracker */}
+        <div className="bg-[#0b1020] rounded-2xl border border-sky-400/25 p-6">
+          <h2 className="text-lg font-extrabold mb-1">90-Day Growth &amp; SEO Tracker</h2>
+          <p className="text-white/50 text-sm mb-4">
+            Goal: <span className="text-holo font-bold">15,000+ followers</span> · top‑3 rankings for 5+ local keywords. Check off each phase.
+          </p>
+          <div className="space-y-2">
+            {TRACKER.map((r) => (
+              <label key={r.id} className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3 cursor-pointer">
+                <input type="checkbox" checked={!!done[r.id]} onChange={() => toggle(r.id)} className="mt-1 accent-sky-500 w-4 h-4 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">Wk {r.week}</span>
+                    <span className={`font-semibold text-sm ${done[r.id] ? "text-white/40 line-through" : "text-white"}`}>{r.action}</span>
+                    <span className="text-holo font-bold text-sm">{r.target}</span>
+                  </div>
+                  <div className="text-white/45 text-xs mt-0.5">SEO: {r.seo}</div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
         {PHASES.map((p) => (
           <div key={p.title} className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
             <div className="flex items-center gap-3 flex-wrap mb-2">
@@ -171,6 +231,25 @@ export default function SocialPlaybookPage() {
             </div>
           </div>
         ))}
+
+        {/* Viral templates */}
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <h2 className="text-lg font-extrabold mb-1">🔥 10 High-Viral Post Templates</h2>
+          <p className="text-white/50 text-sm mb-4">Your niche: hyper‑local Galveston cruise travel. Copy, tweak the blank, post natively.</p>
+          <div className="space-y-2">
+            {VIRAL_TEMPLATES.map((s, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-sky-400/70 mb-1">{s.label}</div>
+                  <div className="text-white/80 text-sm">{s.text}</div>
+                </div>
+                <button onClick={() => copy("vt" + i, s.text)} className="flex-shrink-0 bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                  {copied === "vt" + i ? "✓" : "Copy"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
