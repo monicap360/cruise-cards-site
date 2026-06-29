@@ -99,10 +99,10 @@ export default async function GroupPortalPage({
         <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80">
-              {"// Group Portal"}
+              {group.blockSize <= 1 ? "// Cruise Portal" : "// Group Portal"}
             </div>
             <div className="hud label-mono text-[10px] uppercase tracking-wider text-white px-3 py-1.5 rounded-full">
-              Group {group.code}
+              {group.blockSize <= 1 ? "Your trip" : `Group ${group.code}`}
             </div>
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mt-4">
