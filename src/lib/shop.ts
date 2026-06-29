@@ -32,6 +32,12 @@ export const SHOP_ITEMS: ShopItem[] = [
     href: `${SHOP_URL}/products/soda-12-pack`,
   },
   {
+    title: "Drink packages",
+    desc: "Deluxe Beverage, Refreshment or Classic Soda packages — add before you sail and save.",
+    emoji: "🍹",
+    href: `${SHOP_URL}/products/drink-package`,
+  },
+  {
     title: "Park & Ride",
     desc: "Reserve Galveston park-and-ride cruise parking for the week.",
     emoji: "🅿️",

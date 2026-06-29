@@ -1,5 +1,4 @@
 import Link from "next/link";
-import ShipImage from "@/components/ShipImage";
 import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
@@ -7,6 +6,7 @@ import { SHOP_ITEMS, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY, BOOKIN
 import ParkRideScheduler from "@/components/ParkRideScheduler";
 import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
+import { FB_GROUP_URL } from "@/lib/social";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +58,9 @@ export default async function GroupPortalPage({
   const fullCount = members.filter((m) => m.paidInFull).length;
   const outstanding = members.reduce((s, m) => s + memberBalance(m), 0);
 
+  // Destination hero photo (Western Caribbean from Galveston → Cozumel)
+  const destSlug = "cozumel";
+
   const stat = (v: string | number, l: string) => (
     <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
       <div className="text-holo font-extrabold text-3xl leading-none">{v}</div>
@@ -70,12 +73,17 @@ export default async function GroupPortalPage({
   return (
     <div className="bg-[#05070d] text-white min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-white/10">
-        <ShipImage ship={group.ship} overlay={false} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-[#05070d]/85" />
-        <div className="absolute inset-0 grid-bg opacity-40" />
+      <section className="relative overflow-hidden border-b border-white/10 min-h-[520px] flex items-end">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`/destinations/${destSlug}.jpg`}
+          alt={`${group.ship} — Western Caribbean from Galveston`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-[#05070d]/30" />
+        <div className="absolute inset-0 grid-bg opacity-20" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-sky-400/70 to-transparent" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-10">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80">
               {"// Group Portal"}
@@ -425,14 +433,33 @@ export default async function GroupPortalPage({
                           {rm.cabinType}
                           {open ? " · Open — available to book" : rm.bookedBy ? ` · ${rm.bookedBy}` : ""}
                         </div>
-                        {names && <div className="text-white/70 text-sm mt-1">👥 {names}</div>}
+                        {names && (
+                          <div className="text-white/70 text-sm mt-1.5 space-y-0.5">
+                            {names.split(/,\s*/).filter(Boolean).map((nm, k) => (
+                              <div key={k} className="flex items-center gap-2">
+                                <span>👤 {nm}</span>
+                                <span className="text-white/35 text-[11px]">DOB —</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         {!open && (
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-xs font-semibold">
-                            <a href={order(`Soda 12-pack — ${who}`, `Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${who}.`)} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</a>
-                            <a href={order(`Prepay gratuities — ${who}`, `Please prepay gratuities for ${who}: $${gratPerGuest}/guest × ${occ?.guests || 2} guests = $${gratTotal} total ($18 per guest, per day for ${group.nights || 5} nights).`)} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</a>
-                            <span className="text-white/40">🛡️ Vacation protection:</span>
-                            <a href={order(`ADD vacation protection — ${who}`, `Please ADD vacation protection (travel insurance) for ${who}. Send me the price per guest to confirm.`)} className="text-green-300 hover:text-green-200">Add</a>
-                            <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/50 hover:text-white/80">Decline</a>
+                          <div className="mt-3 space-y-1.5 text-xs font-semibold">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                              <span className="text-white/35 uppercase tracking-wider text-[10px]">Add-ons:</span>
+                              <a href={order(`Soda 12-pack — ${who}`, `Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${who}.`)} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</a>
+                              <a href={order(`Drink package — ${who}`, `Please add a drink package for ${who}. Send the daily price options (Deluxe Beverage / Refreshment / Classic Soda) so we can confirm.`)} className="text-sky-400 hover:text-sky-300">🍹 Drink package</a>
+                              <a href={order(`Prepay gratuities — ${who}`, `Please prepay gratuities for ${who}: $${gratPerGuest}/guest × ${occ?.guests || 2} guests = $${gratTotal} total ($18 per guest, per day for ${group.nights || 5} nights).`)} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</a>
+                              <span className="text-white/40">🛡️ Protection:</span>
+                              <a href={order(`ADD vacation protection — ${who}`, `Please ADD vacation protection (travel insurance) for ${who}. Send me the price per guest to confirm.`)} className="text-green-300 hover:text-green-200">Add</a>
+                              <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/50 hover:text-white/80">Decline</a>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+                              <span className="text-white/35 uppercase tracking-wider text-[10px]">Requests:</span>
+                              <a href={order(`Move / upgrade room — ${who}`, `We'd like to move or upgrade our room for ${who}. Please send availability and any upgrade fee.`)} className="text-amber-300 hover:text-amber-200">🔀 Move / upgrade (fee)</a>
+                              <a href={order(`Name change ($150) — ${who}`, `We need to change a guest name for ${who}. We understand a $150 name-change fee applies.\n\nName to remove: __________\nNew name (as on ID): __________\nDOB: __________`)} className="text-amber-300 hover:text-amber-200">✏️ Change a name ($150)</a>
+                              <a href={order(`Cancel a passenger — ${who}`, `We need to cancel a passenger for ${who}.\n\nPassenger name: __________\n\nPlease advise any cancellation penalty per the schedule (25% 89–75d / 50% 74–61d / 75% 60–31d / 100% 30–0d).`)} className="text-red-300 hover:text-red-200">➖ Cancel a passenger</a>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -574,6 +601,25 @@ export default async function GroupPortalPage({
             )}
           </div>
         )}
+
+        {/* Sea You on Deck community */}
+        <a
+          href={FB_GROUP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block rounded-2xl border border-sky-400/25 bg-gradient-to-r from-sky-500/10 to-transparent p-6 hover:border-sky-400/50 transition-all"
+        >
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-1">{"// Community"}</div>
+              <div className="text-xl font-extrabold text-white">⚓ Join “Sea You on Deck”</div>
+              <p className="text-white/65 text-sm mt-1 max-w-xl">
+                Our cruiser community — meet your group, swap port tips, plan cabin crawls and matching‑shirt days, and count down to sail‑away together.
+              </p>
+            </div>
+            <span className="bg-white text-black font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full shrink-0">Join the community →</span>
+          </div>
+        </a>
 
         {/* Park & Ride scheduler */}
         <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
