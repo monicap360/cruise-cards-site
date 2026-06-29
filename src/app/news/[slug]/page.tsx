@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { POSTS, getPost } from "@/lib/news";
+import FacebookComments from "@/components/FacebookComments";
+
+const SITE = "https://cruisesfromgalveston.net";
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString("en-US", {
@@ -109,6 +112,14 @@ export default async function ArticlePage({
           <div className="label-mono text-[12px] uppercase text-white/40">
             {formatDate(post.date)} &middot; {post.readMins} min read
           </div>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${SITE}/news/${post.slug}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#1466d6] text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-colors"
+          >
+            <span>f</span> Share on Facebook
+          </a>
         </div>
       </section>
 
@@ -120,6 +131,8 @@ export default async function ArticlePage({
           </p>
         ))}
       </article>
+
+      <FacebookComments />
 
       {/* CTA band */}
       <section className="relative border-t border-white/10 overflow-hidden">
