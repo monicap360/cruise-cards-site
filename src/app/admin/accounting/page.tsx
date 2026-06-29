@@ -236,54 +236,66 @@ export default function AccountingPage() {
   }
 
   async function handlePdf(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || !files.length) return;
     setPdfBusy(true);
-    setPdfMsg("Reading document with AI…");
     setPdfEntries([]);
-    try {
-      const bytes = new Uint8Array(await file.arrayBuffer());
-      let binary = "";
-      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-      const b64 = btoa(binary);
-      const mediaType =
-        file.type === "image/png" ? "image/png" : file.type === "image/jpeg" ? "image/jpeg" : "application/pdf";
-      const r = await fetch("/api/parse-accounting", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ pdfBase64: b64, mediaType }),
-      });
-      const d = await r.json();
-      if (!r.ok) {
-        setPdfMsg(d.error || "Could not read that document.");
-        setPdfBusy(false);
-        return;
+    const all: LedgerEntry[] = [];
+    let failed = 0;
+    const list = Array.from(files);
+    for (let n = 0; n < list.length; n++) {
+      const file = list[n];
+      setPdfMsg(`Reading ${n + 1} of ${list.length}: ${file.name}…`);
+      try {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        const b64 = btoa(binary);
+        const mediaType =
+          file.type === "image/png" ? "image/png" : file.type === "image/jpeg" ? "image/jpeg" : "application/pdf";
+        const r = await fetch("/api/parse-accounting", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ pdfBase64: b64, mediaType }),
+        });
+        const d = await r.json();
+        if (!r.ok) {
+          if (r.status === 503) {
+            setPdfMsg(d.error || "AI document reading isn't configured.");
+            setPdfBusy(false);
+            return;
+          }
+          failed++;
+          continue;
+        }
+        const raw = Array.isArray(d.entries) ? (d.entries as Record<string, unknown>[]) : [];
+        for (const x of raw) {
+          const amount = Math.abs(Number(x.amount) || 0);
+          if (amount <= 0) continue;
+          all.push({
+            id: newLedgerId(),
+            date: String(x.date ?? "").slice(0, 10),
+            type: (x.type === "expense" ? "expense" : "income") as LedgerType,
+            category: String(x.category ?? ""),
+            client: String(x.client ?? ""),
+            description: `${String(x.description ?? "")}${list.length > 1 ? ` · ${file.name}` : ""}`,
+            amount,
+            method: String(x.method ?? METHODS[0]),
+            status: "paid",
+            invoiceNumber: String(x.invoiceNumber ?? ""),
+            source: "pdf",
+          });
+        }
+      } catch {
+        failed++;
       }
-      const raw = Array.isArray(d.entries) ? (d.entries as Record<string, unknown>[]) : [];
-      const extracted: LedgerEntry[] = raw
-        .map((x) => ({
-          id: newLedgerId(),
-          date: String(x.date ?? "").slice(0, 10),
-          type: (x.type === "expense" ? "expense" : "income") as LedgerType,
-          category: String(x.category ?? ""),
-          client: String(x.client ?? ""),
-          description: String(x.description ?? ""),
-          amount: Math.abs(Number(x.amount) || 0),
-          method: String(x.method ?? METHODS[0]),
-          status: "paid",
-          invoiceNumber: String(x.invoiceNumber ?? ""),
-          source: "pdf",
-        }))
-        .filter((en) => en.amount > 0);
-      setPdfEntries(extracted);
-      setPdfMsg(
-        extracted.length
-          ? `Found ${extracted.length} transaction(s) — review, edit, then import.`
-          : "No transactions found in that document."
-      );
-    } catch {
-      setPdfMsg("Could not read that document.");
     }
+    setPdfEntries(all);
+    setPdfMsg(
+      all.length
+        ? `Found ${all.length} transaction(s) across ${list.length} document(s)${failed ? ` (${failed} couldn't be read)` : ""} — review, edit, then import.`
+        : `No transactions found${failed ? ` (${failed} couldn't be read)` : ""}.`
+    );
     setPdfBusy(false);
   }
 
@@ -563,12 +575,14 @@ export default function AccountingPage() {
             📄 Import from PDF (AI)
           </h2>
           <p className="text-white/45 text-sm mb-4">
-            Upload an invoice, receipt, commission statement, or bank statement (PDF or photo).
-            Claude reads it and pulls out the transactions — review, edit, then import to your ledger.
+            Upload one or several invoices, receipts, commission statements, or bank statements
+            (PDF or photo) — select multiple files at once. Claude reads them all and pulls out the
+            transactions — review, edit, then import to your ledger.
           </p>
           <input
             type="file"
             accept=".pdf,image/*"
+            multiple
             onChange={handlePdf}
             disabled={pdfBusy}
             className="text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-white file:text-black file:font-semibold file:px-4 file:py-2 file:text-xs file:uppercase file:tracking-wider disabled:opacity-50"
