@@ -23,6 +23,7 @@ const MODE_META: Record<string, { label: string; icon: string }> = {
   "name-correction": { label: "Name correction", icon: "✏️" },
   cancellation: { label: "Cancellation request", icon: "🚫" },
   "booking-change": { label: "Booking change", icon: "🔧" },
+  "group-signup": { label: "Group signup", icon: "🚢" },
 };
 
 type Req = {
