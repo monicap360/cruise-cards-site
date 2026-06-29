@@ -25,6 +25,11 @@ function OrderInner() {
   const [arrival, setArrival] = useState("");
   const [vehicle, setVehicle] = useState("");
   const [agreed, setAgreed] = useState(false);
+  const [plate, setPlate] = useState("");
+  const [carType, setCarType] = useState("");
+  const [carPeople, setCarPeople] = useState("");
+  const [bags, setBags] = useState("");
+  const [dropFirst, setDropFirst] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState("");
@@ -46,20 +51,25 @@ function OrderInner() {
   }
 
   const isTravel = itemKey === "travel";
+  const isParking = itemKey === "parking";
 
   async function submit() {
     if (!name.trim()) { setErr("Please add the name on the reservation."); return; }
     if (isTravel && !arrival) { setErr("Let us know if you're flying or driving."); return; }
+    if (isParking && !plate.trim()) { setErr("Please add the license plate for the vehicle."); return; }
     if (item.ack && !agreed) { setErr("Please check the box to acknowledge and continue."); return; }
     setBusy(true); setErr("");
     const travelNote = isTravel
       ? `Arrival: ${arrival}${arrival === "Driving" && vehicle ? ` · Vehicle: ${vehicle}` : ""}. `
       : "";
+    const parkingNote = isParking
+      ? `Vehicle: ${carType || "—"} · Plate: ${plate || "—"} · ${carPeople || "?"} people · ${bags || "?"} bags · ${dropFirst === "yes" ? "Dropping guests/luggage at ship first" : "Parking directly"}. `
+      : "";
     const ackNote = item.ack ? `[ACKNOWLEDGED: ${item.ack}] ` : "";
     const o: GroupOrder = {
       id: newOrderId(), groupCode: code, item: itemKey, itemLabel: item.label,
       room, cabin, name, phone, qty: item.qty ? qty : 1,
-      notes: ackNote + travelNote + notes + (cabin ? ` · ${cabin}` : ""), status: "New",
+      notes: ackNote + travelNote + parkingNote + notes + (cabin ? ` · ${cabin}` : ""), status: "New",
     };
     const ok = await saveOrder(o);
     setBusy(false);
@@ -138,6 +148,36 @@ function OrderInner() {
                       <p className="text-white/45 text-xs mt-2">We can arrange a transfer from Houston (IAH / Hobby) — add details below.</p>
                     )}
                   </Field>
+                )}
+
+                {isParking && (
+                  <div className="space-y-3">
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Vehicle details</div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <input className={input} value={plate} onChange={(e) => setPlate(e.target.value)} placeholder="License plate #" />
+                      <input className={input} value={carType} onChange={(e) => setCarType(e.target.value)} placeholder="Car make/model (e.g. Toyota Highlander)" />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-white/45 mb-1.5">Dropping guests &amp; luggage at the ship first?</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {[["yes", "Yes — drop at ship first"], ["no", "No — park directly"]].map(([v, l]) => (
+                          <button key={v} type="button" onClick={() => setDropFirst(v)}
+                            className={`rounded-xl px-4 py-3 text-sm font-semibold border transition-all ${dropFirst === v ? "bg-sky-500/15 border-sky-400/60 text-white" : "bg-white/[0.03] border-white/15 text-white/70 hover:border-sky-400/40"}`}>
+                            {l}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <input className={input} type="number" min={1} value={carPeople} onChange={(e) => setCarPeople(e.target.value)} placeholder="People in car" />
+                      {dropFirst !== "yes" && (
+                        <input className={input} type="number" min={0} value={bags} onChange={(e) => setBags(e.target.value)} placeholder="Luggage bags" />
+                      )}
+                    </div>
+                    <div className="rounded-xl border border-green-400/30 bg-green-500/[0.07] px-4 py-3 text-sm text-green-200">
+                      💵 Pay parking by <span className="font-bold">Cash App: $galvestonmonica</span> — please add your cabin/last name in the note.
+                    </div>
+                  </div>
                 )}
 
                 <Field label={item.ack ? "Details" : "Notes (optional)"}>

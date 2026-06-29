@@ -79,8 +79,8 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
   parking: {
     label: "Cruise parking",
     emoji: "🅿️",
-    desc: "Reserve parking at the Galveston cruise terminal for your whole sailing.",
-    priceNote: "Priced by cruise length",
+    desc: "Reserve parking for your whole sailing — price is per vehicle, by cruise length.",
+    priceNote: "Per vehicle · by cruise length",
   },
   move: {
     label: "Move / upgrade room",
