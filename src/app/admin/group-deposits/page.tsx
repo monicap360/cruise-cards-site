@@ -587,6 +587,12 @@ export default function GroupDepositsPage() {
                       >
                         Edit
                       </button>
+                      <Link
+                        href={`/admin/documents?scope=group&group=${encodeURIComponent(d.groupName)}&groupId=${encodeURIComponent(d.id)}`}
+                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-semibold text-xs px-4 py-2 rounded-full"
+                      >
+                        📎 Upload Doc
+                      </Link>
                       <button
                         onClick={() => duplicate(d)}
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-semibold text-xs px-4 py-2 rounded-full"

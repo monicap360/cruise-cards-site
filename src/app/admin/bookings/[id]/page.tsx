@@ -255,6 +255,12 @@ export default function BookingDetailPage() {
                 📄 Invoice
               </Link>
               <Link
+                href={`/admin/documents?scope=individual&email=${encodeURIComponent(booking.customerEmail)}`}
+                className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold px-4 py-2 rounded-full text-sm transition-all"
+              >
+                📎 Upload Doc
+              </Link>
+              <Link
                 href={`/receipt/${booking.id}`}
                 target="_blank"
                 className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold px-4 py-2 rounded-full text-sm transition-all"

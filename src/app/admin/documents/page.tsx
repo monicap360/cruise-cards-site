@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   type GuestDocument,
   DOCUMENT_TYPES,
@@ -13,7 +14,8 @@ import {
 } from "@/lib/documents";
 import { type GroupDeposit, getGroupDeposits } from "@/lib/group-deposits";
 
-export default function AdminDocumentsPage() {
+function DocumentsInner() {
+  const params = useSearchParams();
   const [docs, setDocs] = useState<GuestDocument[]>([]);
   const [groups, setGroups] = useState<GroupDeposit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,20 @@ export default function AdminDocumentsPage() {
     refresh();
     getGroupDeposits().then(setGroups);
   }, []);
+
+  // Preset from a deep link, e.g. /admin/documents?scope=group&group=Thanksgiving…
+  // or ?scope=individual&email=guest@x.com — so a booking/group page can open
+  // the uploader prefilled for that exact guest or group.
+  useEffect(() => {
+    const s = params.get("scope");
+    if (s === "group" || s === "individual") setScope(s);
+    const em = params.get("email");
+    if (em) setEmail(em);
+    const g = params.get("group");
+    if (g) setGroupName(g);
+    const gid = params.get("groupId");
+    if (gid) setGroupId(gid);
+  }, [params]);
 
   function pickGroup(id: string) {
     setGroupId(id);
@@ -292,5 +308,13 @@ export default function AdminDocumentsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminDocumentsPage() {
+  return (
+    <Suspense fallback={null}>
+      <DocumentsInner />
+    </Suspense>
   );
 }
