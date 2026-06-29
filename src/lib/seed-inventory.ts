@@ -203,15 +203,56 @@ function addDays(iso: string, days: number): string {
 }
 
 // Representative guarantee (GTY) cabins so each sailing shows bookable inventory.
+// perNight = per person, double occupancy — tuned to real Galveston cruise fares.
 const CABIN_BASE: Record<CabinCategory, { perNight: number; sqft: number; maxGuests: number }> = {
-  Interior: { perNight: 65, sqft: 170, maxGuests: 4 },
-  "Ocean View": { perNight: 85, sqft: 190, maxGuests: 4 },
-  Balcony: { perNight: 115, sqft: 210, maxGuests: 4 },
-  "Mini-Suite": { perNight: 165, sqft: 300, maxGuests: 4 },
-  Suite: { perNight: 240, sqft: 500, maxGuests: 5 },
+  Interior: { perNight: 85, sqft: 170, maxGuests: 4 },
+  "Ocean View": { perNight: 110, sqft: 190, maxGuests: 4 },
+  Balcony: { perNight: 145, sqft: 210, maxGuests: 4 },
+  "Mini-Suite": { perNight: 195, sqft: 300, maxGuests: 4 },
+  Suite: { perNight: 260, sqft: 500, maxGuests: 5 },
 };
 
-function buildCabins(nights: number, idx: number): Cabin[] {
+// Premium lines price higher; value lines lower.
+function lineMultiplier(cruiseLine: string): number {
+  if (cruiseLine === "Disney Cruise Line") return 1.65;
+  if (cruiseLine === "Royal Caribbean") return 1.18;
+  if (cruiseLine === "Norwegian Cruise Line") return 1.12;
+  if (cruiseLine === "MSC Cruises") return 0.92;
+  return 1.0; // Carnival & default
+}
+
+// Summer & holidays cost more.
+function seasonMultiplier(sailingDate: string): number {
+  const m = Number(sailingDate.slice(5, 7));
+  if (m >= 6 && m <= 8) return 1.25; // summer
+  if (m === 11 || m === 12) return 1.15; // holidays
+  if (m === 5 || m === 9) return 1.1; // shoulder
+  return 1.0;
+}
+
+// Per-person, double-occupancy fare for a cabin category on a given sailing.
+export function cabinFare(
+  type: CabinCategory,
+  nights: number,
+  cruiseLine: string,
+  sailingDate: string,
+  guarantee = true
+): number {
+  const raw =
+    CABIN_BASE[type].perNight *
+    nights *
+    lineMultiplier(cruiseLine) *
+    seasonMultiplier(sailingDate) *
+    (guarantee ? 0.96 : 1);
+  return Math.round(raw / 10) * 10;
+}
+
+function buildCabins(
+  nights: number,
+  idx: number,
+  cruiseLine: string,
+  sailingDate: string
+): Cabin[] {
   const cats: CabinCategory[] = ["Interior", "Ocean View", "Balcony", "Suite"];
   return cats.map((type, i) => {
     const base = CABIN_BASE[type];
@@ -224,7 +265,7 @@ function buildCabins(nights: number, idx: number): Cabin[] {
       type,
       maxGuests: base.maxGuests,
       sqft: base.sqft,
-      price: Math.round(base.perNight * nights),
+      price: cabinFare(type, nights, cruiseLine, sailingDate, true),
       status: "available",
       isGuarantee: true,
       notes: DRAFT_TAG,
@@ -266,7 +307,7 @@ export function generateDraftBlocks(): SailingBlock[] {
         returnDate: addDays(sailingDate, ship.nights),
         nights: ship.nights,
         itinerary: ship.itinerary,
-        cabins: buildCabins(ship.nights, idx),
+        cabins: buildCabins(ship.nights, idx, ship.cruiseLine, sailingDate),
         notes: ship.published
           ? "Published Carnival schedule — weekly Saturday departures from Galveston (galvestoncruises.com / Carnival)."
           : ship.seasonalNote
@@ -289,7 +330,7 @@ export function generateDraftBlocks(): SailingBlock[] {
       returnDate: addDays(k.sailingDate, k.nights),
       nights: k.nights,
       itinerary: k.itinerary,
-      cabins: buildCabins(k.nights, idx),
+      cabins: buildCabins(k.nights, idx, k.cruiseLine, k.sailingDate),
       notes: "Published itinerary (galvestoncruises.com).",
     });
   }
