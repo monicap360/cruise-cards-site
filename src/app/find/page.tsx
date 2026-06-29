@@ -308,9 +308,9 @@ function FindInner() {
                         const ps = b.cabins
                           .filter((c) => c.type === type && c.price > 0)
                           .map((c) => c.price);
-                        return ps.length ? { type, from: Math.min(...ps) } : null;
+                        return { type, from: ps.length ? Math.min(...ps) : 0 };
                       })
-                      .filter((x): x is { type: string; from: number } => x !== null)
+                      .filter((r) => r.from > 0)
                       .sort((a, c) => a.from - c.from);
                     return (
                       <Link
