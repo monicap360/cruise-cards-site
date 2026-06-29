@@ -7,6 +7,7 @@ import ParkRideScheduler from "@/components/ParkRideScheduler";
 import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
+import GroupGate from "@/components/GroupGate";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -22,10 +23,13 @@ const CABIN_OPTIONS = [
 
 export default async function GroupPortalPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ code: string }>;
+  searchParams: Promise<{ pin?: string }>;
 }) {
   const { code } = await params;
+  const { pin } = await searchParams;
   const result = await getGroupByCode(code);
 
   if (!result) {
@@ -50,6 +54,13 @@ export default async function GroupPortalPage({
   }
 
   const { group, members, rooms } = result;
+
+  // PIN gate — protect roster / DOB / payment info. PIN = sail date MMDD.
+  const groupPin = (group.sailingDate || "").split("-").slice(1).join("");
+  if (!groupPin || (pin || "").trim() !== groupPin) {
+    return <GroupGate groupName={group.name} />;
+  }
+
   const now = Date.now();
   const totalGuests = members.reduce((s, m) => s + (m.guests || 0), 0);
   const depositCount = members.filter(
@@ -437,12 +448,17 @@ export default async function GroupPortalPage({
                         </div>
                         {names && (
                           <div className="text-white/70 text-sm mt-1.5 space-y-0.5">
-                            {names.split(/,\s*/).filter(Boolean).map((nm, k) => (
-                              <div key={k} className="flex items-center gap-2">
-                                <span>👤 {nm}</span>
-                                <span className="text-white/35 text-[11px]">DOB —</span>
-                              </div>
-                            ))}
+                            {names.split(/,\s*/).filter(Boolean).map((nm, k) => {
+                              const mm = nm.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+                              const pname = mm ? mm[1] : nm;
+                              const dob = mm ? mm[2] : "";
+                              return (
+                                <div key={k} className="flex items-center gap-2">
+                                  <span>👤 {pname}</span>
+                                  <span className="text-white/35 text-[11px]">DOB {dob || "—"}</span>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                         {!open && (
