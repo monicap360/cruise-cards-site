@@ -141,7 +141,10 @@ export default function AdminGroupsPage() {
               and the contract.
             </p>
           </div>
-          <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/admin/orders" className="bg-white/5 border border-white/15 hover:border-sky-400/50 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full">📦 Group Orders</Link>
+            <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
+          </div>
         </div>
 
         {/* Group editor */}

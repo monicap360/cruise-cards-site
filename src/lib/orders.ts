@@ -89,6 +89,19 @@ export async function getOrders(groupCode: string): Promise<GroupOrder[]> {
   return data.map(toOrder);
 }
 
+export async function getAllOrders(): Promise<GroupOrder[]> {
+  const { data, error } = await supabase
+    .from("group_orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map(toOrder);
+}
+
+export async function updateOrderStatus(id: string, status: string): Promise<void> {
+  await supabase.from("group_orders").update({ status }).eq("id", id);
+}
+
 export async function saveOrder(o: GroupOrder): Promise<boolean> {
   const { error } = await supabase.from("group_orders").insert({
     id: o.id,
