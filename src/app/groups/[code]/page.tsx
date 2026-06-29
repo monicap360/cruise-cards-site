@@ -498,6 +498,8 @@ export default async function GroupPortalPage({
                               <Link href={orderHref("move")} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</Link>
                               <Link href={orderHref("namechange")} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</Link>
                               <Link href={orderHref("cancel")} className="text-red-300/90 hover:text-red-200">⚠️ Cancel passenger</Link>
+                              <Link href={orderHref("cancelroom")} className="text-red-300/90 hover:text-red-200">❌ Cancel room</Link>
+                              <Link href={orderHref("rebook")} className="text-amber-300/90 hover:text-amber-200">🔄 Rebook room</Link>
                               <Link href={orderHref("decline")} className="text-white/45 hover:text-white/80">Decline protection</Link>
                             </div>
                           </div>

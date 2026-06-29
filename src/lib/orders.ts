@@ -99,6 +99,22 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     priceNote: "No coverage",
     ack: "I decline vacation protection and understand cancellation penalties will apply with no insurance reimbursement.",
   },
+  cancelroom: {
+    label: "Cancel a room",
+    emoji: "❌",
+    desc: "Request to cancel this entire stateroom.",
+    priceNote: "Cancellation penalties apply",
+    notePrompt: "Reason for cancelling this room…",
+    ack: "I understand cancellation penalties apply per the cruise line schedule — 25% (89–75 days before sailing), 50% (74–61), 75% (60–31), and 100% (30–0 days) — and I authorize cancellation of this room.",
+  },
+  rebook: {
+    label: "Rebook a room",
+    emoji: "🔄",
+    desc: "Cancel and rebook this stateroom for different dates, occupancy, or category.",
+    priceNote: "Repriced at market rate + $250 fee",
+    notePrompt: "What you'd like to rebook (dates, category, guests)…",
+    ack: "I understand that rebooking requires the room to be repriced at the cruise line's market rates in effect at the time of rebooking — this is the cruise line's rule, not Cruises from Galveston's — and that a $250 rebooking fee applies.",
+  },
 };
 
 function toOrder(r: Record<string, unknown>): GroupOrder {
