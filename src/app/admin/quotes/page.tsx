@@ -15,6 +15,8 @@ import {
   deleteQuote,
   quoteTotal,
 } from "@/lib/quotes";
+import { type SailingBlock, getSailingBlocks, groupByType } from "@/lib/room-blocks";
+import { destinationFor, portsFromItinerary } from "@/lib/destinations";
 
 const DEST_SLUGS = [
   "cozumel",
@@ -46,6 +48,8 @@ export default function AdminQuotesPage() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [savedId, setSavedId] = useState<string>("");
   const [copied, setCopied] = useState(false);
+  const [sailings, setSailings] = useState<SailingBlock[]>([]);
+  const [sailingPick, setSailingPick] = useState("");
 
   function refresh() {
     getAllQuotes().then(setQuotes);
@@ -53,7 +57,41 @@ export default function AdminQuotesPage() {
 
   useEffect(() => {
     refresh();
+    getSailingBlocks().then((s) =>
+      setSailings([...s].sort((a, b) => a.sailingDate.localeCompare(b.sailingDate)))
+    );
   }, []);
+
+  // Prefill the quote from a live sailing: fills ship/line/date/itinerary +
+  // builds cabin options (from $/pp per category) straight from inventory.
+  function loadFromSailing(block: SailingBlock) {
+    const dest = destinationFor(portsFromItinerary(block.itinerary)[0] ?? "");
+    const byType = groupByType(block.cabins);
+    const cabinOptions: QuoteCabin[] = Object.entries(byType)
+      .map(([type, cabins]) => {
+        const avail = cabins.filter((c) => c.status === "available");
+        const pool = avail.length ? avail : cabins;
+        const min = Math.min(...pool.map((c) => c.price));
+        return {
+          id: newCabinId(),
+          category: type,
+          perPerson: Number.isFinite(min) ? min : 0,
+          perks: "",
+          recommended: type === "Balcony",
+        };
+      })
+      .sort((a, b) => a.perPerson - b.perPerson);
+    setQ((prev) => ({
+      ...prev,
+      ship: block.ship,
+      cruiseLine: block.cruiseLine,
+      sailDate: block.sailingDate,
+      nights: block.nights,
+      itinerary: block.itinerary,
+      destSlug: dest?.slug || prev.destSlug,
+      cabinOptions,
+    }));
+  }
 
   const total = quoteTotal(q);
 
@@ -286,6 +324,28 @@ export default function AdminQuotesPage() {
           <div>
             <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">
               {"// Sailing"}
+            </div>
+            <div className="mb-4 bg-sky-500/[0.07] border border-sky-400/25 rounded-xl p-4">
+              <label className={FIELD_LABEL}>⚡ Prefill from a live sailing (ship + sail date)</label>
+              <select
+                className={INPUT}
+                value={sailingPick}
+                onChange={(e) => {
+                  setSailingPick(e.target.value);
+                  const b = sailings.find((s) => s.id === e.target.value);
+                  if (b) loadFromSailing(b);
+                }}
+              >
+                <option value="" className="bg-[#0b1020]">— pick a ship &amp; sail date —</option>
+                {sailings.map((s) => (
+                  <option key={s.id} value={s.id} className="bg-[#0b1020]">
+                    {s.ship} · {s.sailingDate} · {s.nights}n
+                  </option>
+                ))}
+              </select>
+              <p className="text-white/40 text-[11px] mt-1">
+                Fills the cabin options &amp; pricing from live inventory — same ship/date for every customer you quote.
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -663,6 +723,20 @@ export default function AdminQuotesPage() {
                 >
                   Open ↗
                 </Link>
+                <a
+                  href={`mailto:${encodeURIComponent(q.clientEmail)}?subject=${encodeURIComponent(
+                    `Your ${q.ship || "cruise"} quote — Cruises from Galveston`
+                  )}&body=${encodeURIComponent(
+                    `Hi ${q.clientName || "there"},\n\n` +
+                      `Here's your personalized quote for ${q.ship || "your cruise"}` +
+                      `${q.sailDate ? ` sailing ${q.sailDate}` : ""}:\n${shareUrl}\n\n` +
+                      `It has your cabin options and pricing. Reply here or call (409) 632-2106 to lock it in — no card is charged online.\n\n` +
+                      `Cruises from Galveston · Cruise Experience Center · (409) 632-2106`
+                  )}`}
+                  className="bg-sky-500 hover:bg-sky-400 text-white font-semibold text-sm px-4 py-1.5 rounded-full"
+                >
+                  📧 Email to customer
+                </a>
               </div>
             )}
           </div>
