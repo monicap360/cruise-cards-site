@@ -404,13 +404,32 @@ export default function GroupDepositsPage() {
                       setMilestone(i, "paidToDate", Number(e.target.value))
                     }
                   />
-                  <button
-                    onClick={() => removeMilestone(i)}
-                    className="text-white/40 hover:text-red-300 text-lg px-2 justify-self-end"
-                    aria-label="Remove milestone"
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-2 justify-self-end">
+                    <button
+                      onClick={() =>
+                        setMilestone(
+                          i,
+                          "paidToDate",
+                          m.paidToDate >= m.cumulativeDue && m.cumulativeDue > 0 ? 0 : m.cumulativeDue
+                        )
+                      }
+                      className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border whitespace-nowrap ${
+                        m.paidToDate >= m.cumulativeDue && m.cumulativeDue > 0
+                          ? "bg-green-500/15 text-green-300 border-green-400/30"
+                          : "bg-white/5 text-white/60 border-white/15 hover:border-white/30"
+                      }`}
+                      title="Mark this milestone paid (sets paid-to-date to the cumulative due)"
+                    >
+                      {m.paidToDate >= m.cumulativeDue && m.cumulativeDue > 0 ? "✓ Paid" : "Mark paid"}
+                    </button>
+                    <button
+                      onClick={() => removeMilestone(i)}
+                      className="text-white/40 hover:text-red-300 text-lg px-1"
+                      aria-label="Remove milestone"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
