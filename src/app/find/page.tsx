@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { type SailingBlock } from "@/lib/room-blocks";
-import { portsFromItinerary, destinationFor } from "@/lib/destinations";
+import { destinationWithPhoto } from "@/lib/destinations";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
@@ -172,8 +172,11 @@ function FindInner() {
           </h1>
           <p className="text-white/55 text-base sm:text-lg max-w-2xl mb-7">
             Every cruise below is a round-trip, closed-loop sailing from the Port
-            of Galveston. Pricing is per person, double occupancy — taxes &amp;
-            port fees included.
+            of Galveston. Pricing is per person, double occupancy —{" "}
+            <span className="text-white/80 font-semibold">
+              government taxes, port expenses &amp; fees included
+            </span>
+            .
           </p>
 
           <div className="relative mb-4">
@@ -299,9 +302,7 @@ function FindInner() {
                     const available = b.cabins.filter(
                       (c) => c.status === "available"
                     ).length;
-                    const dest = destinationFor(
-                      portsFromItinerary(b.itinerary)[0] ?? ""
-                    );
+                    const dest = destinationWithPhoto(b.itinerary);
                     return (
                       <Link
                         key={b.id}
@@ -359,7 +360,10 @@ function FindInner() {
                                   </div>
                                 </>
                               )}
-                              <div className="text-white/35 text-[10px] mt-1">
+                              <div className="text-green-300/90 text-[10px] mt-1 font-semibold">
+                                ✓ Taxes, port fees &amp; gov fees included
+                              </div>
+                              <div className="text-white/35 text-[10px] mt-0.5">
                                 dbl occ · {available} cabins open
                               </div>
                             </div>

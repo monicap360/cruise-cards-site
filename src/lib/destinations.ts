@@ -244,6 +244,26 @@ export function portsFromItinerary(itinerary: string): string[] {
     .filter((p) => !/galveston|sea day|at sea/i.test(p));
 }
 
+// Destination slugs we actually have a photo for in /public/destinations.
+const PHOTO_SLUGS = new Set([
+  "belize", "bimini", "castaway-cay", "celebration-key", "cococay",
+  "costa-maya", "cozumel", "grand-cayman", "great-stirrup-cay", "half-moon-cay",
+  "harvest-caye", "key-west", "montego-bay", "nassau", "ocean-cay",
+  "progreso", "puerto-rico", "roatan", "san-juan", "st-thomas",
+]);
+
+// Pick the first port in an itinerary that has a real photo, so every sailing
+// card shows an image (not a plain gradient). Falls back to a Cozumel beach.
+export function destinationWithPhoto(itinerary: string): Destination {
+  const ports = portsFromItinerary(itinerary);
+  for (const p of ports) {
+    const d = destinationFor(p);
+    if (PHOTO_SLUGS.has(d.slug)) return d;
+  }
+  const first = destinationFor(ports[0] ?? "Cozumel");
+  return PHOTO_SLUGS.has(first.slug) ? first : { ...first, slug: "cozumel" };
+}
+
 // Top destinations for marketing galleries (homepage, etc.).
 export const FEATURED_DESTINATIONS: Destination[] = [
   "cozumel",
