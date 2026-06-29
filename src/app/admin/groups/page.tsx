@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   type Group,
   type GroupMember,
@@ -11,6 +11,7 @@ import {
   saveGroup,
   deleteGroup,
   saveMember,
+  saveMemberNote,
   deleteMember,
   memberBalance,
   newGroupId,
@@ -63,6 +64,21 @@ export default function AdminGroupsPage() {
   const [r, setR] = useState<GroupRoom>(blankRoom(""));
   const [bookBusy, setBookBusy] = useState("");
   const [bookMsg, setBookMsg] = useState("");
+  const [noteOpen, setNoteOpen] = useState("");
+  const [noteText, setNoteText] = useState("");
+  const [noteBusy, setNoteBusy] = useState(false);
+
+  function openNote(mm: GroupMember) {
+    setNoteOpen(noteOpen === mm.id ? "" : mm.id);
+    setNoteText(mm.adminNotes || "");
+  }
+  async function saveNote(groupId: string) {
+    setNoteBusy(true);
+    await saveMemberNote(noteOpen, noteText);
+    setMembers(await getMembers(groupId));
+    setNoteBusy(false);
+    setNoteOpen("");
+  }
 
   // Upload a cruise-line reservation/confirmation PDF → AI reads it → creates the
   // cabin (member + room). Cost/payments/promos are saved on the room (admin-only).
@@ -285,8 +301,12 @@ export default function AdminGroupsPage() {
                           </tr></thead>
                           <tbody>
                             {members.map((mm) => (
-                              <tr key={mm.id} className="border-t border-white/10">
-                                <td className="py-2 font-semibold">{mm.name}</td>
+                              <Fragment key={mm.id}>
+                              <tr className="border-t border-white/10">
+                                <td className="py-2 font-semibold">
+                                  {mm.name}
+                                  {mm.adminNotes ? <span className="ml-1" title="Has notes">📝</span> : null}
+                                </td>
                                 <td>
                                   {mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}
                                   {(() => { const rm = rooms.find((x) => x.bookedBy === mm.name && x.notes); return rm ? <div className="text-white/40 text-[10px] mt-0.5 max-w-[260px]">💲 {rm.notes}</div> : null; })()}
@@ -309,10 +329,28 @@ export default function AdminGroupsPage() {
                                   <button onClick={() => applyDeposit(mm, grp.id)} className="text-green-300 font-bold text-xs hover:text-green-200 mr-2">Apply deposit</button>
                                   <Link href={`/group-invoice/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">📄 Invoice</Link>
                                   <Link href={`/group-receipt/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">🧾 Receipt</Link>
+                                  <button onClick={() => openNote(mm)} className="text-amber-300 font-bold text-xs hover:text-amber-200 mr-2">📝 Notes</button>
                                   <button onClick={() => { setM(mm); }} className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">Edit</button>
                                   <button onClick={() => removeM(mm.id, grp.id)} className="text-red-300 font-bold text-xs hover:text-red-200">×</button>
                                 </td>
                               </tr>
+                              {noteOpen === mm.id && (
+                                <tr>
+                                  <td colSpan={7} className="pb-3">
+                                    <div className="bg-[#0b1020] border border-amber-400/25 rounded-xl p-3">
+                                      <div className="text-[10px] uppercase tracking-wider text-amber-300/80 font-bold mb-1.5">📝 Reservation notes / communication thread — {mm.name} (admin-only)</div>
+                                      <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={4}
+                                        placeholder="Log calls, requests, special arrangements… e.g. 'Booked 2 rooms for 4 guests; Knox in single room with Phong to save cost.'"
+                                        className="w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-amber-400/50" />
+                                      <div className="flex gap-2 mt-2">
+                                        <button onClick={() => saveNote(grp.id)} disabled={noteBusy} className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-[11px] px-4 py-2 rounded-full">{noteBusy ? "Saving…" : "Save note"}</button>
+                                        <button onClick={() => setNoteOpen("")} className="text-white/50 hover:text-white text-[11px] font-bold uppercase tracking-wider px-3 py-2">Close</button>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                              </Fragment>
                             ))}
                           </tbody>
                         </table>

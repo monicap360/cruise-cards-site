@@ -15,6 +15,7 @@ export type GroupMember = {
   confirmationNumber: string;
   notes: string;
   freeCruise?: boolean; // free cruise (tour-conductor credit) — pays taxes/fees only
+  adminNotes?: string; // private communication thread per reservation (admin-only)
 };
 
 export type Group = {
@@ -153,7 +154,15 @@ function toMember(r: Record<string, unknown>): GroupMember {
     confirmationNumber: (r.confirmation_number as string) ?? "",
     notes: (r.notes as string) ?? "",
     freeCruise: Boolean(r.free_cruise),
+    adminNotes: (r.admin_notes as string) ?? "",
   };
+}
+
+// Save just the per-reservation communication thread (separate from saveMember so
+// it never sends columns the table may not have).
+export async function saveMemberNote(id: string, adminNotes: string): Promise<boolean> {
+  const { error } = await supabase.from("group_members").update({ admin_notes: adminNotes || null }).eq("id", id);
+  return !error;
 }
 function memberRow(m: GroupMember): Record<string, unknown> {
   return {
