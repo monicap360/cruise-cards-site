@@ -439,6 +439,9 @@ export default async function GroupPortalPage({
                           <span className="text-white/50 font-semibold text-sm">
                             {isGty ? "Guarantee — cabin # assigned later" : `Cabin ${rm.label}`}
                           </span>
+                          {occ?.confirmationNumber && (
+                            <span className="text-sky-300/80 font-mono text-xs bg-sky-500/10 border border-sky-400/20 rounded-md px-2 py-0.5">Res #{occ.confirmationNumber}</span>
+                          )}
                         </div>
                         <div className="text-white/55 text-sm mt-0.5">
                           {rm.cabinType}
