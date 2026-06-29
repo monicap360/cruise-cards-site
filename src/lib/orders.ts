@@ -26,6 +26,8 @@ export type OrderItem = {
   desc: string;
   priceNote: string;
   qty?: boolean; // show a quantity field
+  ack?: string; // if set, a required acknowledgment the guest must accept
+  notePrompt?: string; // placeholder for the notes field
 };
 
 export const ORDER_ITEMS: Record<string, OrderItem> = {
@@ -65,6 +67,37 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     emoji: "🧭",
     desc: "Let us know if you're flying or driving in (and your vehicle) so we can plan parking and transfers.",
     priceNote: "Helps us plan Park & Ride",
+  },
+  move: {
+    label: "Move / upgrade room",
+    emoji: "🔀",
+    desc: "Request to move or upgrade your stateroom, subject to availability.",
+    priceNote: "Upgrade fee / rate difference may apply",
+    notePrompt: "What you'd like (e.g. upgrade to balcony, move near another cabin)…",
+    ack: "I understand any room move or upgrade is subject to availability and I'll pay the quoted rate difference or upgrade fee.",
+  },
+  namechange: {
+    label: "Name change",
+    emoji: "✏️",
+    desc: "Request a guest name change on this reservation.",
+    priceNote: "$150 name-change fee",
+    notePrompt: "Name to remove → new name (exactly as on ID) and DOB…",
+    ack: "I understand a $150 name-change fee applies (plus any airline fees for air bookings), and that name changes may affect fares or seat assignments.",
+  },
+  cancel: {
+    label: "Cancel a passenger",
+    emoji: "⚠️",
+    desc: "Request to cancel a passenger on this reservation.",
+    priceNote: "Cancellation penalties apply",
+    notePrompt: "Which passenger to cancel, and the reason…",
+    ack: "I understand cancellation penalties apply per the cruise line schedule — 25% (89–75 days before sailing), 50% (74–61), 75% (60–31), and 100% (30–0 days) — and I authorize this cancellation request.",
+  },
+  decline: {
+    label: "Decline vacation protection",
+    emoji: "🛡️",
+    desc: "Decline travel protection for this cabin.",
+    priceNote: "No coverage",
+    ack: "I decline vacation protection and understand cancellation penalties will apply with no insurance reimbursement.",
   },
 };
 

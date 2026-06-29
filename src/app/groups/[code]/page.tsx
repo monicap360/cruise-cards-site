@@ -424,11 +424,6 @@ export default async function GroupPortalPage({
                   const names = occ?.notes && !/^deposit/i.test(occ.notes) ? occ.notes : "";
                   const open = rm.status === "available" && !rm.bookedBy;
                   const cabinLabel = isGty ? "Guarantee cabin" : `Cabin ${rm.label}`;
-                  const gratPerGuest = 18 * (group.nights || 5); // $18 pp/day
-                  const gratTotal = gratPerGuest * (occ?.guests || 2);
-                  const order = (subject: string, lines: string) =>
-                    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines)}`;
-                  const who = `${cabinLabel}${rm.bookedBy ? `, ${rm.bookedBy}` : ""} — ${group.name}`;
                   const orderHref = (item: string) =>
                     `/groups/${group.code}/order?item=${item}&room=${i + 1}&cabin=${encodeURIComponent(cabinLabel)}&guests=${occ?.guests || 2}`;
                   return (
@@ -500,10 +495,10 @@ export default async function GroupPortalPage({
                             </div>
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2.5 text-[11px] font-semibold">
                               <span className="uppercase tracking-wider text-[10px] text-white/35">Need a change?</span>
-                              <a href={order(`Move / upgrade room — ${who}`, `We'd like to move or upgrade our room for ${who}. Please send availability and any upgrade fee.`)} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</a>
-                              <a href={order(`Name change ($150) — ${who}`, `We need to change a guest name for ${who}. We understand a $150 name-change fee applies.\n\nName to remove: __________\nNew name (as on ID): __________\nDOB: __________`)} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</a>
-                              <a href={order(`Cancel a passenger — ${who}`, `We need to cancel a passenger for ${who}.\n\nPassenger name: __________\n\nPlease advise any cancellation penalty per the schedule (25% 89–75d / 50% 74–61d / 75% 60–31d / 100% 30–0d).`)} className="text-red-300/90 hover:text-red-200">➖ Cancel passenger</a>
-                              <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/45 hover:text-white/80">Decline protection</a>
+                              <Link href={orderHref("move")} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</Link>
+                              <Link href={orderHref("namechange")} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</Link>
+                              <Link href={orderHref("cancel")} className="text-red-300/90 hover:text-red-200">⚠️ Cancel passenger</Link>
+                              <Link href={orderHref("decline")} className="text-white/45 hover:text-white/80">Decline protection</Link>
                             </div>
                           </div>
                         )}
