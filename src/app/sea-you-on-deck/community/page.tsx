@@ -8,6 +8,7 @@ import {
   groupMembersByCrews,
   type CommunityMember,
 } from "@/lib/sea-you-on-deck";
+import { FB_GROUP_URL } from "@/lib/social";
 
 function fmtDate(dateStr: string) {
   if (!dateStr) return "";
@@ -87,6 +88,14 @@ function CommunityPageContent() {
           <p className="text-white/55 max-w-xl">
             Already booked? Find cruisers on the same ship and sail date who have opted in to the community. Say hi, see who&apos;s on deck, and connect before you board.
           </p>
+          <a
+            href={FB_GROUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 bg-[#1877F2] hover:bg-[#1466d6] text-white font-semibold uppercase tracking-wider text-sm px-6 py-3 rounded-full"
+          >
+            Join our Facebook Group →
+          </a>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FB_GROUP_URL } from "@/lib/social";
 
 const crewGroups = [
   {
@@ -100,6 +101,28 @@ export default function SeaYouOnDeckPage() {
               Who&apos;s on My Sailing?
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Facebook Group connection */}
+      <section className="bg-[#0b1020] border-y border-white/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Our Facebook Community"}</div>
+            <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">Join our Facebook Group</h2>
+            <p className="text-white/55 mt-1 max-w-xl">
+              Roll calls, tips, deals, and fellow Galveston cruisers — connect with your sailing before you
+              board and keep the conversation going after. Sea You on Deck crews + our Facebook Group, together.
+            </p>
+          </div>
+          <a
+            href={FB_GROUP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#1877F2] hover:bg-[#1466d6] text-white font-semibold uppercase tracking-wider text-sm px-7 py-4 rounded-full whitespace-nowrap"
+          >
+            Join the Facebook Group →
+          </a>
         </div>
       </section>
 
