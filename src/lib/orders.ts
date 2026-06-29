@@ -28,6 +28,17 @@ export function parkingPrice(nights: number): number {
   return table[nights] ?? 0;
 }
 
+// Onboard gratuities per guest, per day (RCCL standard non-suite).
+export const GRATUITY_PER_DAY = 18.5;
+
+// Per-group add-on price overrides (by group code) for negotiated rates.
+export const PARK_OVERRIDE: Record<string, number> = {
+  "mistry-family-2026": 125,
+};
+export const PROTECTION_OVERRIDE: Record<string, number> = {
+  "mistry-family-2026": 308,
+};
+
 export type OrderItem = {
   label: string;
   emoji: string;
