@@ -186,7 +186,7 @@ export default function ChatWidget({
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="fixed bottom-6 right-6 z-50 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-full shadow-2xl h-14 w-14 flex items-center justify-center text-2xl transition-all border border-white/10"
+        className="fixed bottom-6 right-6 z-50 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-full shadow-2xl h-14 w-14 flex items-center justify-center text-2xl transition-all border border-white/10 print:hidden"
       >
         {open ? "✕" : "💬"}
       </button>

@@ -27,6 +27,10 @@ const MODE_META: Record<string, { label: string; icon: string }> = {
   rfp: { label: "Agent group RFP", icon: "📩" },
   "rooming-list": { label: "Rooming list", icon: "🧾" },
   waitlist: { label: "Waitlist request", icon: "📋" },
+  "room-move": { label: "Room move request", icon: "🛏️" },
+  "guest-change": { label: "Guest change request", icon: "👤" },
+  "name-correction": { label: "Name correction", icon: "✏️" },
+  "booking-change": { label: "Booking change", icon: "🔧" },
 };
 
 export default function AdminActivityPage() {

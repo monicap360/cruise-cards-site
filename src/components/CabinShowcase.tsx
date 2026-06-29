@@ -25,6 +25,7 @@ export default function CabinShowcase({
   reserveHref,
   holdHref,
   seaPayHref,
+  printHref,
   maxGuests,
   sqftRange,
   desc,
@@ -39,6 +40,7 @@ export default function CabinShowcase({
   reserveHref: string;
   holdHref: string;
   seaPayHref: string;
+  printHref?: string;
   maxGuests?: number;
   sqftRange?: string;
   desc?: string;
@@ -120,6 +122,14 @@ export default function CabinShowcase({
             >
               Sea Pay™
             </Link>
+            {printHref && (
+              <Link
+                href={printHref}
+                className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full transition-all"
+              >
+                🖨 Print this offer
+              </Link>
+            )}
           </div>
         </div>
 

@@ -141,6 +141,18 @@ export default async function SailingOptionsPage({
             >
               📋 Join waitlist
             </Link>
+            <Link
+              href={`/sailings/${id}/sheet`}
+              className="inline-block border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+            >
+              🖨 Print / Save PDF
+            </Link>
+            <Link
+              href={`/reserve?ship=${shipParam}&date=${block.sailingDate}`}
+              className="inline-block border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all"
+            >
+              📅 Book appointment
+            </Link>
           </div>
         </div>
       </section>
@@ -246,6 +258,7 @@ export default async function SailingOptionsPage({
                 type
               )}`}
               seaPayHref={`/sea-pay/plan?ship=${shipParam}`}
+              printHref={`/sailings/${id}/sheet?cabin=${encodeURIComponent(type)}`}
               maxGuests={maxGuests}
             />
           );

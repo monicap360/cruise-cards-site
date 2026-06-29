@@ -7,6 +7,7 @@ import { fmt$, fmtDateDow } from "@/lib/sea-pay";
 import { STATUS_STAGES, type CustomerStatus } from "@/lib/account";
 import type { CustomerCredit } from "@/lib/credits";
 import ChatWidget from "@/components/ChatWidget";
+import BookingRequestForm from "@/components/BookingRequestForm";
 
 export default function AccountPage() {
   const [email, setEmail] = useState("");
@@ -241,6 +242,19 @@ export default function AccountPage() {
             </div>
           </div>
         )}
+
+        {/* Manage your booking — room moves & guest changes */}
+        <div className="bg-[#0b1020] border border-sky-400/25 rounded-2xl p-6">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+            {"// Manage Your Booking"}
+          </div>
+          <p className="text-white/55 text-sm mb-4">
+            For your protection, <strong className="text-white/80">all room moves and guest
+            changes must be submitted here in your portal</strong> so we have your request in
+            writing and can track it. We&rsquo;ll confirm by email.
+          </p>
+          <BookingRequestForm email={email} name={name} />
+        </div>
 
         {/* Ask a question */}
         <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
