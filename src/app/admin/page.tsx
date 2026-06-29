@@ -41,6 +41,7 @@ const TOOLS = [
   { href: "/admin/social", label: "📣 Social" },
   { href: "/admin/outreach", label: "🤝 Outreach" },
   { href: "/admin/deep-dive", label: "📰 Deep-Dive" },
+  { href: "/admin/social-playbook", label: "📈 Growth Playbook" },
   { href: "/admin/activity", label: "📡 Activity" },
   { href: "/admin/tasks", label: "✅ Tasks" },
 ];
