@@ -505,7 +505,7 @@ export default async function GroupPortalPage({
                 ) : (
                   members.map((m) => {
                     const bal = memberBalance(m);
-                    const depo = m.paidInFull || m.depositPaid > 0;
+                    const reqDeposit = 100 * (m.guests || 2); // $100 per guest
                     return (
                       <tr key={m.id} className="border-t border-white/10">
                         <td className="px-4 py-3">
@@ -527,10 +527,12 @@ export default async function GroupPortalPage({
                           {m.confirmationNumber || "—"}
                         </td>
                         <td className="px-3 py-3 text-center">
-                          {depo ? (
-                            <span className="text-sky-300">✓</span>
+                          {m.paidInFull || m.depositPaid > 0 ? (
+                            <span className="text-green-300 font-semibold">{fmt$(m.depositPaid)}</span>
                           ) : (
-                            <span className="text-white/25">—</span>
+                            <span className="text-white/55">
+                              {fmt$(reqDeposit)} <span className="text-white/35 text-[10px] uppercase">due</span>
+                            </span>
                           )}
                         </td>
                         <td className="px-3 py-3 text-center">
