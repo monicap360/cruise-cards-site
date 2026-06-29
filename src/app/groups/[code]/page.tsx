@@ -461,6 +461,19 @@ export default async function GroupPortalPage({
                             })}
                           </div>
                         )}
+                        {!open && occ && (
+                          <div className="flex flex-wrap items-center gap-2 mt-2.5 text-xs">
+                            {occ.confirmationNumber && <span className="text-white/45">Conf #{occ.confirmationNumber}</span>}
+                            <span className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                              occ.paidInFull ? "bg-green-500/15 text-green-300 border-green-400/25"
+                              : occ.depositPaid > 0 ? "bg-sky-500/15 text-sky-300 border-sky-400/25"
+                              : "bg-amber-500/15 text-amber-300 border-amber-400/25"}`}>
+                              {occ.paidInFull ? "Paid in full" : occ.depositPaid > 0 ? "Deposit received" : "Invoice sent"}
+                            </span>
+                            <Link href={`/group-invoice/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">📄 Invoice</Link>
+                            {occ.depositPaid > 0 && <Link href={`/group-receipt/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">🧾 Receipt</Link>}
+                          </div>
+                        )}
                         {!open && (
                           <div className="mt-3 space-y-1.5 text-xs font-semibold">
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">

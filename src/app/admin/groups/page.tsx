@@ -247,6 +247,7 @@ export default function AdminGroupsPage() {
                                 <td className="text-right font-bold">{fmt$(memberBalance(mm))}</td>
                                 <td className="text-right whitespace-nowrap">
                                   <button onClick={() => applyDeposit(mm, grp.id)} className="text-green-300 font-bold text-xs hover:text-green-200 mr-2">Apply deposit</button>
+                                  <Link href={`/group-invoice/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">📄 Invoice</Link>
                                   <Link href={`/group-receipt/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">🧾 Receipt</Link>
                                   <button onClick={() => { setM(mm); }} className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">Edit</button>
                                   <button onClick={() => removeM(mm.id, grp.id)} className="text-red-300 font-bold text-xs hover:text-red-200">×</button>
