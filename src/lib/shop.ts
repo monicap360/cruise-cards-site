@@ -20,7 +20,7 @@ export const BOOKING_CALENDAR_URL =
 // Jotform Credit Card Authorization form — card data goes directly to Jotform
 // (PCI-handled there), never to our server/database. Swap the URL to your own form.
 export const CC_AUTH_FORM_URL =
-  process.env.NEXT_PUBLIC_CC_AUTH_FORM_URL || "https://form.jotform.com/261796516689073";
+  process.env.NEXT_PUBLIC_CC_AUTH_FORM_URL || "https://www.jotform.com/sign/252315376969065";
 
 export type ShopItem = { title: string; desc: string; emoji: string; href: string; tag?: string };
 

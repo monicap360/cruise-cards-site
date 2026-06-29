@@ -26,6 +26,18 @@ export default function CreditCardAuthPage() {
           <span className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">No card charged online</span>
         </div>
 
+        <div className="text-center mb-6">
+          <a
+            href={CC_AUTH_FORM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-xl transition-all"
+          >
+            🔒 Start secure authorization →
+          </a>
+          <p className="text-white/40 text-xs mt-2">Opens our secure Jotform document to sign &amp; submit.</p>
+        </div>
+
         <div className="rounded-2xl overflow-hidden border border-white/10 bg-white">
           <iframe
             src={CC_AUTH_FORM_URL}
