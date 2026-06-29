@@ -164,7 +164,7 @@ export default function GroupSignupPage() {
           {step === 1 && (
             <div className="space-y-4">
               <h2 className="text-xl font-extrabold mb-1">Who should we contact?</h2>
-              <div><label className={lbl}>Family / lead contact name *</label><input className={input} value={f.leadName} onChange={(e) => set({ leadName: e.target.value })} placeholder="Yen Alston" /></div>
+              <div><label className={lbl}>Family / lead contact name *</label><input className={input} value={f.leadName} onChange={(e) => set({ leadName: e.target.value })} placeholder="Your full name" /></div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div><label className={lbl}>Email</label><input className={input} type="email" value={f.email} onChange={(e) => set({ email: e.target.value })} placeholder="you@example.com" /></div>
                 <div><label className={lbl}>Phone</label><input className={input} value={f.phone} onChange={(e) => set({ phone: e.target.value })} placeholder="(409) 555-0100" /></div>
@@ -208,7 +208,7 @@ export default function GroupSignupPage() {
               <h2 className="text-xl font-extrabold mb-1">Guests & anything else</h2>
               <div>
                 <label className={lbl}>Guest full names (as on ID, if known)</label>
-                <textarea className={input} rows={5} value={f.guestNames} onChange={(e) => set({ guestNames: e.target.value })} placeholder={"Yen Alston\nSean Alston\nRex Alston"} />
+                <textarea className={input} rows={5} value={f.guestNames} onChange={(e) => set({ guestNames: e.target.value })} placeholder={"One guest per line\nFirst Last\nFirst Last"} />
               </div>
               <div><label className={lbl}>Notes / requests</label><textarea className={input} rows={3} value={f.notes} onChange={(e) => set({ notes: e.target.value })} placeholder="Drink packages, who rooms with whom, accessibility needs…" /></div>
               {error && <p className="text-red-300 text-sm">{error}</p>}
