@@ -38,6 +38,8 @@ export type SailingBlock = {
   itinerary: string;
   cabins: Cabin[];
   notes?: string;
+  contractUrl?: string; // link to the uploaded group contract (PDF)
+  contractName?: string; // original file name, for display
 };
 
 export const CABIN_CATEGORIES: CabinCategory[] = [
@@ -181,6 +183,8 @@ function toBlock(row: Record<string, unknown>, cabins: Cabin[] = []): SailingBlo
     itinerary: (row.itinerary as string) ?? "",
     cabins,
     notes: row.notes as string | undefined,
+    contractUrl: row.contract_url as string | undefined,
+    contractName: row.contract_name as string | undefined,
   };
 }
 
@@ -204,7 +208,7 @@ export async function getSailingBlock(id: string): Promise<SailingBlock | null> 
 }
 
 export async function saveSailingBlock(block: SailingBlock): Promise<void> {
-  await supabase.from("sailing_blocks").upsert({
+  const blockRow: Record<string, unknown> = {
     id: block.id,
     ship: block.ship,
     cruise_line: block.cruiseLine,
@@ -213,7 +217,12 @@ export async function saveSailingBlock(block: SailingBlock): Promise<void> {
     nights: block.nights,
     itinerary: block.itinerary,
     notes: block.notes,
-  });
+  };
+  // Only send contract fields once a contract is attached — avoids errors on
+  // databases that don't have the contract_url/contract_name columns yet.
+  if (block.contractUrl) blockRow.contract_url = block.contractUrl;
+  if (block.contractName) blockRow.contract_name = block.contractName;
+  await supabase.from("sailing_blocks").upsert(blockRow);
   // Upsert all cabins
   if (block.cabins.length > 0) {
     await supabase.from("cabins").upsert(

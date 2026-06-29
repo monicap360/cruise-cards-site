@@ -81,6 +81,60 @@ export default function TravelInsurancePage() {
           </p>
         </section>
 
+        {/* Cancel without protection */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">
+            What happens to your money if you cancel without protection
+          </h2>
+          <p className="text-white/70 text-lg leading-relaxed">
+            Cruise fares are largely prepaid and become non-refundable as you get closer to
+            sailing. If you cancel{" "}
+            <strong className="text-white">without travel protection</strong>, the cruise line
+            keeps a cancellation penalty — and the later you cancel, the more you lose. A{" "}
+            <strong className="text-white">typical</strong> penalty schedule looks like this
+            (your cruise line&rsquo;s exact schedule is on your booking and varies by line and
+            fare type):
+          </p>
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl overflow-hidden">
+            <div className="divide-y divide-white/10">
+              {[
+                {
+                  when: "Before final payment (~90+ days out)",
+                  loss:
+                    "Usually only your deposit is at risk — a non-refundable-deposit fare loses the deposit; a refundable-deposit fare may be refunded.",
+                },
+                { when: "89–57 days before sailing", loss: "Typically lose your full deposit." },
+                { when: "56–43 days before", loss: "About 50% of the total cruise fare." },
+                { when: "42–22 days before", loss: "About 75% of the total cruise fare." },
+                { when: "21 days or fewer", loss: "100% — no refund of the cruise fare." },
+              ].map((row) => (
+                <div key={row.when} className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-1 sm:gap-4 p-4">
+                  <div className="font-bold text-white text-sm">{row.when}</div>
+                  <div className="text-white/60 text-sm">{row.loss}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-white/70 text-lg leading-relaxed">
+            Government taxes, fees, and unused prepaid port charges are generally refunded even
+            on a penalty cancellation — it&rsquo;s the <strong className="text-white">cruise
+            fare</strong> that&rsquo;s lost. <strong className="text-white">Without protection,
+            that money comes straight out of your pocket.</strong>
+          </p>
+          <div className="bg-[#0b1020] border border-sky-400/25 rounded-2xl p-5">
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">
+              With protection
+            </div>
+            <p className="text-white/70 leading-relaxed">
+              A covered cancellation can reimburse those non-refundable amounts, and some plans
+              add a &ldquo;cancel for any reason&rdquo; option that returns a portion of your
+              money even for reasons a standard plan won&rsquo;t cover. That&rsquo;s the whole
+              point of protecting the trip — turning a total loss into a refund or a future
+              cruise credit.
+            </p>
+          </div>
+        </section>
+
         {/* Benefits grid */}
         <section className="space-y-5">
           <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em]">

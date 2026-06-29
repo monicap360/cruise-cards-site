@@ -193,6 +193,30 @@ const TABLE: { match: RegExp; d: Destination }[] = [
       highlights: ["Beach club day", "Crystal shallows", "Island hopping"],
     },
   },
+  {
+    match: /harvest\s*caye/i,
+    d: {
+      slug: "harvest-caye",
+      name: "Harvest Caye",
+      country: "Belize · Norwegian Private Island",
+      blurb:
+        "Norwegian's 75-acre island resort off southern Belize — a huge lagoon pool, a long sandy beach, and real adventure.",
+      gradient: "from-emerald-400 to-teal-700",
+      highlights: ["Lagoon pool & beach", "Zip line & ropes course", "Barrier-reef snorkeling"],
+    },
+  },
+  {
+    match: /great\s*stirrup/i,
+    d: {
+      slug: "great-stirrup-cay",
+      name: "Great Stirrup Cay",
+      country: "Bahamas · Norwegian Private Island",
+      blurb:
+        "Norwegian's private Bahamian island — powdery beaches, cabanas, snorkeling, and a new water park.",
+      gradient: "from-cyan-400 to-blue-700",
+      highlights: ["Private beaches & cabanas", "Vibe Beach Club", "Snorkeling & water park"],
+    },
+  },
 ];
 
 export function destinationFor(port: string): Destination {

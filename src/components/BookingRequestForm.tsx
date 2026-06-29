@@ -9,6 +9,7 @@ const TYPES: { key: string; label: string }[] = [
   { key: "room-move", label: "Room move / cabin change" },
   { key: "guest-change", label: "Add, remove, or update a guest" },
   { key: "name-correction", label: "Name correction" },
+  { key: "cancellation", label: "Cancel my booking" },
   { key: "booking-change", label: "Other booking change" },
 ];
 
@@ -94,6 +95,19 @@ export default function BookingRequestForm({
           placeholder="e.g. Move us from an interior to a balcony on deck 8 · Add a 3rd guest, Jane Doe, DOB 04/12/1990 · Correct spelling of last name to Smith"
         />
       </div>
+      {type === "cancellation" && (
+        <div className="bg-amber-400/10 border border-amber-400/30 rounded-xl p-3 text-amber-100/90 text-sm">
+          <strong>Before you cancel:</strong> cruise-line cancellation penalties may apply
+          depending on how close to sailing you are — after the final-payment date you can lose
+          your deposit or more. If you have vacation protection, a covered cancellation may be
+          reimbursed. We&rsquo;ll confirm your exact penalty with you before anything is
+          cancelled.{" "}
+          <a href="/guides/travel-insurance" className="underline hover:text-white">
+            See cancellation &amp; protection details
+          </a>
+          .
+        </div>
+      )}
       <button
         onClick={submit}
         disabled={busy}

@@ -30,6 +30,7 @@ const MODE_META: Record<string, { label: string; icon: string }> = {
   "room-move": { label: "Room move request", icon: "🛏️" },
   "guest-change": { label: "Guest change request", icon: "👤" },
   "name-correction": { label: "Name correction", icon: "✏️" },
+  cancellation: { label: "Cancellation request", icon: "🚫" },
   "booking-change": { label: "Booking change", icon: "🔧" },
 };
 

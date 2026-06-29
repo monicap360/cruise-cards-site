@@ -26,6 +26,8 @@ const DESTINATION_SLUGS = [
   "ocean-cay",
   "castaway-cay",
   "princess-cays",
+  "harvest-caye",
+  "great-stirrup-cay",
 ];
 
 const ROUTES = [
