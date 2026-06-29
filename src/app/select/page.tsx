@@ -5,7 +5,7 @@ import { GALVESTON_FLEET, type FleetShip } from "@/lib/seed-inventory";
 export const metadata = {
   title: "Select Your Cruise — Lines & Ships from Galveston",
   description:
-    "Pick your cruise line and ship sailing from Galveston — Carnival, Royal Caribbean, MSC, Norwegian, Disney & Regent. Choose a ship to start booking.",
+    "Pick your cruise line and ship sailing from Galveston — Carnival, Royal Caribbean, MSC, Norwegian & Disney. Choose a ship to start booking.",
 };
 
 function byLine(): [string, FleetShip[]][] {

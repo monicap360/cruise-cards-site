@@ -406,7 +406,6 @@ export const CRUISE_LINES = [
   "Carnival Cruise Line",
   "Royal Caribbean",
   "Norwegian Cruise Line",
-  "Princess Cruises",
   "MSC Cruises",
   "Disney Cruise Line",
 ];

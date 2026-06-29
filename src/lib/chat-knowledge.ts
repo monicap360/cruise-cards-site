@@ -57,7 +57,7 @@ SERVICES & ADD-ONS
 DESTINATIONS / PORTS (Western Caribbean & Bahamas from Galveston)
 - Common stops: Cozumel, Costa Maya, Progreso, Roatán, Grand Cayman, Belize,
   Bimini, Nassau, Perfect Day at CocoCay, and cruise-line private islands such
-  as Half Moon Cay, Castaway Cay, Ocean Cay, Celebration Key, and Princess Cays.
+  as Half Moon Cay, Castaway Cay, Ocean Cay, and Celebration Key.
 - The site has a port guide for each destination (where the ship docks, taxis,
   getting around, tips).
 

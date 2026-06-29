@@ -5,7 +5,7 @@ import CruiseLineLogo from "@/components/CruiseLineLogo";
 export const metadata: Metadata = {
   title: "Cruise Line Apps & Booking Portals | Cruises from Galveston",
   description:
-    "Step-by-step guide to downloading each cruise line's app (Carnival HUB, Royal Caribbean, NCL, MSC for Me, Disney Navigator, Princess MedallionClass) and adding your booking number to do online check-in.",
+    "Step-by-step guide to downloading each cruise line's app (Carnival HUB, Royal Caribbean, NCL, MSC for Me, Disney Navigator) and adding your booking number to do online check-in.",
 };
 
 type LineGuide = {
@@ -91,20 +91,6 @@ const GUIDES: LineGuide[] = [
       "Open My Reservations and link your cruise with your reservation number, name, and sail date.",
       "Complete Online Check-In (check your check-in window — it's based on Castaway Club status) and select your Port Arrival Time.",
       "Use the Navigator app onboard for the daily schedule and chat.",
-    ],
-  },
-  {
-    line: "Princess Cruises",
-    app: "Princess MedallionClass App",
-    appNote: "Order your Medallion and check in.",
-    portal: "Cruise Personalizer",
-    portalUrl: "https://www.princess.com",
-    steps: [
-      "Download the Princess MedallionClass app from the App Store or Google Play.",
-      "Sign in / create an account and add your booking with your booking number, name, and birthdate.",
-      "Complete the Green Lane check-in steps (photo, payment, documents, arrival group).",
-      "Order your Ocean Medallion to ship to your home before you sail.",
-      "Use Cruise Personalizer on princess.com to book dining, shore excursions, and extras.",
     ],
   },
 ];

@@ -15,7 +15,6 @@ Images sourced from Wikimedia Commons.
 - **castaway-cay.jpg** — Castaway Cay beach · CC BY 2.0 · Wikimedia Commons
 - **ocean-cay.jpg** — Lighthouse Bay, Ocean Cay MSC Marine Reserve · CC BY 2.0 · Wikimedia Commons
 - **celebration-key.jpg** — Port Lucaya / Grand Bahama beach (proxy) · CC BY 3.0 · Wikimedia Commons
-- **princess-cays.jpg** — Harbour Island, Eleuthera (proxy) · CC BY 3.0 · Wikimedia Commons
 - **galveston-port.jpg** — MSC Seascape · CC BY 2.0 · Wikimedia Commons
 - **harvest-caye.jpg** — Harvest Caye, Belize (aerial) · CC BY-SA 4.0 · Lucas EDVK · Wikimedia Commons
 - **great-stirrup-cay.jpg** — Great Stirrup Cay lighthouse · Public domain · Wikimedia Commons

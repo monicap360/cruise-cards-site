@@ -18,7 +18,6 @@ const lineColors: Record<string, string> = {
   Carnival: "bg-white/10 text-white border border-white/15",
   "Royal Caribbean": "bg-white/10 text-white border border-white/15",
   Norwegian: "bg-white/10 text-white border border-white/15",
-  Princess: "bg-white/10 text-white border border-white/15",
   MSC: "bg-white/10 text-white border border-white/15",
   Disney: "bg-white/10 text-white border border-white/15",
 };

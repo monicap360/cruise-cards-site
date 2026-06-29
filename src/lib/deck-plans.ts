@@ -39,10 +39,6 @@ export const OFFICIAL_DECK_PLANS: Record<string, string> = {
 
   // Disney Cruise Line
   "Disney Magic": "https://disneycruise.disney.go.com/ships/magic/",
-
-  // Regent Seven Seas
-  "Seven Seas Splendor":
-    "https://www.rssc.com/ships/seven_seas_splendor/deckplans",
 };
 
 export function officialDeckPlanUrl(ship: string): string | undefined {

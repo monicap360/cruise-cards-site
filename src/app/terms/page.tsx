@@ -22,11 +22,6 @@ const CRUISE_LINE_CONTRACTS = [
     url: "https://www.ncl.com/about/terms-and-conditions",
   },
   {
-    line: "Princess Cruises",
-    label: "Passage Contract",
-    url: "https://www.princess.com/en-us/legal/passage-contract",
-  },
-  {
     line: "MSC Cruises",
     label: "Cruise Ticket Contract",
     url: "https://www.msccruisesusa.com/manage-booking/before-you-go/cruise-ticket-contract",

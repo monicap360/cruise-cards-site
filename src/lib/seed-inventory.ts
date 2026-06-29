@@ -168,19 +168,6 @@ export const GALVESTON_FLEET: FleetShip[] = [
     end: "2027-04-30",
     seasonalNote: "Returns Nov 2026 (winter season)",
   },
-  // ── Regent Seven Seas ──
-  {
-    cruiseLine: "Regent Seven Seas",
-    ship: "Seven Seas Splendor",
-    nights: 14,
-    durationLabel: "11, 14, 15 & 17-night",
-    departureDay: 1, // Monday (estimate)
-    itinerary: "Cozumel · Belize · Roatán · Caribbean",
-    start: "2026-11-01",
-    end: "2026-12-31",
-    cadenceDays: 14,
-    seasonalNote: "Nov & Dec 2026",
-  },
 ];
 
 // A real, specifically-published sailing worth showing exactly as advertised.

@@ -25,7 +25,6 @@ const DESTINATION_SLUGS = [
   "half-moon-cay",
   "ocean-cay",
   "castaway-cay",
-  "princess-cays",
   "harvest-caye",
   "great-stirrup-cay",
 ];

@@ -141,31 +141,6 @@ const cruiseLines = [
     ],
   },
   {
-    name: "Princess Cruises",
-    color: "from-purple-600 to-purple-900",
-    emoji: "👸",
-    description:
-      "Princess Cruises brings a touch of elegance and sophistication to the Port of Galveston. Famous for their MedallionClass technology, exceptional dining, and scenic itineraries, Princess is the perfect choice for travelers who want a more refined cruise experience.",
-    ships: [
-      {
-        ship: "Caribbean Princess",
-        badge: "",
-        destinations: "7-Night Western Caribbean — Cozumel, Roatán & Grand Cayman",
-        desc:
-          "Caribbean Princess is a Grand-class ship purpose-built for exactly these Caribbean waters. With nearly 3,100 guests, she offers an intimate feel without sacrificing amenities. Highlights include the Movies Under the Stars poolside screen — a Princess signature — the Sanctuary adults-only retreat, a full spa, and an expansive casino. Multiple specialty dining rooms including Sabatini's Italian Trattoria make every evening feel special.",
-        seaPay: true,
-      },
-      {
-        ship: "Ruby Princess",
-        badge: "",
-        destinations: "Western Caribbean & Gulf of Mexico",
-        desc:
-          "Ruby Princess brings Princess Cruises' MedallionClass experience to Galveston — wearable technology that lets you unlock your stateroom, order food anywhere on the ship, and locate fellow travelers with ease. The ship features the beloved Movies Under the Stars deck, Crown Grill steakhouse, multiple pools, and the serene Sanctuary adults-only retreat. A great choice for couples and experienced cruisers looking for a step up in service.",
-        seaPay: true,
-      },
-    ],
-  },
-  {
     name: "MSC Cruises",
     color: "from-slate-600 to-slate-900",
     emoji: "⚓",
@@ -486,7 +461,6 @@ export default function ShipsFromGalvestonPage() {
                 <th className="px-5 py-4 text-center font-bold">Carnival</th>
                 <th className="px-5 py-4 text-center font-bold">Royal Caribbean</th>
                 <th className="px-5 py-4 text-center font-bold">Norwegian</th>
-                <th className="px-5 py-4 text-center font-bold">Princess</th>
                 <th className="px-5 py-4 text-center font-bold">MSC</th>
                 <th className="px-5 py-4 text-center font-bold">Disney</th>
               </tr>
@@ -498,7 +472,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "✅",
                   royal: "✅",
                   ncl: "✅",
-                  princess: "✅",
                   msc: "✅",
                   disney: "✅ Best",
                 },
@@ -507,7 +480,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "✅ Very Lively",
                   royal: "✅",
                   ncl: "✅ Party",
-                  princess: "✅ Refined",
                   msc: "✅ European Vibe",
                   disney: "⚠️ Mild",
                 },
@@ -516,7 +488,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "Half Moon Cay",
                   royal: "CocoCay",
                   ncl: "Great Stirrup Cay",
-                  princess: "Princess Cays",
                   msc: "Ocean Cay",
                   disney: "Castaway Cay",
                 },
@@ -525,7 +496,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "✅ Yes",
                   royal: "✅ Yes",
                   ncl: "✅ Yes",
-                  princess: "✅ Yes",
                   msc: "✅ Yes",
                   disney: "Seasonal",
                 },
@@ -534,7 +504,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "✅ Best Value",
                   royal: "✅",
                   ncl: "✅",
-                  princess: "Mid-Range",
                   msc: "✅ Great Value",
                   disney: "⚠️ Premium",
                 },
@@ -543,7 +512,6 @@ export default function ShipsFromGalvestonPage() {
                   carnival: "Fun & Budget",
                   royal: "Thrill-Seekers",
                   ncl: "Freestyle Dining",
-                  princess: "Couples & Elegance",
                   msc: "European Style",
                   disney: "Young Families",
                 },
@@ -563,9 +531,6 @@ export default function ShipsFromGalvestonPage() {
                   </td>
                   <td className="px-5 py-4 text-center text-white/55 border-b border-white/10">
                     {row.ncl}
-                  </td>
-                  <td className="px-5 py-4 text-center text-white/55 border-b border-white/10">
-                    {row.princess}
                   </td>
                   <td className="px-5 py-4 text-center text-white/55 border-b border-white/10">
                     {row.msc}
