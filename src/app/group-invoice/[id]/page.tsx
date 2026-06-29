@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function GroupInvoicePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ copy?: string }>;
 }) {
   const { id } = await params;
+  const { copy } = await searchParams;
+  const isAgent = copy === "agent";
   const data = await getMemberById(id);
 
   if (!data) {
@@ -31,6 +35,10 @@ export default async function GroupInvoicePage({
   const COMM: Record<string, number> = { Balcony: 1139, "Ocean View": 716, Interior: 806 };
   const discount = member.freeCruise ? (COMM[member.cabinType] || 0) : 0;
   const grossFare = member.fare + discount;
+  // Agent-copy estimates (commission ~10% of commissionable cruise fare).
+  const nonComm = 272.28 * (member.guests || 2); // est. NCCF + taxes/fees per guest
+  const commissionable = Math.max(0, member.fare - nonComm);
+  const estCommission = Math.round(commissionable * 0.1 * 100) / 100;
   const invNo = "INV-" + id.slice(-6).toUpperCase();
   const status = member.paidInFull
     ? "Paid in full"
@@ -72,6 +80,11 @@ export default async function GroupInvoicePage({
       </div>
 
       <div className="bg-white text-gray-900 max-w-[8.5in] mx-auto border border-gray-300 print:border-0 p-8">
+        {isAgent && (
+          <div className="mb-5 rounded-lg bg-red-600 text-white px-4 py-2 text-center text-sm font-extrabold uppercase tracking-wider">
+            Agent Copy — internal records only · not for the guest
+          </div>
+        )}
         <div className="flex items-start justify-between border-b-2 border-gray-900 pb-4 mb-6">
           <div>
             <BrandLogo />
@@ -121,6 +134,22 @@ export default async function GroupInvoicePage({
           {member.paidInFull ? "✓ Paid in full — you're all set." : member.depositPaid > 0 ? "✓ Deposit received — balance due ~120 days before sailing." : "📄 Invoice sent — secure your cabin with your deposit."}
           {group.finalPaymentDate && !member.paidInFull && <span> Final payment due {fmtDate(group.finalPaymentDate)}.</span>}
         </div>
+
+        {isAgent && (
+          <div className="mb-6 rounded-xl border-2 border-red-300 bg-red-50 p-4 text-sm">
+            <div className="font-extrabold text-red-700 uppercase tracking-wider text-xs mb-2">Agent details (confidential)</div>
+            <table className="w-full text-sm">
+              <tbody>
+                {member.confirmationNumber && <tr className="border-b border-red-100"><td className="py-1 text-gray-500">Reservation #</td><td className="py-1 text-right font-semibold">{member.confirmationNumber}</td></tr>}
+                <tr className="border-b border-red-100"><td className="py-1 text-gray-500">Est. commissionable fare</td><td className="py-1 text-right font-semibold">{fmt$(commissionable)}</td></tr>
+                <tr className="border-b border-red-100"><td className="py-1 text-gray-500">Est. commission (10%)</td><td className="py-1 text-right font-extrabold text-green-700">{fmt$(estCommission)}</td></tr>
+                <tr><td className="py-1 text-gray-500">Guests</td><td className="py-1 text-right font-semibold">{member.guests}</td></tr>
+              </tbody>
+            </table>
+            {member.adminNotes && <div className="mt-2 text-gray-600 text-xs whitespace-pre-wrap"><span className="font-bold">Notes:</span> {member.adminNotes}</div>}
+            <div className="text-[10px] text-gray-400 mt-2">Estimates only — confirm commission against the cruise-line group quote.</div>
+          </div>
+        )}
 
         <div className="border-2 border-gray-900 rounded-xl p-4 text-sm">
           <div className="font-extrabold">No card is charged online.</div>

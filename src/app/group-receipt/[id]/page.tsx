@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function GroupReceiptPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ copy?: string }>;
 }) {
   const { id } = await params;
+  const { copy } = await searchParams;
+  const isAgent = copy === "agent";
   const data = await getMemberById(id);
 
   if (!data) {
@@ -55,6 +59,11 @@ export default async function GroupReceiptPage({
 
       {/* Receipt sheet */}
       <div className="bg-white text-gray-900 max-w-[8.5in] mx-auto border border-gray-300 print:border-0 p-8">
+        {isAgent && (
+          <div className="mb-5 rounded-lg bg-red-600 text-white px-4 py-2 text-center text-sm font-extrabold uppercase tracking-wider">
+            Agent Copy — internal records only · not for the guest
+          </div>
+        )}
         <div className="flex items-start justify-between border-b-2 border-gray-900 pb-4 mb-6">
           <div>
             <BrandLogo />
@@ -122,6 +131,9 @@ export default async function GroupReceiptPage({
         )}
 
         <div className="border-2 border-gray-900 rounded-xl p-4 text-sm">
+          {isAgent && member.adminNotes && (
+            <div className="mb-3 pb-3 border-b border-gray-200 text-xs text-gray-600 whitespace-pre-wrap"><span className="font-bold text-red-700 uppercase">Agent notes:</span> {member.adminNotes}</div>
+          )}
           <div className="font-extrabold">No card is charged online.</div>
           <div className="text-gray-600">Pay your balance by mailed check to 3501 Winnie St, Galveston, TX 77550, or directly with the cruise line. Questions? (409) 632-2106 · Cruises from Galveston.</div>
         </div>
