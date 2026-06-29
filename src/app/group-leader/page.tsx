@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   type SignupEntry,
   getSignupsByGroup,
   signupTotals,
   roomGuests,
 } from "@/lib/signups";
-import { getGroupSailing, getGroupByPin } from "@/lib/group-sailings";
+import { getGroupSailing, getGroupByPin, GROUP_SAILINGS, pinFor } from "@/lib/group-sailings";
 import {
   type GroupDeposit,
   getGroupDeposit,
@@ -16,34 +17,85 @@ import {
   paidToDate,
   nextDue,
 } from "@/lib/group-deposits";
+import {
+  type GroupAnnouncement,
+  type GroupRequest,
+  REQUEST_TYPES,
+  newReqId,
+  getAnnouncements,
+  getRequests,
+  saveRequest,
+} from "@/lib/group-hub";
 
-export default function GroupLeaderPage() {
+function GroupLeaderInner() {
+  const params = useSearchParams();
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [group, setGroup] = useState("");
+  const [groupKey, setGroupKey] = useState("");
   const [rows, setRows] = useState<SignupEntry[]>([]);
   const [dep, setDep] = useState<GroupDeposit | null>(null);
+  const [anns, setAnns] = useState<GroupAnnouncement[]>([]);
+  const [reqs, setReqs] = useState<GroupRequest[]>([]);
+  const [reqType, setReqType] = useState(REQUEST_TYPES[0]);
+  const [reqDetails, setReqDetails] = useState("");
+  const [reqName, setReqName] = useState("");
+  const [reqMsg, setReqMsg] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
-  async function login() {
-    if (!pin.trim()) return;
+  async function login(pinArg?: string) {
+    const p = (pinArg ?? pin).trim();
+    if (!p) return;
     setLoading(true);
     setError("");
-    const g = getGroupByPin(pin);
+    const g = getGroupByPin(p);
     if (!g) {
       setLoading(false);
       setError("That group PIN isn't recognized. Check with your specialist or call (409) 632-2106.");
       return;
     }
+    setPin(p);
     setGroup(g.label);
+    setGroupKey(g.key);
     setRows(await getSignupsByGroup(g.label));
     if (g.depositId) {
       try { setDep(await getGroupDeposit(g.depositId)); } catch { setDep(null); }
     }
+    try { setAnns(await getAnnouncements(g.key)); } catch { setAnns([]); }
+    try { setReqs(await getRequests(g.key)); } catch { setReqs([]); }
     setLoggedIn(true);
     setLoading(false);
+  }
+
+  // Direct link: /group-leader?pin=1123  OR  ?g=thanksgiving-2026
+  useEffect(() => {
+    const qp = params.get("pin");
+    const qg = params.get("g");
+    if (qp) { login(qp); return; }
+    if (qg) {
+      const s = GROUP_SAILINGS.find((x) => x.key === qg);
+      if (s) login(pinFor(s));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
+  async function submitRequest() {
+    if (!reqDetails.trim()) { setReqMsg("Add a few details for your request."); return; }
+    const r: GroupRequest = {
+      id: newReqId(), groupKey, type: reqType, details: reqDetails,
+      requester: reqName, status: "Submitted", response: "",
+    };
+    const ok = await saveRequest(r);
+    if (ok) {
+      setReqs(await getRequests(groupKey));
+      setReqDetails(""); setReqName("");
+      setReqMsg("✓ Request sent — we'll update the status here.");
+      setTimeout(() => setReqMsg(""), 3000);
+    } else {
+      setReqMsg("Couldn't send — please call (409) 632-2106.");
+    }
   }
 
   const sailing = group ? getGroupSailing(group) : null;
@@ -99,7 +151,7 @@ export default function GroupLeaderPage() {
             />
             {error && <p className="text-red-300 text-sm">{error}</p>}
             <button
-              onClick={login}
+              onClick={() => login()}
               disabled={loading}
               className="w-full bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-sm px-6 py-3.5 rounded-full transition-all"
             >
@@ -126,9 +178,11 @@ export default function GroupLeaderPage() {
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
           <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-2">{"// Your Group"}</div>
           <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-[-0.02em] leading-tight">
-            {sailing?.ship ?? group}
+            {sailing?.displayName ?? sailing?.ship ?? group}
           </h1>
-          <p className="text-white/60 mt-1">{sailing?.blurb ?? group}</p>
+          <p className="text-white/60 mt-1">
+            {sailing ? `${sailing.ship} · ${sailing.blurb}` : group}
+          </p>
           {daysToSail !== null && (
             <div className="mt-4 inline-flex items-baseline gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-3">
               <span className="text-3xl font-extrabold text-holo">{daysToSail}</span>
@@ -246,6 +300,63 @@ export default function GroupLeaderPage() {
           )}
         </div>
 
+        {/* Group updates feed */}
+        <div>
+          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-4">{"// Group Updates"}</div>
+          {anns.length === 0 ? (
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-5 text-white/45 text-sm">No updates yet — check back here for announcements from Cruises from Galveston.</div>
+          ) : (
+            <div className="space-y-2">
+              {anns.map((a) => (
+                <div key={a.id} className={`bg-[#0b1020] rounded-xl border p-4 ${a.pinned ? "border-sky-400/40" : "border-white/10"}`}>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {a.pinned && <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">📌 Pinned</span>}
+                    <span className="font-bold text-white">{a.title}</span>
+                    <span className="text-white/35 text-xs">{a.createdAt ? new Date(a.createdAt).toLocaleDateString("en-US") : ""}</span>
+                  </div>
+                  {a.body && <div className="text-white/65 text-sm mt-1 whitespace-pre-wrap">{a.body}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Send a request */}
+        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-3">{"// Send a Request"}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select className={input} value={reqType} onChange={(e) => setReqType(e.target.value)}>
+              {REQUEST_TYPES.map((t) => <option key={t} value={t} className="bg-[#0b1020]">{t}</option>)}
+            </select>
+            <input className={input} value={reqName} onChange={(e) => setReqName(e.target.value)} placeholder="Your name (optional)" />
+            <textarea className={`${input} sm:col-span-2`} rows={3} value={reqDetails} onChange={(e) => setReqDetails(e.target.value)} placeholder="Tell us what you need — e.g. 'Three families want cabins close together.'" />
+          </div>
+          <div className="flex items-center gap-3 mt-3">
+            <button onClick={submitRequest} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full">Send request</button>
+            {reqMsg && <span className="text-sky-300 text-sm">{reqMsg}</span>}
+          </div>
+        </div>
+
+        {/* Your requests */}
+        {reqs.length > 0 && (
+          <div>
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-4">{"// Your Requests"}</div>
+            <div className="space-y-2">
+              {reqs.map((r) => (
+                <div key={r.id} className="bg-[#0b1020] rounded-xl border border-white/10 p-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-white">{r.type}</span>
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">{r.status}</span>
+                    <span className="text-white/35 text-xs">{r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-US") : ""}</span>
+                  </div>
+                  {r.details && <div className="text-white/60 text-sm mt-1">{r.details}</div>}
+                  {r.response && <div className="text-green-300/90 text-sm mt-1.5">↳ {r.response}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="text-center text-white/40 text-sm">
           Questions about your group? Call <a href="tel:+14096322106" className="text-sky-400">(409) 632-2106</a> or your specialist will reach out.
           <div className="mt-3">
@@ -254,5 +365,13 @@ export default function GroupLeaderPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GroupLeaderPage() {
+  return (
+    <Suspense fallback={null}>
+      <GroupLeaderInner />
+    </Suspense>
   );
 }
