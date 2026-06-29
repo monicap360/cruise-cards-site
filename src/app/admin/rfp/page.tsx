@@ -71,6 +71,8 @@ export default function AdminRfpPage() {
         `Group rate from $${item.quoteRatePP}/pp. Host fee $${item.feePerRoom}/room. ` +
         `Deposit $${item.depositAmount} to hold ${item.cabins} cabins` +
         `${item.holdUntil ? ` through ${item.holdUntil}` : ""}. ${item.quoteNotes}`,
+      contractUrl: "",
+      contractName: "",
       notes: `From RFP ${item.id}. Host fee $${item.feePerRoom}/room.`,
     };
     await saveGroup(g);
