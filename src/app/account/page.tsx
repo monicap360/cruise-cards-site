@@ -8,6 +8,7 @@ import { STATUS_STAGES, type CustomerStatus } from "@/lib/account";
 import type { CustomerCredit } from "@/lib/credits";
 import ChatWidget from "@/components/ChatWidget";
 import BookingRequestForm from "@/components/BookingRequestForm";
+import { getDocumentsForEmail, type GuestDocument } from "@/lib/documents";
 
 export default function AccountPage() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function AccountPage() {
 
   const [qText, setQText] = useState("");
   const [qSent, setQSent] = useState(false);
+  const [documents, setDocuments] = useState<GuestDocument[]>([]);
 
   async function login() {
     if (!email.trim()) return;
@@ -36,6 +38,11 @@ export default function AccountPage() {
       setCredits([]);
       setStatus(null);
       setRequests([]);
+    }
+    try {
+      setDocuments(await getDocumentsForEmail(email));
+    } catch {
+      setDocuments([]);
     }
     setLoggedIn(true);
     setLoading(false);
@@ -239,6 +246,40 @@ export default function AccountPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Your documents — confirmations & invoices */}
+        {documents.length > 0 && (
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">
+              {"// Your Documents"}
+            </div>
+            <div className="space-y-1">
+              {documents.map((d) => (
+                <a
+                  key={d.id}
+                  href={d.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 border-b border-white/5 last:border-0 py-2.5 group"
+                >
+                  <span className="text-xl">📄</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white text-sm font-semibold group-hover:text-sky-300">
+                      {d.label || d.fileName}
+                    </div>
+                    <div className="text-white/40 text-xs">
+                      {d.type}
+                      {d.confirmNumber ? ` · #${d.confirmNumber}` : ""}
+                    </div>
+                  </div>
+                  <span className="text-sky-400 group-hover:text-sky-300 text-sm font-semibold whitespace-nowrap">
+                    Download →
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
         )}

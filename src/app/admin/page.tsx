@@ -26,6 +26,7 @@ const TOOLS = [
   { href: "/admin/rates", label: "💲 Rates" },
   { href: "/admin/credits", label: "💳 Credits" },
   { href: "/admin/contacts", label: "📇 Comm Log" },
+  { href: "/admin/documents", label: "📄 Documents" },
   { href: "/admin/groups", label: "👥 Groups" },
   { href: "/admin/rfp", label: "📩 Agent RFPs" },
   { href: "/admin/invoice", label: "🧾 Invoice" },
