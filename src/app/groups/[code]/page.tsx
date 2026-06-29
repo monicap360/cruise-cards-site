@@ -423,10 +423,10 @@ export default async function GroupPortalPage({
                       className={`bg-[#0b1020] rounded-xl border p-4 flex items-start justify-between gap-4 ${open ? "border-white/10" : "border-sky-400/25"}`}
                     >
                       <div>
-                        <div className="font-bold text-white">
-                          Room {i + 1}
-                          <span className="text-white/45 font-semibold">
-                            {" · "}{isGty ? "Guarantee — cabin # assigned later" : `Cabin ${rm.label}`}
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          <span className="text-xl sm:text-2xl font-extrabold text-white">Room {i + 1}</span>
+                          <span className="text-white/50 font-semibold text-sm">
+                            {isGty ? "Guarantee — cabin # assigned later" : `Cabin ${rm.label}`}
                           </span>
                         </div>
                         <div className="text-white/55 text-sm mt-0.5">
