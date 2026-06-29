@@ -261,6 +261,17 @@ export async function getMembers(groupId: string): Promise<GroupMember[]> {
   return (data ?? []).map(toMember);
 }
 
+// A single member + its group — for the printable receipt.
+export async function getMemberById(
+  id: string
+): Promise<{ member: GroupMember; group: Group } | null> {
+  const { data: m } = await supabase.from("group_members").select("*").eq("id", id).single();
+  if (!m) return null;
+  const { data: g } = await supabase.from("groups").select("*").eq("id", (m as Record<string, unknown>).group_id as string).single();
+  if (!g) return null;
+  return { member: toMember(m), group: toGroup(g) };
+}
+
 export async function saveGroup(g: Group): Promise<boolean> {
   const { error } = await supabase.from("groups").upsert(groupRow(g));
   return !error;

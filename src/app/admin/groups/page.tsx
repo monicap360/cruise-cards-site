@@ -118,6 +118,13 @@ export default function AdminGroupsPage() {
     await deleteMember(id);
     setMembers(await getMembers(groupId));
   }
+  async function applyDeposit(mm: GroupMember, groupId: string) {
+    const def = mm.depositPaid ? String(mm.depositPaid) : String(100 * (mm.guests || 1));
+    const amt = prompt(`Apply deposit for ${mm.name} — amount ($):`, def);
+    if (amt === null) return;
+    await saveMember({ ...mm, depositPaid: Number(amt) || 0 });
+    setMembers(await getMembers(groupId));
+  }
 
   const input = "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
   const lbl = "block label-mono text-[10px] uppercase tracking-wider text-white/50 mb-1";
@@ -225,7 +232,9 @@ export default function AdminGroupsPage() {
                                 <td className="text-right">{fmt$(mm.depositPaid)}</td>
                                 <td className="text-center">{mm.paidInFull ? "✓" : "—"}</td>
                                 <td className="text-right font-bold">{fmt$(memberBalance(mm))}</td>
-                                <td className="text-right">
+                                <td className="text-right whitespace-nowrap">
+                                  <button onClick={() => applyDeposit(mm, grp.id)} className="text-green-300 font-bold text-xs hover:text-green-200 mr-2">Apply deposit</button>
+                                  <Link href={`/group-receipt/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">🧾 Receipt</Link>
                                   <button onClick={() => { setM(mm); }} className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">Edit</button>
                                   <button onClick={() => removeM(mm.id, grp.id)} className="text-red-300 font-bold text-xs hover:text-red-200">×</button>
                                 </td>
