@@ -237,8 +237,17 @@ export default function ContactPage() {
               <div className="space-y-4 text-white/55">
                 <div>
                   <div className="font-bold text-white">Location</div>
-                  <div className="text-sm">Galveston, Texas</div>
-                  <div className="text-sm">Near the Port of Galveston</div>
+                  <div className="text-sm">Cruise Experience Center</div>
+                  <div className="text-sm">3501 Winnie St, Galveston, TX 77550</div>
+                  <div className="text-sm text-white/45">Near the Port of Galveston</div>
+                  <a
+                    href="https://maps.google.com/?q=3501+Winnie+St,+Galveston,+TX+77550"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-400 hover:text-sky-300 text-sm font-semibold inline-block mt-1"
+                  >
+                    Get directions →
+                  </a>
                 </div>
                 <div>
                   <div className="font-bold text-white">Phone</div>
@@ -271,7 +280,7 @@ export default function ContactPage() {
                   "100% Galveston departures — drive in or fly into Houston",
                   "Free expert consultation with a cruise specialist",
                   "Best price matching on all cruise lines",
-                  "All major cruise lines: Carnival, Royal Caribbean, Norwegian & Disney",
+                  "All major cruise lines: Carnival, Royal Caribbean, MSC, Norwegian & Disney",
                   "Support before, during, and after your cruise",
                 ].map((item) => (
                   <li key={item}>{item}</li>
