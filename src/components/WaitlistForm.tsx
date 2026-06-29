@@ -34,7 +34,7 @@ export default function WaitlistForm({
       return;
     }
     setBusy(true);
-    await supabase.from("inquiries").insert({
+    const row = {
       confirm_number: "WL-" + Math.random().toString(36).toUpperCase().slice(2, 8),
       first_name: name,
       last_name: "",
@@ -51,9 +51,16 @@ export default function WaitlistForm({
         `${guests} guest(s) · ${cabin}. ${notes}`.trim(),
       appt_date: "",
       appt_time: "",
-      mode: "waitlist",
-    });
+    };
+    // Use the proper "waitlist" mode; fall back to "inquiry" if the DB constraint
+    // hasn't been updated yet, so a real submission is never silently lost.
+    let { error } = await supabase.from("inquiries").insert({ ...row, mode: "waitlist" });
+    if (error) ({ error } = await supabase.from("inquiries").insert({ ...row, mode: "inquiry" }));
     setBusy(false);
+    if (error) {
+      alert("Sorry — we couldn't add you just now. Please call (409) 632-2106 and we'll add you to the waitlist.");
+      return;
+    }
     setSent(true);
   }
 

@@ -58,6 +58,33 @@ export default function InboxPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<"new" | "handled" | "all">("new");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [showAdd, setShowAdd] = useState(false);
+  const [a, setA] = useState({ name: "", phone: "", email: "", ship: "", date: "", type: "waitlist", notes: "" });
+  const [addBusy, setAddBusy] = useState(false);
+
+  async function addEntry() {
+    if (!a.name.trim() || (!a.phone.trim() && !a.email.trim())) {
+      alert("Add a name and a phone or email.");
+      return;
+    }
+    setAddBusy(true);
+    const labelMap: Record<string, string> = { waitlist: "WAITLIST", callback: "CALLBACK REQUEST", lead: "LEAD" };
+    const row = {
+      confirm_number: a.type === "waitlist" ? "WL-" + Math.random().toString(36).toUpperCase().slice(2, 8) : "",
+      first_name: a.name, last_name: "", email: a.email, phone: a.phone,
+      ship: a.ship, sail_date: a.date, rate_type: "", guests: "", cabin_type: "", crew: "",
+      message: `${labelMap[a.type] || "LEAD"} (added by office)${a.ship ? ` — ${a.ship}` : ""}${a.date ? ` · ${a.date}` : ""}. ${a.notes}`.trim(),
+      appt_date: "", appt_time: "",
+    };
+    const wantMode = a.type === "callback" ? "appointment" : a.type === "waitlist" ? "waitlist" : "inquiry";
+    let { error } = await supabase.from("inquiries").insert({ ...row, mode: wantMode });
+    if (error) ({ error } = await supabase.from("inquiries").insert({ ...row, mode: "inquiry" }));
+    setAddBusy(false);
+    if (error) { alert("Couldn't add: " + error.message); return; }
+    setA({ name: "", phone: "", email: "", ship: "", date: "", type: a.type, notes: "" });
+    setShowAdd(false);
+    refresh();
+  }
 
   async function refresh() {
     const { data } = await supabase
@@ -133,6 +160,36 @@ export default function InboxPage() {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-5">
+        {/* Add a lead / waitlist / callback by hand */}
+        <div>
+          <button onClick={() => setShowAdd((v) => !v)} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
+            {showAdd ? "× Close" : "➕ Add lead / waitlist / callback"}
+          </button>
+          {showAdd && (
+            <div className="mt-3 bg-[#0b1020] border border-white/10 rounded-2xl p-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-white/50 mb-1">Type</label>
+                  <select value={a.type} onChange={(e) => setA({ ...a, type: e.target.value })} className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-sky-400/60">
+                    <option value="waitlist" className="bg-[#0b1020]">Waitlist</option>
+                    <option value="callback" className="bg-[#0b1020]">Phone-call request / callback</option>
+                    <option value="lead" className="bg-[#0b1020]">Lead</option>
+                  </select>
+                </div>
+                <input value={a.name} onChange={(e) => setA({ ...a, name: e.target.value })} placeholder="Name *" className="self-end w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                <input value={a.phone} onChange={(e) => setA({ ...a, phone: e.target.value })} placeholder="Phone" className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                <input value={a.email} onChange={(e) => setA({ ...a, email: e.target.value })} placeholder="Email" className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                <input value={a.ship} onChange={(e) => setA({ ...a, ship: e.target.value })} placeholder="Ship (optional)" className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                <input value={a.date} onChange={(e) => setA({ ...a, date: e.target.value })} placeholder="Sail date(s) — e.g. Jul 5 or 6, 2026" className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                <textarea value={a.notes} onChange={(e) => setA({ ...a, notes: e.target.value })} placeholder="Notes" rows={2} className="sm:col-span-2 w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+              </div>
+              <button onClick={addEntry} disabled={addBusy} className="mt-3 bg-sky-500 hover:bg-sky-400 text-white disabled:opacity-50 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full">
+                {addBusy ? "Adding…" : "Add to inbox"}
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2">
           {(["new", "handled", "all"] as const).map((s) => (
