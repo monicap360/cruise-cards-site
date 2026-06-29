@@ -229,8 +229,18 @@ export default function AdminGroupsPage() {
                                 <td className="py-2 font-semibold">{mm.name}</td>
                                 <td>{mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}</td>
                                 <td className="text-right">{fmt$(mm.fare)}</td>
-                                <td className="text-right">{fmt$(mm.depositPaid)}</td>
-                                <td className="text-center">{mm.paidInFull ? "✓" : "—"}</td>
+                                <td className="text-right">
+                                  {mm.paidInFull || mm.depositPaid > 0 ? (
+                                    <span className="text-green-300 font-semibold">{fmt$(mm.depositPaid)}</span>
+                                  ) : (
+                                    <span className="text-white/55">{fmt$(100 * (mm.guests || 2))} <span className="text-white/35 text-[10px] uppercase">due</span></span>
+                                  )}
+                                </td>
+                                <td className="text-center">
+                                  {mm.paidInFull ? (
+                                    <span className="inline-block bg-green-500/15 text-green-300 text-[10px] font-bold uppercase rounded-full px-2 py-0.5">Paid</span>
+                                  ) : <span className="text-white/25">—</span>}
+                                </td>
                                 <td className="text-right font-bold">{fmt$(memberBalance(mm))}</td>
                                 <td className="text-right whitespace-nowrap">
                                   <button onClick={() => applyDeposit(mm, grp.id)} className="text-green-300 font-bold text-xs hover:text-green-200 mr-2">Apply deposit</button>
