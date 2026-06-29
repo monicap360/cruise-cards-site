@@ -81,6 +81,22 @@ export default function GroupDepositsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Start a new group with the cruise-line + contact block prefilled — these
+  // repeat across a partner's groups, so it speeds up entering the next one.
+  function duplicate(d: GroupDeposit) {
+    setG({
+      ...blankGroupDeposit(),
+      cruiseLine: d.cruiseLine,
+      ship: d.ship,
+      partnerAdvocate: d.partnerAdvocate,
+      advocateExt: d.advocateExt,
+      rep: d.rep,
+      groupEmail: d.groupEmail,
+    });
+    setEditing(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function save() {
     setSaving(true);
     const ok = await saveGroupDeposit(g);
@@ -154,7 +170,7 @@ export default function GroupDepositsPage() {
         )} — ${g.groupName || "group"}`
       )}&name=${encodeURIComponent(g.groupName)}&contact=${encodeURIComponent(
         g.groupEmail
-      )}`
+      )}&due=${encodeURIComponent(due.dueDate)}`
     : "";
 
   return (
@@ -562,6 +578,12 @@ export default function GroupDepositsPage() {
                         className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-semibold text-xs px-4 py-2 rounded-full"
                       >
                         Edit
+                      </button>
+                      <button
+                        onClick={() => duplicate(d)}
+                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-semibold text-xs px-4 py-2 rounded-full"
+                      >
+                        Duplicate
                       </button>
                       <button
                         onClick={() => remove(d.id)}

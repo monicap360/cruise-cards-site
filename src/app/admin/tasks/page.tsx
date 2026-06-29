@@ -33,12 +33,14 @@ function TasksInner() {
     const name = params.get("name") ?? "";
     const contact = params.get("contact") ?? "";
     const title = params.get("title") ?? "";
-    if (name || contact || title) {
+    const due = params.get("due") ?? "";
+    if (name || contact || title || due) {
       setT((s) => ({
         ...s,
         relatedName: name || s.relatedName,
         relatedContact: contact || s.relatedContact,
         title: title || s.title,
+        dueDate: due || s.dueDate,
       }));
     }
   }, [params]);
