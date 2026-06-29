@@ -24,6 +24,7 @@ import {
   isRoomReleased,
 } from "@/lib/groups";
 import { uploadGuestFile } from "@/lib/documents";
+import CabinThread from "@/components/CabinThread";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -343,8 +344,12 @@ export default function AdminGroupsPage() {
                                         placeholder="Log calls, requests, special arrangements… e.g. 'Booked 2 rooms for 4 guests; Knox in single room with Phong to save cost.'"
                                         className="w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-white text-sm placeholder-white/35 focus:outline-none focus:border-amber-400/50" />
                                       <div className="flex gap-2 mt-2">
-                                        <button onClick={() => saveNote(grp.id)} disabled={noteBusy} className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-[11px] px-4 py-2 rounded-full">{noteBusy ? "Saving…" : "Save note"}</button>
+                                        <button onClick={() => saveNote(grp.id)} disabled={noteBusy} className="bg-white text-black hover:bg-white/90 disabled:opacity-50 font-semibold uppercase tracking-wider text-[11px] px-4 py-2 rounded-full">{noteBusy ? "Saving…" : "Save private note"}</button>
                                         <button onClick={() => setNoteOpen("")} className="text-white/50 hover:text-white text-[11px] font-bold uppercase tracking-wider px-3 py-2">Close</button>
+                                      </div>
+                                      <div className="mt-3 border-t border-white/10 pt-2">
+                                        <div className="text-[10px] uppercase tracking-wider text-sky-300/80 font-bold mb-1">💬 Guest message thread (two-way)</div>
+                                        <CabinThread memberId={mm.id} groupCode={grp.code} sender="agent" />
                                       </div>
                                     </div>
                                   </td>

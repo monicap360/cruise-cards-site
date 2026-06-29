@@ -8,6 +8,7 @@ import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
+import CabinThread from "@/components/CabinThread";
 import HeroImage from "@/components/HeroImage";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
@@ -480,6 +481,7 @@ export default async function GroupPortalPage({
                             {occ.depositPaid > 0 && <Link href={`/group-receipt/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">🧾 Receipt</Link>}
                           </div>
                         )}
+                        {!open && occ && <CabinThread memberId={occ.id} groupCode={group.code} sender="guest" />}
                         {!open && (
                           <div className="mt-4">
                             <div className="text-[10px] uppercase tracking-wider text-white/45 font-bold mb-2">✨ Add to this room — tap an item to add &amp; check out</div>
