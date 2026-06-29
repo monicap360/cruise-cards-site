@@ -6,6 +6,7 @@ import {
   type SignupEntry,
   getSignupsByGroup,
   signupTotals,
+  roomGuests,
 } from "@/lib/signups";
 import { getGroupSailing, getGroupByPin } from "@/lib/group-sailings";
 
@@ -135,10 +136,30 @@ export default function GroupLeaderPage() {
           </button>
         </div>
 
+        {/* Deposit progress */}
+        {rows.length > 0 && (
+          <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-5">
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="font-bold text-white">Deposit progress</span>
+              <span className="text-white/55">{t.depositsPaid} of {t.families} families paid</span>
+            </div>
+            <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-full bg-green-400" style={{ width: `${t.families ? Math.round((t.depositsPaid / t.families) * 100) : 0}%` }} />
+            </div>
+          </div>
+        )}
+
         {/* Roster */}
         <div>
-          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-4">
-            {`// Roster — ${rows.length} famil${rows.length === 1 ? "y" : "ies"}`}
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80">
+              {`// Roster — ${rows.length} famil${rows.length === 1 ? "y" : "ies"} · ${t.guests} guests`}
+            </div>
+            {rows.length > 0 && (
+              <button onClick={() => window.print()} className="print:hidden bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-semibold uppercase tracking-wider text-xs px-4 py-2 rounded-full">
+                🖨️ Print roster
+              </button>
+            )}
           </div>
           {rows.length === 0 ? (
             <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-8 text-center text-white/45">
@@ -146,9 +167,10 @@ export default function GroupLeaderPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {rows.map((r) => (
-                <div key={r.id} className="bg-[#0b1020] rounded-xl border border-white/10 p-4 flex items-center justify-between gap-3 flex-wrap">
-                  <div className="min-w-0">
+              {rows.map((r) => {
+                const guests = roomGuests(r);
+                return (
+                  <div key={r.id} className="bg-[#0b1020] rounded-xl border border-white/10 p-4">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-white">{r.leadName || "Guest"}</span>
                       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${yes(r.confirmed) ? "bg-green-500/15 text-green-300 border-green-400/25" : "bg-yellow-400/15 text-yellow-300 border-yellow-400/25"}`}>
@@ -161,9 +183,16 @@ export default function GroupLeaderPage() {
                     <div className="text-white/50 text-sm mt-0.5">
                       {r.totalGuests} guest{r.totalGuests === 1 ? "" : "s"} ({r.adults}A / {r.kids}K) · {r.cabins}
                     </div>
+                    {guests.length > 0 && (
+                      <div className="text-white/65 text-sm mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                        {guests.map((g, i) => (
+                          <span key={i}>👤 {g.name}{g.dob ? ` · ${g.dob}` : ""}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
