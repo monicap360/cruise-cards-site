@@ -33,8 +33,8 @@ const securityHeaders = [
       // Supabase + Facebook
       "connect-src 'self' https://*.supabase.co https://connect.facebook.net https://*.facebook.com",
       "media-src 'self'",
-      // Embeds we use: Facebook comments, Jotform e-sign, Google Maps
-      "frame-src https://www.facebook.com https://web.facebook.com https://*.facebook.com https://www.jotform.com https://form.jotform.com https://maps.google.com https://www.google.com",
+      // Embeds we use: Facebook comments, Jotform e-sign, Google Maps, booking calendar
+      "frame-src https://www.facebook.com https://web.facebook.com https://*.facebook.com https://www.jotform.com https://form.jotform.com https://maps.google.com https://www.google.com https://calendar.google.com https://calendly.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",

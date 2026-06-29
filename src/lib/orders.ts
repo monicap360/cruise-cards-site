@@ -60,6 +60,12 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     desc: "A night at the Harbor House Hotel & Marina (Pier 21) before you sail — steps from the terminal.",
     priceNote: "Group rates pending",
   },
+  travel: {
+    label: "How are you getting here?",
+    emoji: "🧭",
+    desc: "Let us know if you're flying or driving in (and your vehicle) so we can plan parking and transfers.",
+    priceNote: "Helps us plan Park & Ride",
+  },
 };
 
 function toOrder(r: Record<string, unknown>): GroupOrder {

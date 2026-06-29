@@ -20,6 +20,8 @@ function OrderInner() {
   const [phone, setPhone] = useState("");
   const [qty, setQty] = useState(1);
   const [notes, setNotes] = useState("");
+  const [arrival, setArrival] = useState("");
+  const [vehicle, setVehicle] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState("");
@@ -38,13 +40,19 @@ function OrderInner() {
     );
   }
 
+  const isTravel = itemKey === "travel";
+
   async function submit() {
     if (!name.trim()) { setErr("Please add the name on the reservation."); return; }
+    if (isTravel && !arrival) { setErr("Let us know if you're flying or driving."); return; }
     setBusy(true); setErr("");
+    const travelNote = isTravel
+      ? `Arrival: ${arrival}${arrival === "Driving" && vehicle ? ` · Vehicle: ${vehicle}` : ""}. `
+      : "";
     const o: GroupOrder = {
       id: newOrderId(), groupCode: code, item: itemKey, itemLabel: item.label,
       room, cabin, name, phone, qty: item.qty ? qty : 1,
-      notes: notes + (cabin ? ` · ${cabin}` : ""), status: "New",
+      notes: travelNote + notes + (cabin ? ` · ${cabin}` : ""), status: "New",
     };
     const ok = await saveOrder(o);
     setBusy(false);
@@ -84,6 +92,27 @@ function OrderInner() {
                 <div className="flex items-center gap-3">
                   <label className="text-white/60 text-sm">Quantity</label>
                   <input type="number" min={1} className={`${input} w-24`} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value)))} />
+                </div>
+              )}
+              {isTravel && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-white/60 text-sm">Are you flying or driving in?</label>
+                    <div className="flex gap-2 mt-2">
+                      {["Driving", "Flying"].map((a) => (
+                        <button key={a} type="button" onClick={() => setArrival(a)}
+                          className={`flex-1 rounded-xl px-4 py-3 text-sm font-semibold border ${arrival === a ? "bg-sky-500/20 border-sky-400/60 text-white" : "bg-white/5 border-white/15 text-white/70 hover:border-sky-400/40"}`}>
+                          {a === "Driving" ? "🚗 Driving in" : "✈️ Flying in"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {arrival === "Driving" && (
+                    <input className={input} value={vehicle} onChange={(e) => setVehicle(e.target.value)} placeholder="Vehicle type (e.g. SUV, truck, minivan, sedan)" />
+                  )}
+                  {arrival === "Flying" && (
+                    <p className="text-white/50 text-sm">Flying in? We can arrange a transfer from Houston (IAH/Hobby) — add details below.</p>
+                  )}
                 </div>
               )}
               <textarea className={input} rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything we should know? (sizes, preferences, special requests…)" />

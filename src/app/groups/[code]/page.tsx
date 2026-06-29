@@ -452,6 +452,7 @@ export default async function GroupPortalPage({
                               <Link href={orderHref("soda")} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</Link>
                               <Link href={orderHref("drink")} className="text-sky-400 hover:text-sky-300">🍹 Drink package</Link>
                               <Link href={orderHref("hotel")} className="text-sky-400 hover:text-sky-300">🏨 Pre-cruise hotel</Link>
+                              <Link href={orderHref("travel")} className="text-sky-400 hover:text-sky-300">🧭 Flying or driving?</Link>
                               <Link href={orderHref("tips")} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</Link>
                               <span className="text-white/40">🛡️ Protection:</span>
                               <Link href={orderHref("protection")} className="text-green-300 hover:text-green-200">Add</Link>
