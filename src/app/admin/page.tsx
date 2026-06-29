@@ -27,6 +27,7 @@ const TOOLS = [
   { href: "/admin/offers", label: "🎁 Offers" },
   { href: "/admin/rates", label: "💲 Rates" },
   { href: "/admin/credits", label: "💳 Credits" },
+  { href: "/admin/accounting", label: "📊 Accounting" },
   { href: "/admin/contacts", label: "📇 Comm Log" },
   { href: "/admin/documents", label: "📄 Documents" },
   { href: "/admin/groups", label: "👥 Groups" },
