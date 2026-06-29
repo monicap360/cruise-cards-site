@@ -243,6 +243,7 @@ export default async function DealsPage({
                       ${deal.price}
                     </span>
                     <span className="text-white/45 text-xs"> /person</span>
+                    <span className="text-green-300/90 text-[10px] block font-semibold mt-0.5">✓ Taxes, port fees &amp; gov fees included</span>
                   </div>
                   <Link
                     href={`/sailings?ship=${encodeURIComponent(deal.ship)}`}

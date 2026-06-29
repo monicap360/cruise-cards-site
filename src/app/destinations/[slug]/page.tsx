@@ -2,14 +2,36 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Photo from "@/components/Photo";
 import { destinations } from "../destination-data";
 import { getPortGuide } from "@/lib/port-guides";
+import { type SailingBlock } from "@/lib/room-blocks";
+import { destinationFor, portsFromItinerary } from "@/lib/destinations";
+import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export default function DestinationDetailPage() {
   const params = useParams();
   const slug = String(params.slug ?? "");
   const dest = destinations.find((d) => d.id === slug);
+
+  const [sailings, setSailings] = useState<SailingBlock[]>([]);
+  useEffect(() => {
+    if (!dest) return;
+    fetch("/api/sailings")
+      .then((r) => r.json())
+      .then((all: SailingBlock[]) => {
+        if (!Array.isArray(all)) return;
+        const matches = all
+          .filter((b) =>
+            portsFromItinerary(b.itinerary).some((p) => destinationFor(p).slug === dest.id)
+          )
+          .sort((a, b) => a.sailingDate.localeCompare(b.sailingDate))
+          .slice(0, 6);
+        setSailings(matches);
+      })
+      .catch(() => {});
+  }, [dest]);
 
   if (!dest) {
     return (
@@ -87,6 +109,56 @@ export default function DestinationDetailPage() {
             {dest.description}
           </p>
         </div>
+
+        {/* Live cruises to this port */}
+        {sailings.length > 0 && (
+          <div>
+            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+              {`// Cruises to ${dest.name}`}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {sailings.map((b) => {
+                const rooms = Array.from(new Set(b.cabins.map((c) => c.type)))
+                  .map((type) => {
+                    const ps = b.cabins.filter((c) => c.type === type && c.price > 0).map((c) => c.price);
+                    return { type, from: ps.length ? Math.min(...ps) : 0 };
+                  })
+                  .filter((r) => r.from > 0)
+                  .sort((a, c) => a.from - c.from);
+                const from = rooms.length ? rooms[0].from : 0;
+                return (
+                  <Link
+                    key={b.id}
+                    href={`/sailings/${b.id}`}
+                    className="group overflow-hidden rounded-2xl border border-white/10 hover:border-sky-400/40 transition-colors flex"
+                  >
+                    <div className="relative w-28 flex-shrink-0">
+                      <Photo src={`/destinations/${dest.id}.jpg`} alt={dest.name} gradient={dest.color} overlay={false} className="absolute inset-0" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0b1020]" />
+                    </div>
+                    <div className="flex-1 p-4 bg-[#0b1020]">
+                      <div className="text-white font-extrabold uppercase tracking-tight text-sm leading-tight">{b.ship}</div>
+                      <div className="text-white/45 text-xs mt-0.5">{b.cruiseLine} · {fmtDate(b.sailingDate)} · {b.nights}n</div>
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {rooms.map((r) => (
+                          <span key={r.type} className="text-[10px] bg-white/5 border border-white/10 rounded-full px-2 py-0.5 text-white/70">
+                            {r.type} <span className="text-holo font-bold">{fmt$(r.from)}</span>
+                          </span>
+                        ))}
+                      </div>
+                      {from > 0 && (
+                        <div className="text-green-300/90 text-[10px] mt-1.5 font-semibold">✓ Taxes, port fees &amp; gov fees included</div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            <Link href={`/find?q=${encodeURIComponent(dest.dealKey ?? dest.name)}`} className="inline-block mt-4 text-sky-400 hover:text-sky-300 font-semibold text-sm">
+              See all cruises to {dest.name} →
+            </Link>
+          </div>
+        )}
 
         {/* Port-day practical guide */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
