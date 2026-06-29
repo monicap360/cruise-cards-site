@@ -8,6 +8,13 @@ export const SHOP_URL =
 export const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL || "cruisesfromgalveston.texas@gmail.com";
 
+export const CONTACT_PHONE = "+14096322106";
+export const CONTACT_PHONE_DISPLAY = "(409) 632-2106";
+
+// Online scheduling link (Calendly / Google / etc.). Set in Render to enable
+// the "Book a call" button; until then it falls back to the contact page.
+export const BOOKING_CALENDAR_URL = process.env.NEXT_PUBLIC_BOOKING_CALENDAR_URL || "";
+
 export type ShopItem = { title: string; desc: string; emoji: string; href: string; tag?: string };
 
 export const SHOP_ITEMS: ShopItem[] = [

@@ -3,9 +3,10 @@ import ShipImage from "@/components/ShipImage";
 import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
-import { SHOP_ITEMS, CONTACT_EMAIL } from "@/lib/shop";
+import { SHOP_ITEMS, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY, BOOKING_CALENDAR_URL } from "@/lib/shop";
 import ParkRideScheduler from "@/components/ParkRideScheduler";
 import CruisePackingList from "@/components/CruisePackingList";
+import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -86,9 +87,16 @@ export default async function GroupPortalPage({
           <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mt-4">
             {group.name || "Group Cruise"}
           </h1>
-          <div className="text-white/70 text-lg mt-2">
-            {group.ship}
-            {group.cruiseLine ? ` · ${group.cruiseLine}` : ""}
+          <div className="flex items-center gap-3 text-white/70 text-lg mt-2">
+            {group.cruiseLine && (
+              <span className="bg-white rounded-lg px-2 py-1 inline-flex items-center">
+                <CruiseLineLogo line={group.cruiseLine} className="h-7" />
+              </span>
+            )}
+            <span>
+              {group.ship}
+              {group.cruiseLine ? ` · ${group.cruiseLine}` : ""}
+            </span>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-white/55">
             {group.sailingDate && (
@@ -114,6 +122,33 @@ export default async function GroupPortalPage({
       </section>
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+        {/* Welcome */}
+        <div className="rounded-2xl border border-sky-400/25 bg-sky-500/5 p-6">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Welcome Aboard"}</div>
+          <h2 className="text-2xl font-extrabold text-white">Welcome, {group.name || "friends"}! 🚢</h2>
+          <p className="text-white/70 mt-2 max-w-2xl">
+            We&rsquo;re so excited you&rsquo;re sailing with us on {group.ship}
+            {group.sailingDate ? ` — ${fmtDate(group.sailingDate)}` : ""}. This is your group hub:
+            check your room, book any open cabins, schedule Park &amp; Ride, grab your packing list,
+            and order group extras — all in one place. Need anything? <span className="text-white">Text us first</span> — it&rsquo;s the fastest way to reach us.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <a href={`sms:${CONTACT_PHONE}`} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
+              💬 Text us first (fastest)
+            </a>
+            <a
+              href={BOOKING_CALENDAR_URL || "/contact"}
+              {...(BOOKING_CALENDAR_URL ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full"
+            >
+              📅 Book a call
+            </a>
+            <a href={`tel:${CONTACT_PHONE}`} className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
+              📞 Call {CONTACT_PHONE_DISPLAY}
+            </a>
+          </div>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stat(members.length, "Cabins booked")}
@@ -368,6 +403,12 @@ export default async function GroupPortalPage({
                   const isGty = !rm.label || rm.label.toUpperCase().startsWith("GTY");
                   const names = occ?.notes && !/^deposit/i.test(occ.notes) ? occ.notes : "";
                   const open = rm.status === "available" && !rm.bookedBy;
+                  const cabinLabel = isGty ? "Guarantee cabin" : `Cabin ${rm.label}`;
+                  const gratPerGuest = 18 * (group.nights || 5); // $18 pp/day
+                  const gratTotal = gratPerGuest * (occ?.guests || 2);
+                  const order = (subject: string, lines: string) =>
+                    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines)}`;
+                  const who = `${cabinLabel}${rm.bookedBy ? `, ${rm.bookedBy}` : ""} — ${group.name}`;
                   return (
                     <div
                       key={rm.id}
@@ -386,12 +427,13 @@ export default async function GroupPortalPage({
                         </div>
                         {names && <div className="text-white/70 text-sm mt-1">👥 {names}</div>}
                         {!open && (
-                          <a
-                            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Soda 12-pack — ${group.name}, ${isGty ? "Guarantee cabin" : "Cabin " + rm.label}`)}&body=${encodeURIComponent(`Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${isGty ? "my guarantee cabin" : "Cabin " + rm.label}${rm.bookedBy ? `, ${rm.bookedBy}` : ""} in the ${group.name}.`)}`}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-sky-400 hover:text-sky-300 mt-2"
-                          >
-                            🥤 Order soda 12-pack
-                          </a>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-xs font-semibold">
+                            <a href={order(`Soda 12-pack — ${who}`, `Please add a 12-pack of canned sodas (pickup at the Experience Center) for ${who}.`)} className="text-sky-400 hover:text-sky-300">🥤 Soda 12-pack</a>
+                            <a href={order(`Prepay gratuities — ${who}`, `Please prepay gratuities for ${who}: $${gratPerGuest}/guest × ${occ?.guests || 2} guests = $${gratTotal} total ($18 per guest, per day for ${group.nights || 5} nights).`)} className="text-sky-400 hover:text-sky-300">💵 Prepay tips (${gratPerGuest}/guest)</a>
+                            <span className="text-white/40">🛡️ Vacation protection:</span>
+                            <a href={order(`ADD vacation protection — ${who}`, `Please ADD vacation protection (travel insurance) for ${who}. Send me the price per guest to confirm.`)} className="text-green-300 hover:text-green-200">Add</a>
+                            <a href={order(`DECLINE vacation protection — ${who}`, `We DECLINE vacation protection for ${who}. We understand cancellation penalties apply per the cruise line schedule.`)} className="text-white/50 hover:text-white/80">Decline</a>
+                          </div>
                         )}
                       </div>
                       <div className="text-right shrink-0">
