@@ -147,7 +147,7 @@ export default async function GroupPortalPage({
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         {/* Welcome */}
         <div className="rounded-2xl border border-sky-400/25 bg-sky-500/5 p-6">
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">{"// Welcome Aboard"}</div>
+          <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-2">{"// Welcome Aboard"}</div>
           <h2 className="text-2xl font-extrabold text-white">Welcome, {group.name || "friends"}! 🚢</h2>
           <p className="text-white/70 mt-2 max-w-2xl">
             We&rsquo;re so excited you&rsquo;re sailing with us on {group.ship}
@@ -198,7 +198,7 @@ export default async function GroupPortalPage({
             return (
               <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
                 <div className="flex items-end justify-between flex-wrap gap-2 mb-3">
-                  <div className="label-mono text-[11px] uppercase text-sky-400/80">
+                  <div className="label-mono text-base uppercase text-sky-400/80 font-bold">
                     {"// Group Block Status"}
                   </div>
                   <div className="text-white/70 text-sm">
@@ -254,7 +254,7 @@ export default async function GroupPortalPage({
         {/* Choose your cabin — room inventory (with category fallback) */}
         {(rooms.length > 0 || group.groupRate > 0) && (
           <div>
-            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-2">
               {"// Choose Your Cabin"}
             </div>
             <p className="text-white/55 text-sm mb-5 max-w-2xl">
@@ -414,7 +414,7 @@ export default async function GroupPortalPage({
         {/* Rooming list — by room */}
         {rooms.length > 0 && (
           <div>
-            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
               {"// Rooming List — by room"}
             </div>
             <div className="space-y-2">
@@ -549,7 +549,7 @@ export default async function GroupPortalPage({
 
         {/* Roster */}
         <div>
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+          <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
             {"// Roster & Payment Status"}
           </div>
           <div className="overflow-x-auto rounded-2xl border border-white/10">
@@ -640,7 +640,7 @@ export default async function GroupPortalPage({
 
         {/* Rooming list submission */}
         <div>
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+          <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
             {"// Rooming List"}
           </div>
           <RoomingListForm
@@ -653,7 +653,7 @@ export default async function GroupPortalPage({
         {/* Contract */}
         {(group.contract || group.contractUrl) && (
           <div>
-            <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
               {"// Group Contract & Terms"}
             </div>
             {group.contractUrl && (
@@ -683,7 +683,7 @@ export default async function GroupPortalPage({
         >
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
-              <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-1">{"// Community"}</div>
+              <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-1">{"// Community"}</div>
               <div className="text-xl font-extrabold text-white">⚓ Join “Sea You on Deck”</div>
               <p className="text-white/65 text-sm mt-1 max-w-xl">
                 Our cruiser community — meet your group, swap port tips, plan cabin crawls and matching‑shirt days, and count down to sail‑away together.
@@ -700,7 +700,7 @@ export default async function GroupPortalPage({
 
         {/* Pre-cruise hotel */}
         <div className="rounded-2xl border border-white/10 bg-[#0b1020]/40 p-6">
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Pre-Cruise Hotel"}</div>
+          <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-3">{"// Pre-Cruise Hotel"}</div>
           <div className="grid sm:grid-cols-[1fr_auto] gap-4 sm:items-center">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -732,7 +732,7 @@ export default async function GroupPortalPage({
 
         {/* Group store & extras */}
         <div>
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
+          <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
             {"// Group Store & Extras"}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
