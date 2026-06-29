@@ -11,11 +11,16 @@ import {
   uploadGuestFile,
   newDocId,
 } from "@/lib/documents";
+import { type GroupDeposit, getGroupDeposits } from "@/lib/group-deposits";
 
 export default function AdminDocumentsPage() {
   const [docs, setDocs] = useState<GuestDocument[]>([]);
+  const [groups, setGroups] = useState<GroupDeposit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [scope, setScope] = useState<"individual" | "group">("individual");
   const [email, setEmail] = useState("");
+  const [groupId, setGroupId] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [confirmNumber, setConfirmNumber] = useState("");
   const [type, setType] = useState(DOCUMENT_TYPES[0]);
   const [label, setLabel] = useState("");
@@ -30,11 +35,26 @@ export default function AdminDocumentsPage() {
   }
   useEffect(() => {
     refresh();
+    getGroupDeposits().then(setGroups);
   }, []);
 
+  function pickGroup(id: string) {
+    setGroupId(id);
+    const g = groups.find((x) => x.id === id);
+    setGroupName(g ? g.groupName : "");
+  }
+
   async function upload() {
-    if (!email.trim() || !file) {
-      alert("Add the guest email and choose a PDF file.");
+    if (!file) {
+      alert("Choose a PDF file.");
+      return;
+    }
+    if (scope === "individual" && !email.trim()) {
+      alert("Add the guest email.");
+      return;
+    }
+    if (scope === "group" && !groupName.trim()) {
+      alert("Pick a group (or type a group name).");
       return;
     }
     setBusy(true);
@@ -52,7 +72,10 @@ export default function AdminDocumentsPage() {
     }
     await saveDocument({
       id: newDocId(),
-      email,
+      scope,
+      email: scope === "individual" ? email : "",
+      groupId: scope === "group" ? groupId : "",
+      groupName: scope === "group" ? groupName : "",
       confirmNumber,
       type,
       label,
@@ -76,11 +99,10 @@ export default function AdminDocumentsPage() {
   }
 
   const shown = search.trim()
-    ? docs.filter(
-        (d) =>
-          d.email.toLowerCase().includes(search.toLowerCase()) ||
-          d.confirmNumber.toLowerCase().includes(search.toLowerCase()) ||
-          d.label.toLowerCase().includes(search.toLowerCase())
+    ? docs.filter((d) =>
+        `${d.email} ${d.groupName} ${d.confirmNumber} ${d.label}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
       )
     : docs;
 
@@ -107,8 +129,10 @@ export default function AdminDocumentsPage() {
             Confirmations &amp; Invoices
           </h1>
           <p className="text-white/55 text-sm max-w-2xl mt-1">
-            Upload a guest&rsquo;s cruise-line confirmation PDF or your agent invoice. It
-            appears in their account portal (matched by email) to view and download.
+            Upload a cruise-line confirmation or agent invoice for an{" "}
+            <span className="text-white">individual</span> (appears in their account
+            portal, matched by email) or for a{" "}
+            <span className="text-white">group</span> (attached to the group).
           </p>
         </div>
       </section>
@@ -117,11 +141,49 @@ export default function AdminDocumentsPage() {
         {/* Upload form */}
         <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <h2 className="font-extrabold text-lg mb-4">Upload a document</h2>
+
+          {/* Individual vs Group toggle */}
+          <div className="flex gap-2 mb-4">
+            {(["individual", "group"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setScope(s)}
+                className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${
+                  scope === s
+                    ? "bg-white text-black"
+                    : "bg-white/5 text-white/60 border border-white/10 hover:border-white/30 hover:text-white"
+                }`}
+              >
+                {s === "individual" ? "👤 Individual" : "👥 Group"}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>Guest email *</label>
-              <input className={input} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="guest@example.com" />
-            </div>
+            {scope === "individual" ? (
+              <div>
+                <label className={lbl}>Guest email *</label>
+                <input className={input} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="guest@example.com" />
+              </div>
+            ) : (
+              <div>
+                <label className={lbl}>Group *</label>
+                <select className={input} value={groupId} onChange={(e) => pickGroup(e.target.value)}>
+                  <option value="" className="bg-[#0b1020]">— pick a group —</option>
+                  {groups.map((g) => (
+                    <option key={g.id} value={g.id} className="bg-[#0b1020]">
+                      {g.groupName}{g.ship ? ` · ${g.ship}` : ""}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  className={`${input} mt-2`}
+                  value={groupName}
+                  onChange={(e) => { setGroupName(e.target.value); setGroupId(""); }}
+                  placeholder="…or type a group name"
+                />
+              </div>
+            )}
             <div>
               <label className={lbl}>Confirmation # (optional)</label>
               <input className={input} value={confirmNumber} onChange={(e) => setConfirmNumber(e.target.value)} />
@@ -168,7 +230,7 @@ export default function AdminDocumentsPage() {
             </div>
             <input
               className="bg-white/5 border border-white/15 rounded-xl px-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60 w-64 max-w-full"
-              placeholder="Search email, conf #, label…"
+              placeholder="Search email, group, conf #, label…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -187,10 +249,17 @@ export default function AdminDocumentsPage() {
                   key={d.id}
                   className="bg-[#0b1020] rounded-xl border border-white/10 p-4 flex items-center gap-3 flex-wrap"
                 >
-                  <span className="text-2xl">📄</span>
+                  <span className="text-2xl">{d.scope === "group" ? "👥" : "📄"}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-white">{d.email}</span>
+                      <span className="font-bold text-white">
+                        {d.scope === "group" ? d.groupName : d.email}
+                      </span>
+                      {d.scope === "group" && (
+                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-400/25">
+                          Group
+                        </span>
+                      )}
                       <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">
                         {d.type}
                       </span>

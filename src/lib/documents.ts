@@ -5,7 +5,10 @@ import { supabase } from "@/lib/supabase";
 // metadata lives in the "documents" table.
 export type GuestDocument = {
   id: string;
-  email: string;
+  scope: "individual" | "group"; // who the confirmation is for
+  email: string; // individual: the guest's email (also a group leader's, optional)
+  groupId: string; // group: the group_deposits id (or any group key)
+  groupName: string; // group: human-readable group name
   confirmNumber: string;
   type: string; // "Cruise line confirmation" | "Agent invoice" | "Receipt" | "Other"
   label: string;
@@ -30,7 +33,10 @@ export function newDocId() {
 function toDoc(r: Record<string, unknown>): GuestDocument {
   return {
     id: r.id as string,
+    scope: ((r.scope as string) as GuestDocument["scope"]) ?? "individual",
     email: (r.email as string) ?? "",
+    groupId: (r.group_id as string) ?? "",
+    groupName: (r.group_name as string) ?? "",
     confirmNumber: (r.confirm_number as string) ?? "",
     type: (r.type as string) ?? "Other",
     label: (r.label as string) ?? "",
@@ -44,7 +50,10 @@ function toDoc(r: Record<string, unknown>): GuestDocument {
 function docRow(d: GuestDocument): Record<string, unknown> {
   return {
     id: d.id,
+    scope: d.scope || "individual",
     email: d.email.trim().toLowerCase() || null,
+    group_id: d.groupId || null,
+    group_name: d.groupName || null,
     confirm_number: d.confirmNumber || null,
     type: d.type || "Other",
     label: d.label || null,
@@ -70,6 +79,18 @@ export async function getDocumentsForEmail(email: string): Promise<GuestDocument
     .from("documents")
     .select("*")
     .ilike("email", clean)
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map(toDoc);
+}
+
+export async function getDocumentsForGroup(groupId: string): Promise<GuestDocument[]> {
+  const clean = groupId.trim();
+  if (!clean) return [];
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("group_id", clean)
     .order("created_at", { ascending: false });
   if (error || !data) return [];
   return data.map(toDoc);
