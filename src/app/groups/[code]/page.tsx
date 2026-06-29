@@ -2,7 +2,7 @@ import Link from "next/link";
 import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
 import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
-import { SHOP_ITEMS, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY, BOOKING_CALENDAR_URL } from "@/lib/shop";
+import { SHOP_ITEMS, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/shop";
 import ParkRideScheduler from "@/components/ParkRideScheduler";
 import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
@@ -155,13 +155,12 @@ export default async function GroupPortalPage({
             <a href={`sms:${CONTACT_PHONE}`} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
               💬 Text us first (fastest)
             </a>
-            <a
-              href={BOOKING_CALENDAR_URL || "/contact"}
-              {...(BOOKING_CALENDAR_URL ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            <Link
+              href="/book-a-call"
               className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full"
             >
               📅 Book a call
-            </a>
+            </Link>
             <a href={`tel:${CONTACT_PHONE}`} className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
               📞 Call {CONTACT_PHONE_DISPLAY}
             </a>

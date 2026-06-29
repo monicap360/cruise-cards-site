@@ -11,9 +11,11 @@ export const CONTACT_EMAIL =
 export const CONTACT_PHONE = "+14096322106";
 export const CONTACT_PHONE_DISPLAY = "(409) 632-2106";
 
-// Online scheduling link (Calendly / Google / etc.). Set in Render to enable
-// the "Book a call" button; until then it falls back to the contact page.
-export const BOOKING_CALENDAR_URL = process.env.NEXT_PUBLIC_BOOKING_CALENDAR_URL || "";
+// Online scheduling link (Calendly). Connected to Google Calendar so it can't
+// double-book. The "Book a call" button opens the on-site /book-a-call page,
+// which embeds this.
+export const BOOKING_CALENDAR_URL =
+  process.env.NEXT_PUBLIC_BOOKING_CALENDAR_URL || "https://calendly.com/cruisesfromgalveston-texas";
 
 export type ShopItem = { title: string; desc: string; emoji: string; href: string; tag?: string };
 
