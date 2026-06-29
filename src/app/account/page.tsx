@@ -10,6 +10,9 @@ import ChatWidget from "@/components/ChatWidget";
 import BookingRequestForm from "@/components/BookingRequestForm";
 import { getDocumentsForEmail, type GuestDocument } from "@/lib/documents";
 
+// Secure e-signature document (Jotform Sign). Change the id to swap documents.
+const SIGN_URL = "https://www.jotform.com/sign/252315585270052";
+
 export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -283,6 +286,36 @@ export default function AccountPage() {
             </div>
           </div>
         )}
+
+        {/* Sign your documents — secure e-signature */}
+        <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+            {"// Sign Your Documents"}
+          </div>
+          <p className="text-white/55 text-sm mb-4">
+            Review and securely e-sign your booking agreement. Signatures are collected through
+            our encrypted e-signature partner with a legal audit trail — no card or payment here.
+          </p>
+          <a
+            href={SIGN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full"
+          >
+            ✍️ Review &amp; e-sign
+          </a>
+          <div className="mt-4 rounded-xl overflow-hidden border border-white/10">
+            <iframe
+              title="Sign your documents"
+              src={SIGN_URL}
+              className="w-full h-[640px] bg-white"
+              loading="lazy"
+            />
+          </div>
+          <p className="text-white/35 text-xs mt-2">
+            If the document doesn&rsquo;t load above, use the &ldquo;Review &amp; e-sign&rdquo; button to open it securely.
+          </p>
+        </div>
 
         {/* Manage your booking — room moves & guest changes */}
         <div className="bg-[#0b1020] border border-sky-400/25 rounded-2xl p-6">
