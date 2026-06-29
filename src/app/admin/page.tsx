@@ -28,6 +28,7 @@ const TOOLS = [
   { href: "/admin/contacts", label: "📇 Comm Log" },
   { href: "/admin/documents", label: "📄 Documents" },
   { href: "/admin/groups", label: "👥 Groups" },
+  { href: "/admin/group-deposits", label: "🏦 Group Deposits" },
   { href: "/admin/rfp", label: "📩 Agent RFPs" },
   { href: "/admin/quotes", label: "📝 Quotes" },
   { href: "/admin/invoice", label: "🧾 Invoice" },
