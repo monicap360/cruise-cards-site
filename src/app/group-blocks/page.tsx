@@ -12,6 +12,7 @@ import {
 } from "@/lib/room-blocks";
 import { fmtDate, fmt$ } from "@/lib/sea-pay";
 import Photo from "@/components/Photo";
+import CelebrationStrip from "@/components/CelebrationStrip";
 
 export default function GroupBlocksPage() {
   const [blocks, setBlocks] = useState<SailingBlock[]>([]);
@@ -48,6 +49,8 @@ export default function GroupBlocksPage() {
       </section>
 
       {/* Group perk — free cabin with 8+ */}
+      <CelebrationStrip />
+
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2">
         <div className="bg-[#0b1020] border border-sky-400/30 rounded-2xl p-6 sm:p-8">
           <div className="grid lg:grid-cols-3 gap-6 items-center">

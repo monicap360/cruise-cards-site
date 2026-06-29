@@ -1,5 +1,6 @@
 import Link from "next/link";
 import DestinationCard from "@/components/DestinationCard";
+import CelebrationStrip from "@/components/CelebrationStrip";
 import { FEATURED_DESTINATIONS } from "@/lib/destinations";
 import { durationWordCap } from "@/lib/sea-pay";
 
@@ -320,6 +321,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <CelebrationStrip />
 
       {/* ── Featured deals ───────────────────────────────────────────────── */}
       <section className="bg-[#05070d] text-white border-t border-white/10 py-24 sm:py-32">
