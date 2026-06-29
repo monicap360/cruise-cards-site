@@ -96,6 +96,29 @@ export async function getSignups(): Promise<SignupEntry[]> {
   return data.map(toSignup);
 }
 
+export async function getSignupsByGroup(label: string): Promise<SignupEntry[]> {
+  const { data, error } = await supabase
+    .from("signups")
+    .select("*")
+    .eq("group_label", label)
+    .order("created_at", { ascending: true });
+  if (error || !data) return [];
+  return data.map(toSignup);
+}
+
+// Find which group a leader belongs to, by the email on their signup row.
+export async function findLeaderGroup(email: string): Promise<string | null> {
+  const clean = email.trim().toLowerCase();
+  if (!clean) return null;
+  const { data } = await supabase
+    .from("signups")
+    .select("group_label,email")
+    .ilike("email", clean)
+    .limit(1);
+  if (data && data.length) return (data[0].group_label as string) ?? null;
+  return null;
+}
+
 export async function saveSignup(s: SignupEntry): Promise<boolean> {
   const { error } = await supabase.from("signups").upsert(signupRow(s));
   return !error;

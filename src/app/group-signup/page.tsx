@@ -124,6 +124,12 @@ export default function GroupSignupPage() {
             <div><span className="text-white/45">Cabins:</span> {f.cabinsNeeded} {f.cabinPref}</div>
             <div><span className="text-white/45">Questions?</span> <a href="tel:+14096322106" className="text-sky-400">(409) 632-2106</a></div>
           </div>
+          <p className="text-white/45 text-sm mt-5">
+            Organizing this group?{" "}
+            <a href="/group-leader" className="text-sky-400 hover:text-sky-300 font-semibold">
+              Manage your group →
+            </a>
+          </p>
         </div>
       </div>
     );

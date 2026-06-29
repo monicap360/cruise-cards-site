@@ -1,0 +1,37 @@
+// Featured group sailings — shared by the public signup form (/group-signup)
+// and the group-leader portal (/group-leader). Add an entry to run another group.
+export type GroupSailing = {
+  key: string;
+  label: string; // must match the group_label stored on signups rows
+  ship: string;
+  line: string;
+  sailDate: string; // YYYY-MM-DD
+  returnDate: string;
+  nights: number;
+  port: string;
+  itinerary: string;
+  destSlug: string; // hero photo
+  blurb: string;
+};
+
+export const GROUP_SAILINGS: GroupSailing[] = [
+  {
+    key: "thanksgiving-2026",
+    label: "Thanksgiving 2026 — Liberty of the Seas",
+    ship: "Liberty of the Seas",
+    line: "Royal Caribbean",
+    sailDate: "2026-11-23",
+    returnDate: "2026-11-28",
+    nights: 5,
+    port: "Galveston",
+    itinerary: "Western Caribbean",
+    destSlug: "cozumel",
+    blurb: "5 nights round-trip from Galveston · Nov 23–28, 2026",
+  },
+];
+
+export function getGroupSailing(label: string): GroupSailing | null {
+  return GROUP_SAILINGS.find((g) => g.label === label) ?? null;
+}
+
+export const FEATURED_GROUP = GROUP_SAILINGS[0];
