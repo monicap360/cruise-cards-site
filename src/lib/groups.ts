@@ -170,7 +170,6 @@ function memberRow(m: GroupMember): Record<string, unknown> {
     paid_in_full: m.paidInFull,
     confirmation_number: m.confirmationNumber || null,
     notes: m.notes || null,
-    free_cruise: m.freeCruise ?? false,
   };
 }
 
