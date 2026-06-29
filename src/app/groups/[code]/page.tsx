@@ -9,7 +9,6 @@ import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
 import HeroImage from "@/components/HeroImage";
-import { shipSlug } from "@/components/ShipImage";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
@@ -74,6 +73,7 @@ export default async function GroupPortalPage({
 
   // Destination hero photo (Western Caribbean from Galveston → Cozumel)
   const destSlug = "cozumel";
+  const shipPhotoSlug = group.ship.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
   const stat = (v: string | number, l: string) => (
     <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
@@ -89,7 +89,7 @@ export default async function GroupPortalPage({
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-white/10 min-h-[340px] flex items-end">
         <HeroImage
-          candidates={[`/ships/${shipSlug(group.ship)}.jpg`, "/galveston-cruise-terminal.jpg", `/destinations/${destSlug}.jpg`]}
+          candidates={[`/ships/${shipPhotoSlug}.jpg`, "/galveston-cruise-terminal.jpg", `/destinations/${destSlug}.jpg`]}
           alt={`${group.ship} at the Galveston cruise terminal`}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
