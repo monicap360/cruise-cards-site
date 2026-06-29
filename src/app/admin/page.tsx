@@ -39,6 +39,7 @@ const TOOLS = [
   { href: "/admin/invoice", label: "🧾 Invoice" },
   { href: "/admin/notify", label: "✉️ Updates" },
   { href: "/admin/social", label: "📣 Social" },
+  { href: "/admin/outreach", label: "🤝 Outreach" },
   { href: "/admin/activity", label: "📡 Activity" },
   { href: "/admin/tasks", label: "✅ Tasks" },
 ];

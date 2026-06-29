@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { POSTS, getPost } from "@/lib/news";
 import FacebookComments from "@/components/FacebookComments";
+import { FB_PAGE_URL, AUTHOR_NAME, FB_ENGAGEMENT } from "@/lib/social";
 
 const SITE = "https://cruisesfromgalveston.net";
 
@@ -78,13 +79,25 @@ export default async function ArticlePage({
     dateModified: new Date(post.date).toISOString(),
     description: post.excerpt,
     articleSection: post.category,
-    author: { "@type": "Organization", name: "Cruises from Galveston" },
+    // sameAs ties the author/publisher to the verified Facebook entity (E-E-A-T).
+    author: { "@type": "Person", name: AUTHOR_NAME, sameAs: FB_PAGE_URL },
     publisher: {
       "@type": "Organization",
       name: "Cruises from Galveston",
+      sameAs: [FB_PAGE_URL],
       logo: { "@type": "ImageObject", url: "https://cruisesfromgalveston.net/logo.png" },
     },
     mainEntityOfPage: `https://cruisesfromgalveston.net/news/${post.slug}`,
+    // Only emitted when you set a REAL engagement count (NEXT_PUBLIC_FB_ENGAGEMENT).
+    ...(FB_ENGAGEMENT > 0
+      ? {
+          interactionStatistic: {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/CommentAction",
+            userInteractionCount: FB_ENGAGEMENT,
+          },
+        }
+      : {}),
   };
 
   return (
