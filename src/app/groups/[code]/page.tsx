@@ -626,6 +626,30 @@ export default async function GroupPortalPage({
           <ParkRideScheduler groupCode={group.code} sailDate={group.sailingDate} />
         </div>
 
+        {/* Pre-cruise hotel */}
+        <div className="rounded-2xl border border-white/10 bg-[#0b1020]/40 p-6">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Pre-Cruise Hotel"}</div>
+          <div className="grid sm:grid-cols-[1fr_auto] gap-4 sm:items-center">
+            <div>
+              <div className="text-xl font-extrabold text-white">🏨 Harbor House Hotel &amp; Marina — Pier 21</div>
+              <p className="text-white/65 text-sm mt-1 max-w-xl">
+                Stay the night before right on the harbor, <span className="text-white/85">steps from the cruise terminal</span>. Beat sail-day traffic, sleep in, and walk to your ship. Ask us about park‑stay‑cruise.
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Pre-cruise hotel (Harbor House) — ${group.name}`)}&body=${encodeURIComponent(`We'd like to add a pre-cruise night at the Harbor House Hotel & Marina (Pier 21) before the ${group.name}${group.sailingDate ? ` sailing ${group.sailingDate}` : ""}.\n\nNumber of rooms: ____\nNight(s): ____\nNames per room: ____`)}`}
+                className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full text-center"
+              >
+                Add a pre-cruise night
+              </a>
+              <Link href="/galveston-cruise-hotels" className="border border-white/25 hover:border-white/60 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full text-center">
+                See all hotels
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Packing list */}
         <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
           <CruisePackingList />
