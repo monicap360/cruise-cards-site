@@ -169,7 +169,18 @@ export default function AdminContactsPage() {
                   </span>
                 </button>
                 {open === g.email && (
-                  <div className="border-t border-white/10 divide-y divide-white/10">
+                  <div className="border-t border-white/10">
+                    <div className="p-3 flex justify-end border-b border-white/10">
+                      <a
+                        href={`/admin/tasks?name=${encodeURIComponent(g.name || "")}&contact=${encodeURIComponent(
+                          g.contacts.find((c) => c.phone)?.phone || g.email || ""
+                        )}&title=${encodeURIComponent("Follow up with " + (g.name || g.email))}`}
+                        className="text-xs font-bold bg-white text-black hover:bg-white/90 rounded-full px-4 py-2 transition-all"
+                      >
+                        + Follow-up
+                      </a>
+                    </div>
+                    <div className="divide-y divide-white/10">
                     {g.contacts.map((c) => (
                       <div key={c.id} className="p-4 flex items-start gap-3">
                         <div className="text-xs font-bold uppercase text-white/40 w-24 flex-shrink-0">
@@ -185,6 +196,7 @@ export default function AdminContactsPage() {
                         <button onClick={() => remove(c.id)} className="text-xs font-bold text-red-300 hover:text-red-200 flex-shrink-0">Delete</button>
                       </div>
                     ))}
+                    </div>
                   </div>
                 )}
               </div>
