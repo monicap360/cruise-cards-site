@@ -17,6 +17,7 @@ const PRIMARY = [
 const MORE = [
   { href: "/last-minute", label: "Last-Minute" },
   { href: "/ships-from-galveston", label: "Ships" },
+  { href: "/galveston-cruise-hotels", label: "Hotels & Parking" },
   { href: "/webcams", label: "Live Cams" },
   { href: "/news", label: "News" },
   { href: "/specials", label: "Specials" },
@@ -26,6 +27,8 @@ const MORE = [
   { href: "/hold", label: "Hold a Room" },
   { href: "/booking-options", label: "Booking Options" },
   { href: "/reserve", label: "Reserve a Visit" },
+  { href: "/group-signup", label: "Start a Group" },
+  { href: "/group-leader", label: "Manage My Group" },
   { href: "/request-group-space", label: "Travel Agents" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
