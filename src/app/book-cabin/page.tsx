@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { fmt$, fmtDateDow } from "@/lib/sea-pay";
 import Photo from "@/components/Photo";
-import { destinationFor } from "@/lib/destinations";
+import { destinationFor, portsFromItinerary } from "@/lib/destinations";
+import { getSailingBlock, type SailingBlock } from "@/lib/room-blocks";
 
 function shipSlug(s: string) {
   return s
@@ -17,11 +18,63 @@ function shipSlug(s: string) {
 
 const DEPOSIT_PP = 50;
 
-const FARE_TYPES = [
-  { value: "flexible", label: "Flexible (refundable deposit)" },
-  { value: "nonrefundable", label: "Non-Refundable (lowest price)" },
-  { value: "semiflex", label: "Semi-Flex (partial refund)" },
+// ── Add-ons (NOT inventory — estimated, confirmed by a specialist) ─────────────
+type AddonId =
+  | "gratuities"
+  | "protection"
+  | "shuttle"
+  | "airHou"
+  | "airIah";
+
+type Addon = {
+  id: AddonId;
+  label: string;
+  note: string;
+  // Compute the price for the whole party.
+  price: (guests: number, nights: number) => number;
+};
+
+const ADDONS: Addon[] = [
+  {
+    id: "gratuities",
+    label: "Gratuities / tips",
+    note: "$16.50 per person, per night",
+    price: (guests, nights) => 16.5 * guests * nights,
+  },
+  {
+    id: "protection",
+    label: "Vacation protection",
+    note: "$79 per person",
+    price: (guests) => 79 * guests,
+  },
+  {
+    id: "shuttle",
+    label: "Hotel → terminal shuttle",
+    note: "$8 per person",
+    price: (guests) => 8 * guests,
+  },
+  {
+    id: "airHou",
+    label: "Airport transfer (HOU — Hobby)",
+    note: "$65 per person",
+    price: (guests) => 65 * guests,
+  },
+  {
+    id: "airIah",
+    label: "Airport transfer (IAH — Bush)",
+    note: "$89 per person",
+    price: (guests) => 89 * guests,
+  },
 ];
+
+// ── Discounts — selecting any applies a single 5% cruise-fare discount ─────────
+const DISCOUNTS: { id: string; label: string }[] = [
+  { id: "military", label: "Military (active or veteran)" },
+  { id: "firstResponder", label: "First responder (police / fire / EMS)" },
+  { id: "senior", label: "Senior (55+)" },
+  { id: "teacher", label: "Teacher / educator" },
+];
+const DISCOUNT_RATE = 0.05;
 
 const ACKS: { id: string; label: string }[] = [
   {
@@ -55,35 +108,65 @@ function confirmNumber() {
   return "CFG-" + Math.random().toString(36).toUpperCase().substring(2, 8);
 }
 
+// One guest's editable details.
+type GuestForm = {
+  first: string;
+  last: string;
+  dob: string;
+  email: string;
+  phone: string;
+  loyalty: string;
+};
+
+function emptyGuest(): GuestForm {
+  return { first: "", last: "", dob: "", email: "", phone: "", loyalty: "" };
+}
+
+// A selectable cabin tier built from live inventory (or the query fallback).
+type Tier = {
+  category: string;
+  fromPrice: number;
+  available: number;
+};
+
 function BookCabinContent() {
   const params = useSearchParams();
 
+  // ── Sailing context (from query, then enriched by live block) ───────────────
   const [ship, setShip] = useState("");
   const [sailDate, setSailDate] = useState("");
-  const [cabinType, setCabinType] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  const [nights, setNights] = useState(0);
+  const [itinerary, setItinerary] = useState("");
   const [cruiseLine, setCruiseLine] = useState("");
-  const [pricePP, setPricePP] = useState(0);
   const [dest, setDest] = useState("");
 
-  // Guest 1 (lead)
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob1, setDob1] = useState("");
-  // Guest 2
-  const [g2First, setG2First] = useState("");
-  const [g2Last, setG2Last] = useState("");
-  const [g2Email, setG2Email] = useState("");
-  const [g2Phone, setG2Phone] = useState("");
-  const [g2Dob, setG2Dob] = useState("");
-  // Emergency contact
+  // Fallback (single cabin) coming straight from the query string.
+  const [queryType, setQueryType] = useState("");
+  const [queryPrice, setQueryPrice] = useState(0);
+
+  // Live block (if we can resolve one).
+  const [block, setBlock] = useState<SailingBlock | null>(null);
+
+  // ── Selection state ─────────────────────────────────────────────────────────
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState(0);
+  const [addons, setAddons] = useState<Record<string, boolean>>({});
+  const [discounts, setDiscounts] = useState<Record<string, boolean>>({});
+
+  // ── Guests ──────────────────────────────────────────────────────────────────
+  const [guests, setGuests] = useState("2");
+  const numGuests = Number(guests) || 1;
+  const [guestList, setGuestList] = useState<GuestForm[]>([
+    emptyGuest(),
+    emptyGuest(),
+  ]);
+
+  // ── Emergency contact ───────────────────────────────────────────────────────
   const [emName, setEmName] = useState("");
   const [emPhone, setEmPhone] = useState("");
   const [emRelation, setEmRelation] = useState("");
 
-  const [guests, setGuests] = useState("2");
-  const [fareType, setFareType] = useState("flexible");
   const [notes, setNotes] = useState("");
   const [acks, setAcks] = useState<Record<string, boolean>>({});
 
@@ -91,19 +174,122 @@ function BookCabinContent() {
   const [done, setDone] = useState(false);
   const [confirm, setConfirm] = useState("");
 
+  // ── Read query params on mount ──────────────────────────────────────────────
   useEffect(() => {
     setShip(params.get("ship") ?? "");
     setSailDate(params.get("date") ?? "");
-    setCabinType(params.get("type") ?? "");
     setCruiseLine(params.get("line") ?? "");
-    const p = Number(params.get("price"));
-    if (!Number.isNaN(p)) setPricePP(p);
-    const g = params.get("guests");
-    if (g) setGuests(g);
     setDest(params.get("dest") ?? "");
+    setQueryType(params.get("type") ?? "");
+    const p = Number(params.get("price"));
+    if (!Number.isNaN(p) && p > 0) setQueryPrice(p);
+    const g = params.get("guests");
+    if (g && Number(g) > 0) setGuests(g);
   }, [params]);
 
-  const destInfo = dest ? destinationFor(dest) : null;
+  // ── Resolve the live sailing block ──────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const id = params.get("id");
+      const qShip = params.get("ship") ?? "";
+      const qDate = params.get("date") ?? "";
+      let found: SailingBlock | null = null;
+      if (id) {
+        found = await getSailingBlock(id);
+      } else if (qShip && qDate) {
+        try {
+          const res = await fetch("/api/sailings");
+          if (res.ok) {
+            const blocks = (await res.json()) as SailingBlock[];
+            found =
+              blocks.find(
+                (b) => b.ship === qShip && b.sailingDate === qDate
+              ) ?? null;
+          }
+        } catch {
+          found = null;
+        }
+      }
+      if (cancelled || !found) return;
+      setBlock(found);
+      setShip(found.ship);
+      setSailDate(found.sailingDate);
+      setReturnDate(found.returnDate);
+      setNights(found.nights);
+      setItinerary(found.itinerary);
+      if (found.cruiseLine) setCruiseLine(found.cruiseLine);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [params]);
+
+  // ── Keep the guest list length in sync with the guest count ────────────────
+  useEffect(() => {
+    setGuestList((prev) => {
+      if (prev.length === numGuests) return prev;
+      const next = prev.slice(0, numGuests);
+      while (next.length < numGuests) next.push(emptyGuest());
+      return next;
+    });
+  }, [numGuests]);
+
+  // ── Build selectable tiers from live inventory ──────────────────────────────
+  const tiers = useMemo<Tier[]>(() => {
+    if (!block) return [];
+    const map = new Map<string, { from: number; available: number }>();
+    for (const c of block.cabins) {
+      if (c.status !== "available") continue;
+      const entry = map.get(c.type) ?? { from: Infinity, available: 0 };
+      entry.from = Math.min(entry.from, c.price);
+      entry.available += 1;
+      map.set(c.type, entry);
+    }
+    return Array.from(map.entries())
+      .map(([category, v]) => ({
+        category,
+        fromPrice: v.from === Infinity ? 0 : v.from,
+        available: v.available,
+      }))
+      .sort((a, b) => a.fromPrice - b.fromPrice);
+  }, [block]);
+
+  // Auto-select a sensible tier once data is known.
+  useEffect(() => {
+    if (selectedCategory) return;
+    if (tiers.length > 0) {
+      // Prefer the tier matching the query type, else cheapest.
+      const match =
+        (queryType && tiers.find((t) => t.category === queryType)) || tiers[0];
+      setSelectedCategory(match.category);
+      setSelectedPrice(match.fromPrice);
+    } else if (queryType || queryPrice) {
+      // No block → fall back to the single cabin from the query.
+      setSelectedCategory(queryType);
+      setSelectedPrice(queryPrice);
+    }
+  }, [tiers, queryType, queryPrice, selectedCategory]);
+
+  function pickTier(t: Tier) {
+    setSelectedCategory(t.category);
+    setSelectedPrice(t.fromPrice);
+  }
+
+  function updateGuest(i: number, patch: Partial<GuestForm>) {
+    setGuestList((prev) =>
+      prev.map((g, idx) => (idx === i ? { ...g, ...patch } : g))
+    );
+  }
+
+  // ── Photo ───────────────────────────────────────────────────────────────────
+  const firstPort = itinerary ? portsFromItinerary(itinerary)[0] : "";
+  const destInfo = firstPort
+    ? destinationFor(firstPort)
+    : dest
+      ? destinationFor(dest)
+      : null;
   const photoSrc = destInfo
     ? `/destinations/${destInfo.slug}.jpg`
     : ship
@@ -111,51 +297,100 @@ function BookCabinContent() {
       : "";
   const photoGradient = destInfo?.gradient ?? "from-blue-700 to-[#0a1f44]";
 
-  const grossTotal = pricePP > 0 ? pricePP * 2 : 0;
-  const numGuests = Number(guests) || 1;
+  // ── Pricing math ────────────────────────────────────────────────────────────
+  const cruiseFare = selectedPrice > 0 ? selectedPrice * numGuests : 0;
+  const effectiveNights = nights > 0 ? nights : 7; // for gratuities estimate
+
+  const selectedAddons = ADDONS.filter((a) => addons[a.id]).map((a) => ({
+    ...a,
+    amount: a.price(numGuests, effectiveNights),
+  }));
+  const addonsTotal = selectedAddons.reduce((s, a) => s + a.amount, 0);
+
+  const anyDiscount = DISCOUNTS.some((d) => discounts[d.id]);
+  const discountAmount = anyDiscount ? cruiseFare * DISCOUNT_RATE : 0;
+
+  const estimatedTotal = Math.max(0, cruiseFare - discountAmount) + addonsTotal;
   const depositTotal = DEPOSIT_PP * numGuests;
+
   const today = new Date().toISOString().slice(0, 10);
+
+  // ── Validation ──────────────────────────────────────────────────────────────
   const allAcked = ACKS.every((a) => acks[a.id]);
-  const guest1Ok = firstName && lastName && dob1 && email && phone;
-  const guest2Ok =
-    numGuests < 2 || (g2First && g2Last && g2Dob && g2Email && g2Phone);
+  const guestsOk = guestList.every((g, i) => {
+    const base = g.first && g.last && g.dob;
+    if (i === 0) return base && g.email && g.phone;
+    return base;
+  });
   const emergencyOk = emName && emPhone;
+  const tierOk = !!selectedCategory;
   const canSubmit =
-    guest1Ok && guest2Ok && emergencyOk && allAcked && !submitting;
+    tierOk && guestsOk && emergencyOk && allAcked && !submitting;
+
+  const lead = guestList[0] ?? emptyGuest();
 
   async function submit() {
     setSubmitting(true);
     const num = confirmNumber();
-    const g1 = `Guest 1: ${firstName} ${lastName} | DOB ${dob1} | ${email} | ${phone}.`;
-    const g2 =
-      numGuests >= 2
-        ? ` Guest 2: ${g2First} ${g2Last} | DOB ${g2Dob} | ${g2Email} | ${g2Phone}.`
-        : "";
+
+    const guestLines = guestList
+      .map((g, i) => {
+        const tag = i === 0 ? "Guest 1 (Lead)" : `Guest ${i + 1}`;
+        const contact =
+          i === 0 ? ` | ${g.email} | ${g.phone}` : "";
+        const loy = g.loyalty ? ` | Loyalty #${g.loyalty}` : "";
+        return `${tag}: ${g.first} ${g.last} | DOB ${g.dob}${contact}${loy}.`;
+      })
+      .join(" ");
+
+    const addonLines =
+      selectedAddons.length > 0
+        ? " Add-ons (estimated): " +
+          selectedAddons
+            .map((a) => `${a.label} ${fmt$(a.amount)}`)
+            .join(", ") +
+          "."
+        : " Add-ons: none.";
+
+    const discountLine = anyDiscount
+      ? ` Discount: ${DISCOUNTS.filter((d) => discounts[d.id])
+          .map((d) => d.label)
+          .join(", ")} → −${fmt$(discountAmount)} (5%).`
+      : " Discount: none.";
+
     const em = ` Emergency contact: ${emName}${
       emRelation ? ` (${emRelation})` : ""
     } | ${emPhone}.`;
-    await supabase.from("inquiries").insert({
+
+    const message =
+      `CABIN BOOKING REQUEST — ${selectedCategory || "cabin"} on ${ship} ${sailDate}` +
+      `${nights ? ` (${nights} nights)` : ""}. ` +
+      `From ${fmt$(selectedPrice)}/pp × ${numGuests} = ${fmt$(cruiseFare)} cruise fare.` +
+      `${discountLine}${addonLines}` +
+      ` Estimated total ${fmt$(estimatedTotal)} · deposit ${fmt$(depositTotal)}.` +
+      ` ${guestLines}${em}` +
+      (notes ? ` Notes: ${notes}` : "") +
+      " Acknowledged all booking terms.";
+
+    const row: Record<string, unknown> = {
       confirm_number: num,
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      phone,
+      first_name: lead.first,
+      last_name: lead.last,
+      email: lead.email,
+      phone: lead.phone,
       ship,
       sail_date: sailDate,
-      rate_type: fareType,
+      rate_type: anyDiscount ? "discounted" : "standard",
       guests,
-      cabin_type: cabinType,
+      cabin_type: selectedCategory,
       crew: "",
-      message:
-        `CABIN BOOKING REQUEST — ${cabinType || "cabin"} on ${ship} ${sailDate}. ` +
-        `From ${fmt$(pricePP)}/pp · gross ${fmt$(grossTotal)} · deposit ${fmt$(
-          depositTotal
-        )}. ${g1}${g2}${em} Acknowledged all booking terms.` +
-        (notes ? ` Notes: ${notes}` : ""),
+      message,
       appt_date: "",
       appt_time: "",
       mode: "booking",
-    });
+    };
+
+    await supabase.from("inquiries").insert(row);
     setConfirm(num);
     setDone(true);
     setSubmitting(false);
@@ -165,13 +400,14 @@ function BookCabinContent() {
     "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60";
   const lbl = "block text-white/70 text-sm font-medium mb-1";
 
+  // ── Confirmation screen ─────────────────────────────────────────────────────
   if (done) {
     return (
       <div className="min-h-screen bg-[#05070d] flex items-center justify-center px-4 py-16">
         <div className="bg-[#0b1020] rounded-3xl border border-white/10 p-10 max-w-lg w-full text-center">
-          <div className="text-4xl mb-3">🔒</div>
+          <div className="text-4xl mb-3 text-sky-400">✓</div>
           <h2 className="text-3xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">
-            Cabin Held
+            Reservation Requested
           </h2>
           <div className="text-white/45 font-mono text-sm mb-6">
             Confirmation #{confirm}
@@ -186,33 +422,37 @@ function BookCabinContent() {
                 {fmtDateDow(sailDate)}
               </div>
             )}
-            {cabinType && (
+            {selectedCategory && (
               <div>
-                <strong className="text-white/80">Cabin:</strong> {cabinType}
+                <strong className="text-white/80">Cabin:</strong>{" "}
+                {selectedCategory}
               </div>
             )}
-            {pricePP > 0 && (
+            {selectedPrice > 0 && (
               <div>
-                <strong className="text-white/80">From:</strong> {fmt$(pricePP)}
-                /person · deposit {fmt$(depositTotal)}
+                <strong className="text-white/80">From:</strong>{" "}
+                {fmt$(selectedPrice)}/person · est. total{" "}
+                {fmt$(estimatedTotal)} · deposit {fmt$(depositTotal)}
               </div>
             )}
             <div>
-              <strong className="text-white/80">Guest:</strong> {firstName}{" "}
-              {lastName}
+              <strong className="text-white/80">Guest:</strong> {lead.first}{" "}
+              {lead.last}
             </div>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 text-left text-sm text-white/60 space-y-2">
             <div className="font-extrabold text-white">What happens next?</div>
             <div>
-              1. Your request is logged securely under #{confirm}.
+              We&rsquo;ll email your{" "}
+              <strong className="text-white/80">
+                cruise-line secure payment link
+              </strong>{" "}
+              to <strong className="text-white/80">{lead.email}</strong> and a
+              specialist will confirm availability.{" "}
+              <strong className="text-white/80">
+                No card is charged on this website.
+              </strong>
             </div>
-            <div>
-              2. A specialist will contact <strong className="text-white/80">{email}</strong> to
-              confirm availability and arrange your deposit — by phone, check, or
-              directly with the cruise line.
-            </div>
-            <div>3. Once your deposit is received, your cabin is booked.</div>
           </div>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link
@@ -227,342 +467,506 @@ function BookCabinContent() {
     );
   }
 
+  // ── Main form ───────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#05070d]">
-      <div className="bg-[#0b1020] border-b border-white/10 text-white px-6 py-7">
-        <div className="max-w-3xl mx-auto">
-          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">
-            {"// Secure Cabin Booking"}
+      {/* Hero */}
+      <div className="relative">
+        {(photoSrc || ship) && (
+          <div className="relative h-56 sm:h-72">
+            <Photo
+              src={photoSrc}
+              fallbackSrc={ship ? `/ships/${shipSlug(ship)}.jpg` : undefined}
+              alt={destInfo ? `${destInfo.name}, ${destInfo.country}` : ship}
+              gradient={photoGradient}
+              overlay={false}
+              className="absolute inset-0"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/55 to-[#05070d]/20" />
+            <div className="absolute inset-0 grid-bg opacity-20" />
           </div>
-          <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
-            Reserve Your Cabin
-          </h1>
-          <p className="text-white/55 text-sm mt-1">
-            Submit a secure booking request — a specialist confirms availability
-            and arranges your deposit. No card is charged on this site.
-          </p>
+        )}
+        <div className="absolute inset-x-0 bottom-0">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-6">
+            <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/90 mb-1">
+              {"// Reserve your cabin"}
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-[-0.01em] text-white drop-shadow">
+              {ship || "Reserve Your Cabin"}
+            </h1>
+            <div className="text-white/70 text-sm mt-1 flex flex-wrap gap-x-4 gap-y-0.5">
+              {cruiseLine && <span>{cruiseLine}</span>}
+              {sailDate && (
+                <span>
+                  Sails {fmtDateDow(sailDate)}
+                  {returnDate ? ` → returns ${fmtDateDow(returnDate)}` : ""}
+                </span>
+              )}
+              {nights > 0 && <span>{nights} nights</span>}
+            </div>
+            {itinerary && (
+              <div className="text-white/55 text-xs mt-1">{itinerary}</div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-5">
-        {/* Cabin summary */}
-        {(ship || cabinType) && (
-          <div className="rounded-2xl overflow-hidden border border-sky-400/30 bg-sky-500/[0.07] flex flex-col sm:flex-row">
-            {/* Destination / ship photo */}
-            <div className="relative sm:w-56 h-44 sm:h-auto flex-shrink-0">
-              <Photo
-                src={photoSrc}
-                fallbackSrc={ship ? `/ships/${shipSlug(ship)}.jpg` : undefined}
-                alt={destInfo ? `${destInfo.name}, ${destInfo.country}` : ship}
-                gradient={photoGradient}
-                overlay={false}
-                className="absolute inset-0"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-[#0b1020] via-[#0b1020]/20 to-transparent" />
-              {destInfo && (
-                <div className="absolute bottom-3 left-4 right-3">
-                  <div className="label-mono text-[9px] uppercase tracking-wider text-sky-300">
-                    You&rsquo;ll visit
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+          {/* ── LEFT: the form ── */}
+          <div className="space-y-5">
+            {/* Cabin tier selection */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-1">
+                {"// Choose your cabin"}
+              </div>
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+                Cabin Tier
+              </h3>
+              {tiers.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {tiers.map((t) => {
+                    const active = selectedCategory === t.category;
+                    const popular = /balcony/i.test(t.category);
+                    return (
+                      <button
+                        key={t.category}
+                        type="button"
+                        onClick={() => pickTier(t)}
+                        className={`relative text-left rounded-xl border p-4 transition-all ${
+                          active
+                            ? "border-sky-400/70 bg-sky-400/10 ring-1 ring-sky-400/40"
+                            : "border-white/15 bg-white/5 hover:border-white/30"
+                        }`}
+                      >
+                        {popular && (
+                          <span className="absolute top-3 right-3 text-[9px] uppercase tracking-wider font-bold text-sky-300 bg-sky-400/15 border border-sky-400/30 rounded-full px-2 py-0.5">
+                            Most popular
+                          </span>
+                        )}
+                        <div className="text-white font-extrabold">
+                          {t.category}
+                        </div>
+                        <div className="text-holo font-bold mt-1">
+                          from {fmt$(t.fromPrice)}{" "}
+                          <span className="text-white/40 text-xs font-normal">
+                            / person
+                          </span>
+                        </div>
+                        <div className="text-white/45 text-xs mt-1">
+                          {t.available} available
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : selectedCategory ? (
+                <div className="rounded-xl border border-sky-400/50 bg-sky-400/10 p-4">
+                  <div className="text-white font-extrabold">
+                    {selectedCategory}
                   </div>
-                  <div className="text-white font-extrabold text-lg leading-none drop-shadow">
-                    {destInfo.name}
+                  {selectedPrice > 0 && (
+                    <div className="text-holo font-bold mt-1">
+                      from {fmt$(selectedPrice)}{" "}
+                      <span className="text-white/40 text-xs font-normal">
+                        / person
+                      </span>
+                    </div>
+                  )}
+                  <div className="text-white/45 text-xs mt-1">
+                    Availability confirmed by your specialist.
                   </div>
+                </div>
+              ) : (
+                <div className="text-white/45 text-sm">
+                  Loading live cabin availability…
                 </div>
               )}
             </div>
 
-            {/* Details */}
-            <div className="flex-1 p-6">
-              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80 mb-2">
-                You&rsquo;re booking
+            {/* Guests */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+                Guests
+              </h3>
+              <div className="max-w-[200px] mb-5">
+                <label className={lbl}>Number of Guests</label>
+                <select
+                  className={field}
+                  value={guests}
+                  onChange={(e) => setGuests(e.target.value)}
+                >
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                    <option key={n} value={n}>
+                      {n} guest{n > 1 ? "s" : ""}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="text-white font-extrabold text-xl">
-                {cabinType ? `${cabinType} · ` : ""}
-                {ship}
-              </div>
-              <div className="text-white/60 text-sm mt-0.5">
-                {cruiseLine}
-                {sailDate ? ` · Sails ${fmtDateDow(sailDate)}` : ""}
-              </div>
-              {pricePP > 0 && (
-                <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-                  <span className="text-white/70">
-                    From <strong className="text-holo">{fmt$(pricePP)}</strong> /
-                    person
-                  </span>
-                  <span className="text-white/70">
-                    Deposit{" "}
-                    <strong className="text-white">{fmt$(depositTotal)}</strong>
-                  </span>
-                </div>
-              )}
-              <div className="mt-3 flex items-center gap-2 text-[11px] text-white/45">
-                <span className="text-sky-400">🔒</span> Secure booking ·
-                best-price support · local Galveston team
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* Booking details */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Booking Details
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>Number of Guests</label>
-              <select
-                className={field}
-                value={guests}
-                onChange={(e) => setGuests(e.target.value)}
-              >
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>
-                    {n} guest{n > 1 ? "s" : ""}
-                  </option>
+              <div className="space-y-6">
+                {guestList.map((g, i) => (
+                  <div
+                    key={i}
+                    className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0"
+                  >
+                    <div className="text-white font-bold text-sm mb-3">
+                      Guest {i + 1}
+                      {i === 0 && (
+                        <span className="text-sky-400/80 font-normal">
+                          {" "}
+                          (Lead Guest)
+                        </span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className={lbl}>First Name *</label>
+                        <input
+                          className={field}
+                          value={g.first}
+                          onChange={(e) =>
+                            updateGuest(i, { first: e.target.value })
+                          }
+                          placeholder="Jane"
+                        />
+                      </div>
+                      <div>
+                        <label className={lbl}>Last Name *</label>
+                        <input
+                          className={field}
+                          value={g.last}
+                          onChange={(e) =>
+                            updateGuest(i, { last: e.target.value })
+                          }
+                          placeholder="Smith"
+                        />
+                      </div>
+                      <div>
+                        <label className={lbl}>Date of Birth *</label>
+                        <input
+                          type="date"
+                          max={today}
+                          className={field}
+                          value={g.dob}
+                          onChange={(e) =>
+                            updateGuest(i, { dob: e.target.value })
+                          }
+                        />
+                      </div>
+                      {i === 0 ? (
+                        <div>
+                          <label className={lbl}>Phone *</label>
+                          <input
+                            type="tel"
+                            className={field}
+                            value={g.phone}
+                            onChange={(e) =>
+                              updateGuest(i, { phone: e.target.value })
+                            }
+                            placeholder="(409) 555-0100"
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <label className={lbl}>
+                            Loyalty # (VIFP / Crown &amp; Anchor / Latitudes)
+                          </label>
+                          <input
+                            className={field}
+                            value={g.loyalty}
+                            onChange={(e) =>
+                              updateGuest(i, { loyalty: e.target.value })
+                            }
+                            placeholder="Optional"
+                          />
+                        </div>
+                      )}
+                      {i === 0 && (
+                        <>
+                          <div className="sm:col-span-2">
+                            <label className={lbl}>Email *</label>
+                            <input
+                              type="email"
+                              className={field}
+                              value={g.email}
+                              onChange={(e) =>
+                                updateGuest(i, { email: e.target.value })
+                              }
+                              placeholder="you@example.com"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className={lbl}>
+                              Loyalty # (VIFP / Crown &amp; Anchor / Latitudes)
+                            </label>
+                            <input
+                              className={field}
+                              value={g.loyalty}
+                              onChange={(e) =>
+                                updateGuest(i, { loyalty: e.target.value })
+                              }
+                              placeholder="Optional"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 ))}
-              </select>
-              <p className="text-white/40 text-xs mt-1">
-                Pricing is per person, double occupancy. 3rd/4th guests at
-                add-a-guest rates.
+              </div>
+            </div>
+
+            {/* Add-ons */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-1">
+                Add-ons
+              </h3>
+              <p className="text-white/40 text-xs mb-4">
+                Estimated — confirmed by your specialist.
               </p>
+              <div className="space-y-2">
+                {ADDONS.map((a) => {
+                  const amount = a.price(numGuests, effectiveNights);
+                  const on = !!addons[a.id];
+                  return (
+                    <label
+                      key={a.id}
+                      className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer transition-all ${
+                        on
+                          ? "border-sky-400/60 bg-sky-400/10"
+                          : "border-white/15 bg-white/5 hover:border-white/30"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={(e) =>
+                          setAddons((s) => ({
+                            ...s,
+                            [a.id]: e.target.checked,
+                          }))
+                        }
+                        className="accent-sky-500 w-4 h-4 flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white text-sm font-semibold">
+                          {a.label}
+                        </div>
+                        <div className="text-white/40 text-xs">{a.note}</div>
+                      </div>
+                      <div className="text-holo font-bold text-sm whitespace-nowrap">
+                        {fmt$(amount)}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
-            <div>
-              <label className={lbl}>Fare Type</label>
-              <select
-                className={field}
-                value={fareType}
-                onChange={(e) => setFareType(e.target.value)}
-              >
-                {FARE_TYPES.map((f) => (
-                  <option key={f.value} value={f.value}>
-                    {f.label}
-                  </option>
+
+            {/* Discounts */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-1">
+                Discounts
+              </h3>
+              <p className="text-white/40 text-xs mb-4">
+                Select any that apply — one 5% discount on your cruise fare.
+                Proof may be required at booking.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {DISCOUNTS.map((d) => (
+                  <label
+                    key={d.id}
+                    className="flex items-center gap-3 text-sm text-white/70 cursor-pointer rounded-xl border border-white/15 bg-white/5 p-3 hover:border-white/30"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!discounts[d.id]}
+                      onChange={(e) =>
+                        setDiscounts((s) => ({
+                          ...s,
+                          [d.id]: e.target.checked,
+                        }))
+                      }
+                      className="accent-sky-500 w-4 h-4 flex-shrink-0"
+                    />
+                    {d.label}
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Guest 1 */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Guest 1 <span className="text-sky-400/80 text-sm">(Lead Guest)</span>
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>First Name *</label>
-              <input
-                className={field}
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Jane"
-              />
+            {/* Emergency contact */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+                Emergency Contact{" "}
+                <span className="text-white/45 text-sm font-normal">
+                  (not sailing with you)
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={lbl}>Full Name *</label>
+                  <input
+                    className={field}
+                    value={emName}
+                    onChange={(e) => setEmName(e.target.value)}
+                    placeholder="Contact name"
+                  />
+                </div>
+                <div>
+                  <label className={lbl}>Phone *</label>
+                  <input
+                    type="tel"
+                    className={field}
+                    value={emPhone}
+                    onChange={(e) => setEmPhone(e.target.value)}
+                    placeholder="(713) 555-0123"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={lbl}>Relationship</label>
+                  <input
+                    className={field}
+                    value={emRelation}
+                    onChange={(e) => setEmRelation(e.target.value)}
+                    placeholder="Parent, sibling, friend…"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className={lbl}>Last Name *</label>
-              <input
-                className={field}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Smith"
-              />
-            </div>
-            <div>
-              <label className={lbl}>Date of Birth *</label>
-              <input
-                type="date"
-                max={today}
-                className={field}
-                value={dob1}
-                onChange={(e) => setDob1(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className={lbl}>Phone *</label>
-              <input
-                type="tel"
-                className={field}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="(409) 555-0100"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label className={lbl}>Email *</label>
-              <input
-                type="email"
-                className={field}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-              />
-            </div>
-          </div>
-        </div>
 
-        {/* Guest 2 */}
-        {numGuests >= 2 && (
-          <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-            <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-              Guest 2
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={lbl}>First Name *</label>
-                <input
-                  className={field}
-                  value={g2First}
-                  onChange={(e) => setG2First(e.target.value)}
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label className={lbl}>Last Name *</label>
-                <input
-                  className={field}
-                  value={g2Last}
-                  onChange={(e) => setG2Last(e.target.value)}
-                  placeholder="Smith"
-                />
-              </div>
-              <div>
-                <label className={lbl}>Date of Birth *</label>
-                <input
-                  type="date"
-                  max={today}
-                  className={field}
-                  value={g2Dob}
-                  onChange={(e) => setG2Dob(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className={lbl}>Phone *</label>
-                <input
-                  type="tel"
-                  className={field}
-                  value={g2Phone}
-                  onChange={(e) => setG2Phone(e.target.value)}
-                  placeholder="(409) 555-0101"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className={lbl}>Email *</label>
-                <input
-                  type="email"
-                  className={field}
-                  value={g2Email}
-                  onChange={(e) => setG2Email(e.target.value)}
-                  placeholder="guest2@example.com"
-                />
+            {/* Special requests */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <label className={lbl}>Special Requests</label>
+              <textarea
+                rows={3}
+                className={`${field} resize-none`}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Celebrating something? Accessibility needs? Bed configuration? Let us know."
+              />
+            </div>
+
+            {/* Acknowledgments */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
+                Please Confirm
+              </h3>
+              <div className="space-y-3">
+                {ACKS.map((a) => (
+                  <label
+                    key={a.id}
+                    className="flex items-start gap-3 text-sm text-white/65 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!acks[a.id]}
+                      onChange={(e) =>
+                        setAcks((s) => ({ ...s, [a.id]: e.target.checked }))
+                      }
+                      className="mt-1 accent-sky-500 w-4 h-4 flex-shrink-0"
+                    />
+                    {a.label}
+                  </label>
+                ))}
               </div>
             </div>
           </div>
-        )}
 
-        {/* Emergency contact */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Emergency Contact{" "}
-            <span className="text-white/45 text-sm font-normal">
-              (not sailing with you)
-            </span>
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>Full Name *</label>
-              <input
-                className={field}
-                value={emName}
-                onChange={(e) => setEmName(e.target.value)}
-                placeholder="Contact name"
-              />
-            </div>
-            <div>
-              <label className={lbl}>Phone *</label>
-              <input
-                type="tel"
-                className={field}
-                value={emPhone}
-                onChange={(e) => setEmPhone(e.target.value)}
-                placeholder="(713) 555-0123"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label className={lbl}>Relationship</label>
-              <input
-                className={field}
-                value={emRelation}
-                onChange={(e) => setEmRelation(e.target.value)}
-                placeholder="Parent, sibling, friend…"
-              />
-            </div>
-          </div>
-        </div>
+          {/* ── RIGHT: live order summary ── */}
+          <div className="lg:sticky lg:top-6 self-start">
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6 space-y-4">
+              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/80">
+                {"// Order summary"}
+              </div>
 
-        {/* Special requests */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <label className={lbl}>Special Requests</label>
-          <textarea
-            rows={3}
-            className={`${field} resize-none`}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Celebrating something? Accessibility needs? Bed configuration? Let us know."
-          />
-        </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between text-white/70">
+                  <span>
+                    Cruise fare
+                    {selectedPrice > 0 && (
+                      <span className="text-white/40">
+                        {" "}
+                        ({fmt$(selectedPrice)} × {numGuests})
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-white">{fmt$(cruiseFare)}</span>
+                </div>
 
-        {/* Acknowledgments */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
-          <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
-            Please Confirm
-          </h3>
-          <div className="space-y-3">
-            {ACKS.map((a) => (
-              <label
-                key={a.id}
-                className="flex items-start gap-3 text-sm text-white/65 cursor-pointer"
+                {selectedAddons.map((a) => (
+                  <div
+                    key={a.id}
+                    className="flex justify-between text-white/60 text-xs"
+                  >
+                    <span>{a.label}</span>
+                    <span>{fmt$(a.amount)}</span>
+                  </div>
+                ))}
+
+                {anyDiscount && (
+                  <div className="flex justify-between text-sky-300 text-xs">
+                    <span>Discount (5%)</span>
+                    <span>−{fmt$(discountAmount)}</span>
+                  </div>
+                )}
+
+                <div className="border-t border-white/10 pt-3 flex justify-between items-baseline">
+                  <span className="text-white/80 font-semibold">
+                    Estimated total
+                  </span>
+                  <span className="text-holo font-extrabold text-lg">
+                    {fmt$(estimatedTotal)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-baseline">
+                  <span className="text-white/80 font-semibold">
+                    Deposit due
+                  </span>
+                  <span className="text-white font-bold">
+                    {fmt$(depositTotal)}
+                  </span>
+                </div>
+                <div className="text-white/35 text-[11px]">
+                  ({fmt$(DEPOSIT_PP)} × {numGuests} guests)
+                </div>
+              </div>
+
+              <p className="text-white/40 text-[11px] leading-relaxed border-t border-white/10 pt-3">
+                Per person, double occupancy. Final price &amp; availability
+                confirmed by your specialist. No card charged online.
+              </p>
+
+              <button
+                onClick={submit}
+                disabled={!canSubmit}
+                className="w-full bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all"
               >
-                <input
-                  type="checkbox"
-                  checked={!!acks[a.id]}
-                  onChange={(e) =>
-                    setAcks((s) => ({ ...s, [a.id]: e.target.checked }))
-                  }
-                  className="mt-1 accent-sky-500 w-4 h-4 flex-shrink-0"
-                />
-                {a.label}
-              </label>
-            ))}
+                {submitting ? "Submitting…" : "Request Reservation →"}
+              </button>
+
+              {!canSubmit && !submitting && (
+                <p className="text-white/35 text-[11px] text-center">
+                  Complete all guests, emergency contact &amp; acknowledgments
+                  to submit.
+                </p>
+              )}
+
+              <Link
+                href="/sailings"
+                className="block text-center text-white/45 hover:text-white/70 text-xs transition-colors"
+              >
+                Cancel
+              </Link>
+
+              <div className="flex items-center justify-center gap-2 text-[11px] text-white/40 border-t border-white/10 pt-3">
+                <span className="text-sky-400">🔒</span> Secure request · no card
+                online
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Security notice */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-start gap-3 text-xs text-white/55">
-          <span className="text-lg">🔒</span>
-          <span>
-            <strong className="text-white/80">Secure request.</strong> Your
-            details are transmitted over an encrypted connection. We never
-            collect credit-card numbers on this website — a specialist arranges
-            your deposit directly with you.
-          </span>
-        </div>
-
-        <div className="flex gap-4 justify-end">
-          <Link
-            href="/sailings"
-            className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider px-6 py-3 rounded-full text-sm transition-all"
-          >
-            Cancel
-          </Link>
-          <button
-            onClick={submit}
-            disabled={!canSubmit}
-            className="bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider px-8 py-3 rounded-full text-sm transition-all"
-          >
-            {submitting ? "Submitting…" : "Submit Secure Booking →"}
-          </button>
         </div>
       </div>
     </div>
