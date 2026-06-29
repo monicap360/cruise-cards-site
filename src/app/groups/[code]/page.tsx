@@ -631,9 +631,12 @@ export default async function GroupPortalPage({
           <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-3">{"// Pre-Cruise Hotel"}</div>
           <div className="grid sm:grid-cols-[1fr_auto] gap-4 sm:items-center">
             <div>
-              <div className="text-xl font-extrabold text-white">🏨 Harbor House Hotel &amp; Marina — Pier 21</div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="text-xl font-extrabold text-white">🏨 Harbor House Hotel &amp; Marina — Pier 21</div>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/25">⏳ Rates pending</span>
+              </div>
               <p className="text-white/65 text-sm mt-1 max-w-xl">
-                Stay the night before right on the harbor, <span className="text-white/85">steps from the cruise terminal</span>. Beat sail-day traffic, sleep in, and walk to your ship. Ask us about park‑stay‑cruise.
+                Stay the night before right on the harbor, <span className="text-white/85">steps from the cruise terminal</span>. Beat sail-day traffic, sleep in, and walk to your ship. <span className="text-white/85">We&rsquo;re finalizing group rates now</span> — ask to be added and we&rsquo;ll send your price as soon as it&rsquo;s confirmed.
               </p>
             </div>
             <div className="flex flex-col gap-2 shrink-0">

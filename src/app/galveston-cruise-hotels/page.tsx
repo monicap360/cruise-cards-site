@@ -19,7 +19,7 @@ const HOTELS: Hotel[] = [
   {
     name: "Harbor House Hotel & Marina at Pier 21",
     distance: "0.4 mi — steps from the terminal",
-    perks: ["Walk or 5-minute ride to the cruise terminal", "Harborfront rooms right over the marina", "On historic Pier 21 — restaurants & the Strand at your door", "Boutique waterfront feel"],
+    perks: ["Walk or 5-minute ride to the cruise terminal", "Harborfront rooms right over the marina", "On historic Pier 21 — restaurants & the Strand at your door", "Group rates pending — ask us for current pricing"],
     vibe: "Closest to the port — wake up on the water and stroll to your ship.",
   },
   {
