@@ -61,6 +61,48 @@ export default function AdminGroupsPage() {
   const [m, setM] = useState<GroupMember>(blankMember(""));
   const [rooms, setRooms] = useState<GroupRoom[]>([]);
   const [r, setR] = useState<GroupRoom>(blankRoom(""));
+  const [bookBusy, setBookBusy] = useState("");
+  const [bookMsg, setBookMsg] = useState("");
+
+  // Upload a cruise-line reservation/confirmation PDF → AI reads it → creates the
+  // cabin (member + room). Cost/payments/promos are saved on the room (admin-only).
+  async function importBooking(e: React.ChangeEvent<HTMLInputElement>, groupId: string) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    setBookBusy(groupId);
+    setBookMsg("Reading the booking with AI…");
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      const b64 = btoa(bin);
+      const mediaType = file.type === "image/png" ? "image/png" : file.type === "image/jpeg" ? "image/jpeg" : "application/pdf";
+      const res = await fetch("/api/parse-booking", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ pdfBase64: b64, mediaType }) });
+      const d = await res.json();
+      if (!res.ok) { setBookMsg(d.error || "Could not read that document."); setBookBusy(""); return; }
+      const guests: { name?: string; dob?: string }[] = Array.isArray(d.guests) ? d.guests : [];
+      const names = guests.map((x) => `${x.name}${x.dob ? ` (${x.dob})` : ""}`).join(", ");
+      const lead = guests[0]?.name || String(d.reservationNumber || "Guest");
+      const num = (v: unknown) => (Number(v) || 0);
+      const fin = [
+        num(d.totalPrice) ? `Total $${num(d.totalPrice).toFixed(2)}` : "",
+        num(d.taxesPerPerson) ? `Taxes/pp $${num(d.taxesPerPerson).toFixed(2)}` : "",
+        num(d.paymentsReceived) ? `Paid $${num(d.paymentsReceived).toFixed(2)}` : "",
+        num(d.finalPayment) ? `Balance $${num(d.finalPayment).toFixed(2)}${d.finalPaymentDue ? ` due ${d.finalPaymentDue}` : ""}` : "",
+        Array.isArray(d.promos) && d.promos.length ? `Promos: ${d.promos.join(", ")}` : "",
+      ].filter(Boolean).join(" · ");
+      await saveMember({ id: newMemberId(), groupId, name: lead, email: String(d.email || ""), phone: String(d.phone || ""), cabinType: String(d.category || ""), cabinNumber: String(d.stateroom || ""), guests: guests.length || 2, fare: 0, depositPaid: 0, paidInFull: false, confirmationNumber: String(d.reservationNumber || ""), notes: names });
+      await saveRoom({ id: newRoomId(), groupId, cabinType: String(d.category || ""), label: String(d.stateroom || "TBD"), ratePP: 0, holdUntil: "", status: "booked", bookedBy: lead, notes: fin });
+      setMembers(await getMembers(groupId));
+      setRooms(await getRooms(groupId));
+      setBookMsg(`✓ Loaded ${d.reservationNumber || "booking"} — ${d.category || ""} ${d.stateroom || ""}. Cost saved to the room (admin-only).`);
+      setTimeout(() => setBookMsg(""), 6000);
+    } catch (err) {
+      setBookMsg("Import failed: " + (err instanceof Error ? err.message : "unknown error"));
+    }
+    setBookBusy("");
+  }
 
   async function refresh() {
     setGroups(await getAllGroups());
@@ -219,6 +261,21 @@ export default function AdminGroupsPage() {
 
                 {openId === grp.id && (
                   <div className="border-t border-white/10 p-4 bg-white/5">
+                    {/* Upload booking confirmation (AI) */}
+                    <div className="mb-4 rounded-xl border border-sky-400/25 bg-sky-500/[0.06] p-4">
+                      <div className="flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                          <div className="font-bold text-sm">📄 Upload booking confirmation (PDF)</div>
+                          <div className="text-white/55 text-xs mt-0.5">AI reads a Royal Caribbean / Carnival reservation and adds the cabin — stateroom, category, guests + DOBs, reservation #, total, taxes, payments & promos (cost saved admin-only).</div>
+                        </div>
+                        <label className={`cursor-pointer bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-4 py-2.5 rounded-full ${bookBusy === grp.id ? "opacity-50 pointer-events-none" : ""}`}>
+                          {bookBusy === grp.id ? "Reading…" : "Upload PDF"}
+                          <input type="file" accept="application/pdf,image/png,image/jpeg" className="hidden" onChange={(e) => importBooking(e, grp.id)} />
+                        </label>
+                      </div>
+                      {bookMsg && bookBusy !== "" && <div className="text-sky-300 text-xs mt-2">{bookMsg}</div>}
+                      {bookMsg && bookBusy === "" && <div className="text-green-300 text-xs mt-2">{bookMsg}</div>}
+                    </div>
                     {/* members table */}
                     {members.length > 0 && (
                       <div className="overflow-x-auto mb-4">
@@ -230,7 +287,10 @@ export default function AdminGroupsPage() {
                             {members.map((mm) => (
                               <tr key={mm.id} className="border-t border-white/10">
                                 <td className="py-2 font-semibold">{mm.name}</td>
-                                <td>{mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}</td>
+                                <td>
+                                  {mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}
+                                  {(() => { const rm = rooms.find((x) => x.bookedBy === mm.name && x.notes); return rm ? <div className="text-white/40 text-[10px] mt-0.5 max-w-[260px]">💲 {rm.notes}</div> : null; })()}
+                                </td>
                                 <td className="text-right">{fmt$(mm.fare)}</td>
                                 <td className="text-right">
                                   {mm.paidInFull || mm.depositPaid > 0 ? (
