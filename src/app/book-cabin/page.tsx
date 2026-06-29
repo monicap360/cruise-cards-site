@@ -17,6 +17,7 @@ function shipSlug(s: string) {
 }
 
 const DEPOSIT_PP = 50;
+const HOTEL_PER_NIGHT = 139; // estimated pre/post-cruise hotel rate per room/night
 
 // ── Add-ons (NOT inventory — estimated, confirmed by a specialist) ─────────────
 type AddonId =
@@ -153,6 +154,15 @@ function BookCabinContent() {
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [addons, setAddons] = useState<Record<string, boolean>>({});
   const [discounts, setDiscounts] = useState<Record<string, boolean>>({});
+
+  // Pre/post-cruise hotel + flights
+  const [preHotel, setPreHotel] = useState(false);
+  const [preNights, setPreNights] = useState(1);
+  const [postHotel, setPostHotel] = useState(false);
+  const [postNights, setPostNights] = useState(1);
+  const [hotelRooms, setHotelRooms] = useState(1);
+  const [flights, setFlights] = useState(false);
+  const [flightCity, setFlightCity] = useState("");
 
   // ── Guests ──────────────────────────────────────────────────────────────────
   const [guests, setGuests] = useState("2");
@@ -310,7 +320,11 @@ function BookCabinContent() {
   const anyDiscount = DISCOUNTS.some((d) => discounts[d.id]);
   const discountAmount = anyDiscount ? cruiseFare * DISCOUNT_RATE : 0;
 
-  const estimatedTotal = Math.max(0, cruiseFare - discountAmount) + addonsTotal;
+  const hotelNights = (preHotel ? preNights : 0) + (postHotel ? postNights : 0);
+  const hotelTotal = hotelNights * HOTEL_PER_NIGHT * Math.max(1, hotelRooms);
+
+  const estimatedTotal =
+    Math.max(0, cruiseFare - discountAmount) + addonsTotal + hotelTotal;
   const depositTotal = DEPOSIT_PP * numGuests;
 
   const today = new Date().toISOString().slice(0, 10);
@@ -358,6 +372,19 @@ function BookCabinContent() {
           .join(", ")} → −${fmt$(discountAmount)} (5%).`
       : " Discount: none.";
 
+    const hotelLine =
+      hotelNights > 0
+        ? ` Hotel: ${preHotel ? `${preNights} pre-cruise night(s)` : ""}${
+            preHotel && postHotel ? " + " : ""
+          }${postHotel ? `${postNights} post-cruise night(s)` : ""} × ${Math.max(
+            1,
+            hotelRooms
+          )} room(s) ≈ ${fmt$(hotelTotal)} (est).`
+        : "";
+    const flightLine = flights
+      ? ` Flights: please quote — flying from ${flightCity || "(city TBD)"}.`
+      : "";
+
     const em = ` Emergency contact: ${emName}${
       emRelation ? ` (${emRelation})` : ""
     } | ${emPhone}.`;
@@ -366,7 +393,7 @@ function BookCabinContent() {
       `CABIN BOOKING REQUEST — ${selectedCategory || "cabin"} on ${ship} ${sailDate}` +
       `${nights ? ` (${nights} nights)` : ""}. ` +
       `From ${fmt$(selectedPrice)}/pp × ${numGuests} = ${fmt$(cruiseFare)} cruise fare.` +
-      `${discountLine}${addonLines}` +
+      `${discountLine}${addonLines}${hotelLine}${flightLine}` +
       ` Estimated total ${fmt$(estimatedTotal)} · deposit ${fmt$(depositTotal)}.` +
       ` ${guestLines}${em}` +
       (notes ? ` Notes: ${notes}` : "") +
@@ -764,6 +791,66 @@ function BookCabinContent() {
               </div>
             </div>
 
+            {/* Pre & Post-Cruise */}
+            <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-1">
+                Pre &amp; Post-Cruise
+              </h3>
+              <p className="text-white/40 text-xs mb-4">
+                Make a trip of it — add hotel nights near the port and let us book your flights.
+                Hotel is an estimate; flights are quoted by your specialist.
+              </p>
+              <div className="space-y-3">
+                {/* Pre-cruise hotel */}
+                <div className={`rounded-xl border p-3 transition-all ${preHotel ? "border-sky-400/60 bg-sky-400/10" : "border-white/15 bg-white/5"}`}>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={preHotel} onChange={(e) => setPreHotel(e.target.checked)} className="accent-sky-500 w-4 h-4 flex-shrink-0" />
+                    <span className="flex-1 text-white text-sm font-semibold">Pre-cruise hotel (night before)</span>
+                    <span className="text-white/40 text-xs">~{fmt$(HOTEL_PER_NIGHT)}/night/room</span>
+                  </label>
+                  {preHotel && (
+                    <div className="mt-3 flex items-center gap-2 pl-7">
+                      <span className="text-white/60 text-xs">Nights</span>
+                      <input type="number" min={1} value={preNights} onChange={(e) => setPreNights(Math.max(1, Number(e.target.value)))} className="w-20 bg-white/5 border border-white/15 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-sky-400/60" />
+                    </div>
+                  )}
+                </div>
+                {/* Post-cruise hotel */}
+                <div className={`rounded-xl border p-3 transition-all ${postHotel ? "border-sky-400/60 bg-sky-400/10" : "border-white/15 bg-white/5"}`}>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={postHotel} onChange={(e) => setPostHotel(e.target.checked)} className="accent-sky-500 w-4 h-4 flex-shrink-0" />
+                    <span className="flex-1 text-white text-sm font-semibold">Post-cruise hotel (night after)</span>
+                    <span className="text-white/40 text-xs">~{fmt$(HOTEL_PER_NIGHT)}/night/room</span>
+                  </label>
+                  {postHotel && (
+                    <div className="mt-3 flex items-center gap-2 pl-7">
+                      <span className="text-white/60 text-xs">Nights</span>
+                      <input type="number" min={1} value={postNights} onChange={(e) => setPostNights(Math.max(1, Number(e.target.value)))} className="w-20 bg-white/5 border border-white/15 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-sky-400/60" />
+                    </div>
+                  )}
+                </div>
+                {(preHotel || postHotel) && (
+                  <div className="flex items-center gap-2 pl-1">
+                    <span className="text-white/60 text-xs">Hotel rooms</span>
+                    <input type="number" min={1} value={hotelRooms} onChange={(e) => setHotelRooms(Math.max(1, Number(e.target.value)))} className="w-20 bg-white/5 border border-white/15 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-sky-400/60" />
+                  </div>
+                )}
+                {/* Flights */}
+                <div className={`rounded-xl border p-3 transition-all ${flights ? "border-sky-400/60 bg-sky-400/10" : "border-white/15 bg-white/5"}`}>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={flights} onChange={(e) => setFlights(e.target.checked)} className="accent-sky-500 w-4 h-4 flex-shrink-0" />
+                    <span className="flex-1 text-white text-sm font-semibold">Book my flights (into Houston IAH/HOU)</span>
+                    <span className="text-white/40 text-xs">Quoted</span>
+                  </label>
+                  {flights && (
+                    <div className="mt-3 pl-7">
+                      <input value={flightCity} onChange={(e) => setFlightCity(e.target.value)} placeholder="Flying from? (city or airport)" className="w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-white text-sm placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* Discounts */}
             <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
               <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-1">
@@ -909,6 +996,20 @@ function BookCabinContent() {
                   <div className="flex justify-between text-sky-300 text-xs">
                     <span>Discount (5%)</span>
                     <span>−{fmt$(discountAmount)}</span>
+                  </div>
+                )}
+
+                {hotelTotal > 0 && (
+                  <div className="flex justify-between text-white/60 text-xs">
+                    <span>Hotel ({hotelNights} night{hotelNights === 1 ? "" : "s"} × {Math.max(1, hotelRooms)} room{hotelRooms === 1 ? "" : "s"}, est)</span>
+                    <span>{fmt$(hotelTotal)}</span>
+                  </div>
+                )}
+
+                {flights && (
+                  <div className="flex justify-between text-white/60 text-xs">
+                    <span>Flights</span>
+                    <span className="text-white/45">Quoted</span>
                   </div>
                 )}
 
