@@ -51,8 +51,8 @@ export default function Navbar() {
     <nav className="bg-[#05070d]/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/10 print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center" aria-label="Cruise Experience Center — home">
-            <CompassLogo className="scale-125 origin-left" />
+          <Link href="/" className="flex items-center -ml-1 sm:-ml-3" aria-label="Cruise Experience Center — home">
+            <CompassLogo className="scale-150 origin-left" />
           </Link>
 
           <div className="hidden md:flex items-center gap-1">
@@ -108,12 +108,6 @@ export default function Navbar() {
               className="ml-1 text-white/70 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-full font-medium text-[13px] transition-colors"
             >
               Log In
-            </Link>
-            <Link
-              href="/select"
-              className="ml-1 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-5 py-2.5 rounded-full text-xs transition-all"
-            >
-              Select Cruise
             </Link>
           </div>
 

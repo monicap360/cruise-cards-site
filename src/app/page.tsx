@@ -141,12 +141,37 @@ export default function Home() {
               Plan. Book. Protect. Sail. Return.
             </span>
           </p>
+          {/* Cruise search engine */}
+          <form
+            action="/find"
+            className="animate-fade-up delay-3 mb-5 flex flex-col sm:flex-row gap-3 max-w-xl"
+          >
+            <input
+              name="q"
+              placeholder="Search by ship, destination, or month…"
+              aria-label="Search cruises from Galveston"
+              className="flex-1 bg-white/5 border border-white/15 rounded-full px-5 py-4 text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60"
+            />
+            <button
+              type="submit"
+              className="bg-sky-500 hover:bg-sky-400 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all whitespace-nowrap"
+            >
+              Search Cruises
+            </button>
+          </form>
+
           <div className="animate-fade-up delay-3 flex flex-col sm:flex-row gap-3">
             <Link
-              href="/deals"
+              href="/select"
               className="bg-white text-black font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full hover:bg-white/90 transition-all text-center"
             >
-              Explore Sailings
+              Select Cruise
+            </Link>
+            <Link
+              href="/deals"
+              className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all text-center"
+            >
+              Explore Deals
             </Link>
             <Link
               href="/reserve"
