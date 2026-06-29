@@ -425,7 +425,7 @@ export default async function GroupPortalPage({
                   const open = rm.status === "available" && !rm.bookedBy;
                   const cabinLabel = isGty ? "Guarantee cabin" : `Cabin ${rm.label}`;
                   const orderHref = (item: string) =>
-                    `/groups/${group.code}/order?item=${item}&room=${i + 1}&cabin=${encodeURIComponent(cabinLabel)}&guests=${occ?.guests || 2}`;
+                    `/groups/${group.code}/order?item=${item}&room=${i + 1}&cabin=${encodeURIComponent(cabinLabel)}&guests=${occ?.guests || 2}&nights=${group.nights || 0}`;
                   return (
                     <div
                       key={rm.id}
@@ -480,6 +480,7 @@ export default async function GroupPortalPage({
                                 { item: "tips", emoji: "💵", label: `Prepay tips` },
                                 { item: "protection", emoji: "🛡️", label: "Vacation protection" },
                                 { item: "hotel", emoji: "🏨", label: "Pre-cruise hotel" },
+                                { item: "parking", emoji: "🅿️", label: "Cruise parking" },
                                 { item: "travel", emoji: "🧭", label: "Flying / driving" },
                               ].map((a) => (
                                 <Link
@@ -496,6 +497,7 @@ export default async function GroupPortalPage({
                             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-2.5 text-[11px] font-semibold">
                               <span className="uppercase tracking-wider text-[10px] text-white/35">Need a change?</span>
                               <Link href={orderHref("move")} className="text-amber-300/90 hover:text-amber-200">🔀 Move / upgrade</Link>
+                              <Link href={orderHref("correction")} className="text-sky-300/90 hover:text-sky-200">🪪 Correct name/DOB</Link>
                               <Link href={orderHref("namechange")} className="text-amber-300/90 hover:text-amber-200">✏️ Name change ($150)</Link>
                               <Link href={orderHref("cancel")} className="text-red-300/90 hover:text-red-200">⚠️ Cancel passenger</Link>
                               <Link href={orderHref("cancelroom")} className="text-red-300/90 hover:text-red-200">❌ Cancel room</Link>

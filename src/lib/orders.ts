@@ -20,6 +20,14 @@ export type GroupOrder = {
 
 export const newOrderId = () => "ord-" + Math.random().toString(36).slice(2, 9);
 
+// Cruise terminal parking, priced by cruise length (nights).
+export function parkingPrice(nights: number): number {
+  const table: Record<number, number> = { 4: 55, 5: 65, 6: 75, 7: 99, 8: 110 };
+  if (nights <= 4) return 55;
+  if (nights >= 8) return 110;
+  return table[nights] ?? 0;
+}
+
 export type OrderItem = {
   label: string;
   emoji: string;
@@ -68,6 +76,12 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     desc: "Let us know if you're flying or driving in (and your vehicle) so we can plan parking and transfers.",
     priceNote: "Helps us plan Park & Ride",
   },
+  parking: {
+    label: "Cruise parking",
+    emoji: "🅿️",
+    desc: "Reserve parking at the Galveston cruise terminal for your whole sailing.",
+    priceNote: "Priced by cruise length",
+  },
   move: {
     label: "Move / upgrade room",
     emoji: "🔀",
@@ -106,6 +120,14 @@ export const ORDER_ITEMS: Record<string, OrderItem> = {
     priceNote: "Cancellation penalties apply",
     notePrompt: "Reason for cancelling this room…",
     ack: "I understand cancellation penalties apply per the cruise line schedule — 25% (89–75 days before sailing), 50% (74–61), 75% (60–31), and 100% (30–0 days) — and I authorize cancellation of this room.",
+  },
+  correction: {
+    label: "Correct a name / DOB",
+    emoji: "🪪",
+    desc: "Fix a misspelled name or an incorrect date of birth on this reservation.",
+    priceNote: "Typo corrections — usually no fee",
+    notePrompt: "What needs correcting (current spelling/DOB → correct spelling/DOB)…",
+    ack: "I confirm this is a correction of a spelling or date-of-birth error (not a different guest). I understand the cruise line must approve corrections, and if it's treated as a name change a $150 fee may apply.",
   },
   rebook: {
     label: "Rebook a room",
