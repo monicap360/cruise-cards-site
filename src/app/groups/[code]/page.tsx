@@ -9,6 +9,7 @@ import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
 import CabinThread from "@/components/CabinThread";
+import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import HeroImage from "@/components/HeroImage";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
@@ -65,6 +66,7 @@ export default async function GroupPortalPage({
 
   const now = Date.now();
   const totalGuests = members.reduce((s, m) => s + (m.guests || 0), 0);
+  const hotelRates = (await getRfpsForGroup(group.code)).filter((r) => r.status === "Submitted" || r.status === "Selected");
   const depositCount = members.filter(
     (m) => m.paidInFull || m.depositPaid > 0
   ).length;
@@ -725,6 +727,27 @@ export default async function GroupPortalPage({
               </Link>
             </div>
           </div>
+
+          {hotelRates.length > 0 && (
+            <div className="mt-5 border-t border-white/10 pt-4">
+              <div className="text-[11px] uppercase tracking-wider text-sky-300/80 font-bold mb-2">Submitted group hotel rates</div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {hotelRates.map((h) => (
+                  <div key={h.id} className={`rounded-xl border p-4 ${h.status === "Selected" ? "border-green-400/40 bg-green-500/[0.06]" : "border-white/10 bg-white/[0.03]"}`}>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="font-bold text-white">{h.hotelName}</div>
+                      {h.status === "Selected" && <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-green-500/15 text-green-300">✓ Our pick</span>}
+                    </div>
+                    <div className="text-holo font-extrabold text-2xl leading-none mt-1">{fmt$(h.nightlyRate)}<span className="text-white/45 text-sm font-semibold">/night</span></div>
+                    {h.roomType && <div className="text-white/55 text-xs mt-0.5">{h.roomType}</div>}
+                    {h.parkStayCruise && <div className="text-green-300 text-xs mt-1">🅿️ Park‑stay‑cruise{h.parkingDays ? ` · ${h.parkingDays} nights parking` : ""}{h.shuttle ? " · shuttle" : ""}</div>}
+                    {h.terms && <div className="text-white/45 text-xs mt-1.5">{h.terms}</div>}
+                    <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Book ${h.hotelName} — ${group.name}`)}&body=${encodeURIComponent(`We'd like to book ${h.hotelName} (${fmt$(h.nightlyRate)}/night) for the ${group.name}.\n\nNumber of rooms: ____\nNight(s): ____`)}`} className="inline-block mt-3 text-sky-400 hover:text-sky-300 text-xs font-bold">Book this hotel →</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Packing list */}
