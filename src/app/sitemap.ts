@@ -48,6 +48,7 @@ const ROUTES = [
   "/guides/cruise-terminals",
   "/guides/travel-insurance",
   "/transportation",
+  "/galveston-cruise-hotels",
   "/cruise-line-apps",
   "/already-booked",
   "/free-cruise",
