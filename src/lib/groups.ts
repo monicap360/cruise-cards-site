@@ -34,6 +34,8 @@ export type Group = {
   releaseDate: string; // when unbooked rooms release into inventory (date/time)
   groupRate: number; // group rate per person (double occupancy)
   contract: string; // free-text contract terms / status
+  contractUrl: string; // uploaded group-contract PDF (Storage URL)
+  contractName: string; // original file name
   notes: string;
   createdAt?: string;
 };
@@ -104,6 +106,8 @@ function toGroup(r: Record<string, unknown>): Group {
     releaseDate: (r.release_date as string) ?? "",
     groupRate: Number(r.group_rate) || 0,
     contract: (r.contract as string) ?? "",
+    contractUrl: (r.contract_url as string) ?? "",
+    contractName: (r.contract_name as string) ?? "",
     notes: (r.notes as string) ?? "",
     createdAt: (r.created_at as string) ?? "",
   };
@@ -127,6 +131,8 @@ function groupRow(g: Group): Record<string, unknown> {
     release_date: g.releaseDate || null,
     group_rate: g.groupRate || 0,
     contract: g.contract || null,
+    contract_url: g.contractUrl || null,
+    contract_name: g.contractName || null,
     notes: g.notes || null,
   };
 }

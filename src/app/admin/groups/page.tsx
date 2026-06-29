@@ -22,6 +22,7 @@ import {
   newRoomId,
   isRoomReleased,
 } from "@/lib/groups";
+import { uploadGuestFile } from "@/lib/documents";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -31,7 +32,7 @@ function blankGroup(): Group {
     id: newGroupId(), code: newGroupCode(), name: "", leaderName: "", leaderEmail: "",
     leaderPhone: "", ship: "", cruiseLine: "", sailingDate: "", returnDate: "", nights: 0,
     depositDueDate: "", finalPaymentDate: "", blockSize: 0, releaseDate: "",
-    groupRate: 0, contract: "", notes: "",
+    groupRate: 0, contract: "", contractUrl: "", contractName: "", notes: "",
   };
 }
 function blankMember(groupId: string): GroupMember {
@@ -153,6 +154,29 @@ export default function AdminGroupsPage() {
             <div className="sm:col-span-2"><label className={lbl}>Group rate ($/person)</label><input type="number" className={input} value={g.groupRate || ""} onChange={(e) => setGroupF({ groupRate: Number(e.target.value) })} placeholder="e.g. 549" /></div>
             <div className="sm:col-span-2"><label className={lbl}>Rooms release (date &amp; time)</label><input type="datetime-local" className={input} value={g.releaseDate} onChange={(e) => setGroupF({ releaseDate: e.target.value })} /></div>
             <div className="sm:col-span-6"><label className={lbl}>Contract / terms (shown on the portal)</label><textarea className={input} rows={3} value={g.contract} onChange={(e) => setGroupF({ contract: e.target.value })} placeholder="Group rate, included perks, deposit & final-payment terms, cancellation policy…" /></div>
+            <div className="sm:col-span-6">
+              <label className={lbl}>Group contract (PDF upload)</label>
+              {g.contractUrl ? (
+                <div className="flex items-center gap-3 flex-wrap">
+                  <a href={g.contractUrl} target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300 text-sm font-semibold">📄 {g.contractName || "View contract"}</a>
+                  <button type="button" onClick={() => setGroupF({ contractUrl: "", contractName: "" })} className="text-red-300 hover:text-red-200 text-xs font-bold">Remove</button>
+                </div>
+              ) : (
+                <input
+                  type="file"
+                  accept="application/pdf,image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const up = await uploadGuestFile(file);
+                    if ("error" in up) { alert("Upload failed: " + up.error + "\n\nMake sure the 'documents' Storage bucket exists."); return; }
+                    setGroupF({ contractUrl: up.url, contractName: up.name });
+                  }}
+                  className="block w-full text-sm text-white/70 file:mr-3 file:rounded-full file:border-0 file:bg-white file:text-black file:font-semibold file:px-4 file:py-2 file:text-xs file:uppercase file:tracking-wider"
+                />
+              )}
+              <p className="text-white/40 text-xs mt-1">Uploads to the documents bucket; shown on the group portal as a download.</p>
+            </div>
           </div>
           <div className="flex gap-3 mt-5">
             <button onClick={saveG} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">{editingG ? "Update group" : "Create group"}</button>

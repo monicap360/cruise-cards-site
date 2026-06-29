@@ -453,14 +453,26 @@ export default async function GroupPortalPage({
         </div>
 
         {/* Contract */}
-        {group.contract && (
+        {(group.contract || group.contractUrl) && (
           <div>
             <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">
               {"// Group Contract & Terms"}
             </div>
-            <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 text-white/70 text-sm leading-relaxed whitespace-pre-wrap">
-              {group.contract}
-            </div>
+            {group.contractUrl && (
+              <a
+                href={group.contractUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-3 rounded-full mb-4"
+              >
+                📄 Download group contract{group.contractName ? ` (${group.contractName})` : ""}
+              </a>
+            )}
+            {group.contract && (
+              <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-6 text-white/70 text-sm leading-relaxed whitespace-pre-wrap">
+                {group.contract}
+              </div>
+            )}
           </div>
         )}
 
