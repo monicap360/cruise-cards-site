@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Photo from "@/components/Photo";
+import BrandLogo from "@/components/BrandLogo";
 import PrintButton from "@/components/PrintButton";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 import { getQuote, quoteTotal, quoteBalance } from "@/lib/quotes";
@@ -68,10 +69,8 @@ export default async function QuotePage({
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/30" />
           <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
             <div>
-              <div className="text-lg font-extrabold tracking-tight">
-                Cruises from Galveston
-              </div>
-              <div className="text-xs uppercase tracking-wider text-white/80">
+              <BrandLogo dark className="drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]" />
+              <div className="text-xs uppercase tracking-wider text-white/80 mt-1">
                 Cruise Experience Center
               </div>
             </div>

@@ -18,7 +18,9 @@ async function handleLogout() {
 }
 
 const TOOLS = [
+  { href: "/admin/inbox", label: "📥 Online Requests" },
   { href: "/admin/reservations", label: "🛎️ Front Desk" },
+  { href: "/admin/departures", label: "🛳️ Departures" },
   { href: "/admin/sales", label: "📈 Sales" },
   { href: "/admin/room-blocks", label: "🛏️ Room Blocks" },
   { href: "/admin/waivers", label: "⚖️ Waivers" },

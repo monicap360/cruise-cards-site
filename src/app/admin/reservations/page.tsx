@@ -106,12 +106,20 @@ export default function ReservationsPage() {
                 Front Desk Reservations
               </h1>
             </div>
-            <Link
-              href="/admin/reservations/new"
-              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all text-xs"
-            >
-              + New Reservation
-            </Link>
+            <div className="flex gap-2 flex-wrap">
+              <Link
+                href="/admin/inbox"
+                className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold uppercase tracking-wider px-5 py-3 rounded-full transition-all text-xs"
+              >
+                📥 Online Requests
+              </Link>
+              <Link
+                href="/admin/reservations/new"
+                className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-6 py-3 rounded-full transition-all text-xs"
+              >
+                + New Reservation
+              </Link>
+            </div>
           </div>
 
           {/* Today stats */}
