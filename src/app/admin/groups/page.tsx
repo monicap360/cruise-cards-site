@@ -360,6 +360,7 @@ export default function AdminGroupsPage() {
                                 </td>
                                 <td className="text-right font-bold">{fmt$(memberBalance(mm))}</td>
                                 <td className="text-right whitespace-nowrap">
+                                  <Link href={`/admin/folio/${mm.id}`} target="_blank" className="text-sky-400 font-bold text-xs hover:text-sky-300 mr-2">💰 Folio</Link>
                                   <button onClick={() => applyDeposit(mm, grp.id)} className="text-green-300 font-bold text-xs hover:text-green-200 mr-2">Apply deposit</button>
                                   <Link href={`/group-invoice/${mm.id}?copy=agent`} target="_blank" className="text-amber-300 font-bold text-xs hover:text-amber-200 mr-2">📄 Agent invoice</Link>
                                   <Link href={`/group-receipt/${mm.id}?copy=agent`} target="_blank" className="text-amber-300 font-bold text-xs hover:text-amber-200 mr-2">🧾 Agent receipt</Link>
