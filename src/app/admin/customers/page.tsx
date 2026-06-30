@@ -8,6 +8,7 @@ import {
   getOffers, saveOffer, deleteOffer,
   newCustomerId, newOfferId, newOfferToken,
 } from "@/lib/crm";
+import { type Ticket, saveTicket, newTicketId, newTicketToken, newTicketPin } from "@/lib/tickets";
 
 const fmt$ = (n: number) => "$" + (n || 0).toLocaleString("en-US");
 const STATUS_COLOR: Record<string, string> = {
@@ -53,6 +54,17 @@ export default function AdminCustomersPage() {
     if (!confirm("Delete this customer?")) return;
     await deleteCustomer(id);
     setCustomers(await getCustomers());
+  }
+  async function openTicket(cust: Customer) {
+    const subject = prompt(`New ticket for ${cust.name} — subject:`);
+    if (!subject) return;
+    const t: Ticket = {
+      id: newTicketId(), token: newTicketToken(), pin: newTicketPin(),
+      customerName: cust.name, customerEmail: cust.email, customerPhone: cust.phone,
+      groupCode: "", subject, status: "Open",
+    };
+    await saveTicket(t);
+    alert(`Ticket opened for ${cust.name}. Manage it in Support Tickets. PIN ${t.pin}.`);
   }
   async function saveOf() {
     if (!offer) return;
@@ -130,6 +142,7 @@ export default function AdminCustomersPage() {
                     </div>
                     <div className="flex gap-2 shrink-0">
                       <button onClick={() => setOffer(blankOffer(cust))} className="bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full">+ Offer</button>
+                      <button onClick={() => openTicket(cust)} className="text-amber-300 text-xs font-bold hover:text-amber-200">🎫 Ticket</button>
                       <button onClick={() => { setC(cust); setEditingC(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-sky-400 text-xs font-bold hover:text-sky-300">Edit</button>
                       <button onClick={() => removeC(cust.id)} className="text-red-300 text-xs font-bold hover:text-red-200">×</button>
                     </div>

@@ -10,6 +10,7 @@ import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
+import GroupTickets from "@/components/GroupTickets";
 import HeroImage from "@/components/HeroImage";
 import { fmt$, fmtDate } from "@/lib/sea-pay";
 
@@ -760,6 +761,11 @@ export default async function GroupPortalPage({
         {/* Packing list */}
         <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
           <CruisePackingList />
+        </div>
+
+        {/* Questions & Concerns (tickets) */}
+        <div className="rounded-2xl border border-white/10 bg-[#0b1020]/40 p-6">
+          <GroupTickets groupCode={group.code} groupName={group.name} />
         </div>
 
         {/* Group store & extras */}

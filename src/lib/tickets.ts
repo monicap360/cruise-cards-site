@@ -53,6 +53,11 @@ export async function getTickets(): Promise<Ticket[]> {
   return data.map(toTicket);
 }
 
+export async function getTicketsForGroup(groupCode: string): Promise<Ticket[]> {
+  const { data } = await supabase.from("tickets").select("*").eq("group_code", groupCode).order("created_at", { ascending: false });
+  return (data ?? []).map(toTicket);
+}
+
 export async function getTicketByToken(token: string): Promise<Ticket | null> {
   const { data } = await supabase.from("tickets").select("*").eq("token", token).limit(1);
   if (!data || !data[0]) return null;
