@@ -62,6 +62,7 @@ export default function AdminGroupsPage() {
   const [loading, setLoading] = useState(true);
   const [g, setG] = useState<Group>(blankGroup());
   const [editingG, setEditingG] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [m, setM] = useState<GroupMember>(blankMember(""));
@@ -139,6 +140,7 @@ export default function AdminGroupsPage() {
     await saveGroup(g);
     setG(blankGroup());
     setEditingG(false);
+    setShowForm(false);
     refresh();
   }
   async function removeG(id: string) {
@@ -205,12 +207,14 @@ export default function AdminGroupsPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <button onClick={() => { setG(blankGroup()); setEditingG(false); setShowForm((v) => !v); }} className="bg-white text-black hover:bg-white/90 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full">{showForm && !editingG ? "Close" : "+ New Group"}</button>
             <Link href="/admin/orders" className="bg-white/5 border border-white/15 hover:border-sky-400/50 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full">📦 Group Orders</Link>
             <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
           </div>
         </div>
 
-        {/* Group editor */}
+        {/* Group editor — opens on demand (New Group button / Edit) */}
+        {(showForm || editingG) && (
         <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6 mb-8">
           <h2 className="font-extrabold text-lg mb-4">{editingG ? "Edit group" : "New group"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
@@ -253,9 +257,10 @@ export default function AdminGroupsPage() {
           </div>
           <div className="flex gap-3 mt-5">
             <button onClick={saveG} className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-6 py-2.5 rounded-full">{editingG ? "Update group" : "Create group"}</button>
-            {editingG && <button onClick={() => { setG(blankGroup()); setEditingG(false); }} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">Cancel</button>}
+            <button onClick={() => { setG(blankGroup()); setEditingG(false); setShowForm(false); }} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-6 py-2.5 rounded-full">Cancel</button>
           </div>
         </div>
+        )}
 
         {/* Groups list */}
         {loading ? <p className="text-white/45">Loading…</p> : groups.length === 0 ? (
@@ -268,13 +273,13 @@ export default function AdminGroupsPage() {
                   <div className="flex-1 min-w-[12rem]">
                     <div className="font-extrabold">{grp.name}</div>
                     <div className="text-white/55 text-sm">{grp.ship}{grp.sailingDate ? ` · ${grp.sailingDate}` : ""}</div>
-                    <div className="text-white/40 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}</div>
+                    <div className="text-white/40 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}{grp.sailingDate ? <> · <span className="text-sky-300 font-bold">PIN {grp.sailingDate.slice(5, 7)}{grp.sailingDate.slice(8, 10)}</span> <span className="text-white/30">(what guests enter)</span></> : null}</div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
                     <div className="flex gap-3">
                       <button onClick={() => openMembers(grp)} className="text-xs font-bold text-sky-400 hover:text-sky-300">{openId === grp.id ? "Hide" : "Manage members"}</button>
-                      <button onClick={() => { setG(grp); setEditingG(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
+                      <button onClick={() => { setG(grp); setEditingG(true); setShowForm(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
                       <button onClick={() => removeG(grp.id)} className="text-xs font-bold text-red-300 hover:text-red-200">Delete</button>
                     </div>
                   </div>
