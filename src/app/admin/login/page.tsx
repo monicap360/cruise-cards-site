@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Image from "next/image";
+import { signIn } from "@/lib/auth";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [pin, setPin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +39,35 @@ function LoginForm() {
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleEmailSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { data, error: signErr } = await signIn(email, password);
+      if (signErr || !data.session) {
+        setError("Incorrect email or password.");
+        setLoading(false);
+        return;
+      }
+      const res = await fetch("/api/tenant-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken: data.session.access_token }),
+      });
+      if (res.ok) {
+        router.push(redirect);
+        router.refresh();
+      } else {
+        setError("Couldn't start your session — is your account set up?");
+        setLoading(false);
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   }
@@ -77,6 +109,25 @@ function LoginForm() {
             className="w-full bg-white text-black hover:bg-white/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed font-semibold uppercase tracking-wider py-4 rounded-full text-lg transition-all"
           >
             {loading ? "Checking…" : "Enter"}
+          </button>
+        </form>
+
+        {/* Email sign-in (Supabase Auth) — per-agency accounts */}
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-white/30 text-[10px] uppercase tracking-widest">or sign in</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+        <form onSubmit={handleEmailSignIn} className="space-y-3 text-left">
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"
+            autoComplete="username"
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"
+            autoComplete="current-password"
+            className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+          <button type="submit" disabled={!email || !password || loading}
+            className="w-full border border-white/20 hover:border-white/50 hover:bg-white/5 disabled:opacity-40 text-white font-semibold uppercase tracking-wider py-3 rounded-full text-sm transition-all">
+            Sign in with email
           </button>
         </form>
 
