@@ -167,6 +167,19 @@ export default function ReservePage() {
     };
     await saveReservation(reservation);
 
+    try {
+      await fetch("/api/notify-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: service || "Visit request", confirmNumber: reservation.reservationNumber,
+          customerName: reservation.guestName, customerEmail: reservation.guestEmail, phone: reservation.guestPhone,
+          ship: reservation.ship, sailDate: reservation.sailDate,
+          summary: `${service} on ${date} at ${time} · ${party} guest(s). ${requestSummary.trim()}`,
+        }),
+      });
+    } catch { /* ignore — reservation already saved */ }
+
     setConfirmation({ reservation, customerMessage });
     setSubmitting(false);
     setStep(4);

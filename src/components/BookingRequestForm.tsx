@@ -50,6 +50,16 @@ export default function BookingRequestForm({
       appt_time: "",
       mode: type,
     });
+    try {
+      await fetch("/api/notify-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: label, customerName: name || "Account holder", customerEmail: email,
+          confirmNumber: confirm.trim(), summary: details,
+        }),
+      });
+    } catch { /* ignore — request already saved */ }
     setBusy(false);
     setSent(true);
   }

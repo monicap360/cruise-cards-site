@@ -427,6 +427,18 @@ function BookCabinContent() {
     };
 
     await supabase.from("inquiries").insert(row);
+    // Ring the office + confirm the customer — never blocks the booking.
+    try {
+      await fetch("/api/notify-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "Cabin booking", confirmNumber: num,
+          customerName: `${lead.first} ${lead.last}`.trim(), customerEmail: lead.email, phone: lead.phone,
+          ship, sailDate, cabin: selectedCategory, summary: message,
+        }),
+      });
+    } catch { /* ignore — booking already saved */ }
     setConfirm(num);
     setDone(true);
     setSubmitting(false);
