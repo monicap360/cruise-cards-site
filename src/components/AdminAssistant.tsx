@@ -36,10 +36,22 @@ export default function AdminAssistant() {
     const next: Msg[] = [...msgs, { role: "user", content }];
     setMsgs([...next, { role: "assistant", content: "" }]);
     setBusy(true);
+    // For Elaria, pull her device-local bills/to-dos so it can remind & prioritize.
+    let context = "";
+    if (mode === "elaria") {
+      try {
+        const bills = JSON.parse(localStorage.getItem("elaria-bills") || "[]") as { name: string; amount: number; due: string; recurring: boolean }[];
+        const todos = JSON.parse(localStorage.getItem("elaria-todos") || "[]") as { text: string; priority: string; done: boolean }[];
+        const notes = localStorage.getItem("elaria-notes") || "";
+        const billLines = bills.map((b) => `- ${b.name}: $${b.amount} due ${b.due}${b.recurring ? " (monthly)" : ""}`).join("\n") || "(none)";
+        const todoLines = todos.filter((t) => !t.done).map((t) => `- [${t.priority}] ${t.text}`).join("\n") || "(none)";
+        context = `BILLS:\n${billLines}\n\nOPEN TO-DOS:\n${todoLines}${notes ? `\n\nNOTES:\n${notes.slice(0, 1000)}` : ""}`;
+      } catch { /* ignore */ }
+    }
     try {
       const res = await fetch("/api/assistant", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode, messages: next }),
+        body: JSON.stringify({ mode, messages: next, context }),
       });
       if (!res.ok || !res.body) {
         const e = await res.json().catch(() => ({}));
