@@ -28,6 +28,7 @@ const TOOL_GROUPS: { title: string; tools: { href: string; label: string }[] }[]
   ]},
   { title: "Front Desk & Orders", tools: [
     { href: "/admin/reservations", label: "🛎️ Front Desk Reservations" },
+    { href: "/admin/cabin-board", label: "🗂️ Cabin Board" },
     { href: "/admin/fulfillment", label: "📦 Fulfillment" },
     { href: "/admin/tickets", label: "🎫 Support Tickets" },
   ]},
