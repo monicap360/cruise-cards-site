@@ -27,6 +27,7 @@ import { uploadGuestFile } from "@/lib/documents";
 import CabinThread from "@/components/CabinThread";
 import { GROUP_SHEETS } from "@/lib/group-sheets";
 import GroupDiscrepancies from "@/components/GroupDiscrepancies";
+import GroupCruiseCare from "@/components/GroupCruiseCare";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -307,6 +308,8 @@ export default function AdminGroupsPage() {
                     )}
                     {/* Requested vs booked reconciliation */}
                     <GroupDiscrepancies groupId={grp.id} />
+                    {/* Per-cabin Cruise Care alert */}
+                    <GroupCruiseCare groupId={grp.id} />
                     {/* members table */}
                     {members.length > 0 && (
                       <div className="overflow-x-auto mb-4">
