@@ -115,38 +115,72 @@ export default function ElariaPage() {
   ] : [];
 
   return (
-    <div className="min-h-screen bg-[#05070d] text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-center justify-between mb-7 flex-wrap gap-3">
-          <div>
-            <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-400/80">{"// Owner command center"}</div>
-            <h1 className="text-4xl font-extrabold uppercase tracking-[-0.02em] bg-gradient-to-r from-sky-300 to-white bg-clip-text text-transparent">Elaria</h1>
-            <p className="text-white/50 text-sm">Everything you run — one private view.</p>
+    <div className="relative min-h-screen bg-[#02040a] text-white overflow-hidden">
+      {/* Deep-space backdrop */}
+      <div className="pointer-events-none absolute inset-0 starfield opacity-70" />
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-40" />
+      <div className="aurora bg-sky-500 -top-40 -left-32 w-[36rem] h-[36rem] animate-drift-slow opacity-[0.16]" />
+      <div className="aurora bg-indigo-600 top-1/3 -right-40 w-[34rem] h-[34rem] animate-drift opacity-[0.14]" />
+      <div className="aurora bg-cyan-400 bottom-0 left-1/3 w-[28rem] h-[28rem] animate-float opacity-[0.10]" />
+      <div className="scanline" />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 90% 60% at 50% -10%, rgba(56,189,248,.12), transparent 60%)" }} />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* ── Hero ── */}
+        <div className="relative neon-edge neon-pulse rounded-3xl bg-[#060b18]/70 backdrop-blur-md p-6 sm:p-8 mb-8 overflow-hidden">
+          <div className="tech-rule absolute top-0 left-8 right-8" />
+          {/* Radar emblem */}
+          <div className="hidden sm:block absolute -right-6 -top-6 w-44 h-44 opacity-40">
+            <div className="absolute inset-0 rounded-full border border-sky-400/30 orbit-spin" />
+            <div className="absolute inset-4 rounded-full border border-sky-400/20 orbit-spin-rev" />
+            <div className="absolute inset-8 rounded-full border border-sky-400/10" />
+            <div className="absolute inset-0 orbit-spin" style={{ background: "conic-gradient(from 0deg, rgba(56,189,248,.35), transparent 28%)", borderRadius: "9999px", WebkitMask: "radial-gradient(circle, transparent 30%, #000 31%)", mask: "radial-gradient(circle, transparent 30%, #000 31%)" }} />
           </div>
-          <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/40 hover:text-white">Admin grid →</Link>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="label-mono text-[10px] uppercase tracking-[0.3em] text-sky-300/80">// systems online · owner command center</span>
+          </div>
+          <h1 className="text-5xl sm:text-6xl font-extrabold uppercase tracking-[-0.03em] text-holo text-glow leading-none">Elaria</h1>
+          <p className="text-white/50 text-sm mt-2 max-w-md">Mission control for everything you run — guests, money, growth, and your secure keys.</p>
+          <div className="mt-4 flex items-center gap-4 flex-wrap label-mono text-[10px] uppercase tracking-widest text-white/40">
+            <span>◇ {stats ? stats.groups : "—"} active groups</span>
+            <span className="text-sky-400/60">●</span>
+            <span>◇ {stats ? stats.sailings : "—"} sailings tracked</span>
+            <span className="text-sky-400/60">●</span>
+            <Link href="/admin" className="hover:text-white">◇ admin grid →</Link>
+          </div>
         </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
+        {/* ── KPIs ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-9">
           {!stats ? (
-            <div className="col-span-full text-white/40 text-sm">Loading your numbers…</div>
-          ) : KPIS.map((k) => (
-            <Link key={k.label} href={k.href} className="bg-[#0b1020] border border-white/10 rounded-2xl p-4 hover:border-white/25 transition-colors">
-              <div className={`text-2xl font-extrabold ${k.accent}`}>{k.value}</div>
-              <div className="text-white/45 text-[11px] uppercase tracking-wider mt-1">{k.label}</div>
+            <div className="col-span-full label-mono text-sky-300/60 text-sm uppercase tracking-widest animate-pulse">▮ acquiring telemetry…</div>
+          ) : KPIS.map((k, i) => (
+            <Link key={k.label} href={k.href}
+              className="group relative bg-[#060b18]/70 backdrop-blur-sm rounded-2xl p-4 neon-edge hover:neon-pulse transition-all overflow-hidden">
+              <span className="absolute top-1.5 left-1.5 w-2 h-2 border-l border-t border-sky-400/40" />
+              <span className="absolute bottom-1.5 right-1.5 w-2 h-2 border-r border-b border-sky-400/40" />
+              <div className={`text-2xl font-extrabold ${k.accent} group-hover:text-glow transition-all`}>{k.value}</div>
+              <div className="text-white/40 text-[10px] uppercase tracking-wider mt-1 label-mono">{k.label}</div>
+              <div className="text-white/20 text-[9px] label-mono mt-0.5">{String(i + 1).padStart(2, "0")}</div>
             </Link>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_330px] gap-6">
           {/* Quick links */}
           <div className="space-y-6">
             {LINK_GROUPS.map((g) => (
               <div key={g.title}>
-                <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/70 mb-2">{g.title}</div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-300/70">{g.title}</div>
+                  <div className="tech-rule flex-1 opacity-60" />
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {g.links.map((l) => (
-                    <Link key={l.href} href={l.href} className="bg-[#0b1020] border border-white/10 rounded-xl px-3 py-3 text-sm font-semibold hover:border-sky-400/40 hover:bg-white/[0.03] transition-colors">
+                    <Link key={l.href} href={l.href}
+                      className="group relative bg-[#060b18]/60 backdrop-blur-sm border border-sky-400/15 rounded-xl px-3 py-3 text-sm font-semibold hover:border-sky-400/50 hover:bg-sky-400/[0.06] transition-all">
+                      <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-sky-400/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       {l.label}
                     </Link>
                   ))}
@@ -155,21 +189,24 @@ export default function ElariaPage() {
             ))}
           </div>
 
-          {/* Right: activity + scratchpad */}
+          {/* Right: activity console + log */}
           <div className="space-y-6">
             <div>
-              <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/70 mb-2">Recent activity</div>
-              <div className="bg-[#0b1020] border border-white/10 rounded-2xl p-3 space-y-1">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-300/70">Live feed</div>
+                <div className="tech-rule flex-1 opacity-60" />
+              </div>
+              <div className="bg-[#060b18]/70 backdrop-blur-sm neon-edge rounded-2xl p-3 space-y-1 font-mono">
                 {activity.length === 0 ? (
-                  <div className="text-white/40 text-sm p-2">Nothing yet.</div>
+                  <div className="text-sky-300/40 text-xs p-2 label-mono">▮ no signals yet</div>
                 ) : activity.map((a) => (
-                  <Link key={a.kind + a.id} href={a.kind === "ticket" ? "/admin/tickets" : "/admin/inbox"} className="block rounded-lg px-2 py-1.5 hover:bg-white/5">
+                  <Link key={a.kind + a.id} href={a.kind === "ticket" ? "/admin/tickets" : "/admin/inbox"} className="block rounded-lg px-2 py-1.5 hover:bg-sky-400/[0.06]">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs">{a.kind === "ticket" ? "🎫" : "📥"}</span>
+                      <span className="text-sky-400/70 text-[10px]">{a.kind === "ticket" ? "▸" : "◂"}</span>
                       <span className="font-semibold text-sm truncate flex-1">{a.title}</span>
-                      <span className="text-white/30 text-[10px] shrink-0">{when(a.when)}</span>
+                      <span className="text-white/25 text-[10px] shrink-0">{when(a.when)}</span>
                     </div>
-                    <div className="text-white/45 text-xs pl-6 truncate">{a.sub}</div>
+                    <div className="text-sky-200/40 text-xs pl-4 truncate">{a.sub}</div>
                   </Link>
                 ))}
               </div>
@@ -177,13 +214,13 @@ export default function ElariaPage() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/70">My scratchpad</div>
-                {savedAt && <span className="text-white/30 text-[10px]">saved {savedAt}</span>}
+                <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-300/70">Captain&rsquo;s log</div>
+                {savedAt && <span className="text-sky-300/40 text-[10px] label-mono">saved {savedAt}</span>}
               </div>
               <textarea value={notes} onChange={(e) => saveNotes(e.target.value)} rows={10}
                 placeholder="Private notes, to-dos, reminders… (stays on this device only)"
-                className="w-full bg-[#0b1020] border border-white/10 rounded-2xl p-4 text-white/90 text-sm placeholder-white/30 resize-none focus:outline-none focus:border-sky-400/50" />
-              <p className="text-white/30 text-[10px] mt-1">Saved locally in this browser — not in the database.</p>
+                className="w-full bg-[#060b18]/70 backdrop-blur-sm border border-sky-400/15 rounded-2xl p-4 text-sky-100/90 text-sm font-mono placeholder-sky-300/25 resize-none focus:outline-none focus:border-sky-400/50" />
+              <p className="text-sky-300/25 text-[10px] mt-1 label-mono">▮ stored locally · not in database</p>
             </div>
           </div>
         </div>
