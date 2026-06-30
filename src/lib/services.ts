@@ -23,8 +23,10 @@ export const IN_HOUSE_SERVICES: InHouseService[] = [
   { name: "Waiting lounge & ship videos", free: true, category: "Comfort & Convenience" },
 
   // ── Paid (placeholder prices — update these) ──
-  { name: "Mobility scooter rental", free: false, price: 45, unit: "per day", category: "Mobility & Accessibility" },
-  { name: "Wheelchair rental", free: false, price: 25, unit: "per day", category: "Mobility & Accessibility" },
+  // ScootAround partner rentals — charged at ScootAround.com rates; we earn commission (not a markup).
+  { name: "Mobility scooter rental", free: false, note: "ScootAround rates · per sailing", category: "Mobility & Accessibility" },
+  { name: "Wheelchair rental", free: false, note: "ScootAround rates · per sailing", category: "Mobility & Accessibility" },
+  { name: "Oxygen / CPAP / medical equipment", free: false, note: "ScootAround rates · per sailing", category: "Mobility & Accessibility" },
   { name: "Luggage storage (Bag Drop & Stow)", free: false, price: 10, unit: "per bag", category: "Comfort & Convenience" },
   { name: "Passport photos", free: false, price: 15, category: "Documents & Check-In" },
   { name: "Printing & copies", free: false, price: 1, unit: "per page", category: "Documents & Check-In" },
