@@ -21,20 +21,20 @@ const ITERATIONS = 310000;
 export const newVaultItemId = () =>
   (crypto.randomUUID?.() ?? "v-" + Math.random().toString(36).slice(2, 11));
 
-function bufToB64(b: ArrayBuffer): string {
+function bufToB64(b: ArrayBufferLike): string {
   const bytes = new Uint8Array(b);
   let s = "";
   for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
   return btoa(s);
 }
-function b64ToBytes(s: string): Uint8Array {
-  return Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+function b64ToBytes(s: string): BufferSource {
+  return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)) as BufferSource;
 }
 
-async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+async function deriveKey(passphrase: string, salt: BufferSource): Promise<CryptoKey> {
   const base = await crypto.subtle.importKey(
     "raw",
-    new TextEncoder().encode(passphrase),
+    new TextEncoder().encode(passphrase) as BufferSource,
     "PBKDF2",
     false,
     ["deriveKey"]
@@ -76,14 +76,16 @@ export async function encryptAndSave(
   passphrase: string,
   existingSalt?: string
 ): Promise<string> {
-  const saltBytes = existingSalt ? b64ToBytes(existingSalt) : crypto.getRandomValues(new Uint8Array(16));
+  const saltBytes: Uint8Array = existingSalt
+    ? Uint8Array.from(atob(existingSalt), (c) => c.charCodeAt(0))
+    : crypto.getRandomValues(new Uint8Array(16));
   const saltB64 = existingSalt ?? bufToB64(saltBytes.buffer);
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(passphrase, saltBytes);
+  const key = await deriveKey(passphrase, saltBytes as BufferSource);
   const ct = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
+    { name: "AES-GCM", iv: iv as BufferSource },
     key,
-    new TextEncoder().encode(JSON.stringify(items))
+    new TextEncoder().encode(JSON.stringify(items)) as BufferSource
   );
   const { error } = await supabase.from("vault").upsert({
     id: ROW_ID,
