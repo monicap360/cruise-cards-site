@@ -17,39 +17,51 @@ async function handleLogout() {
   window.location.href = "/admin/login";
 }
 
-const TOOLS = [
-  { href: "/admin/elaria", label: "✦ Elaria — Command Center" },
-  { href: "/admin/inbox", label: "📥 Online Requests" },
-  { href: "/admin/customers", label: "📇 Customers (CRM)" },
-  { href: "/admin/tickets", label: "🎫 Support Tickets" },
-  { href: "/admin/fulfillment", label: "📦 Fulfillment (Orders)" },
-  { href: "/admin/vault", label: "🔐 Password Vault" },
-  { href: "/admin/hotel-rfp", label: "🏨 Hotel RFP" },
-  { href: "/admin/reservations", label: "🛎️ Front Desk" },
-  { href: "/admin/departures", label: "🛳️ Departures" },
-  { href: "/admin/sales", label: "📈 Sales" },
-  { href: "/admin/room-blocks", label: "🛏️ Room Blocks" },
-  { href: "/admin/waivers", label: "⚖️ Waivers" },
-  { href: "/admin/offers", label: "🎁 Offers" },
-  { href: "/admin/rates", label: "💲 Rates" },
-  { href: "/admin/credits", label: "💳 Credits" },
-  { href: "/admin/accounting", label: "📊 Accounting" },
-  { href: "/admin/contacts", label: "📇 Comm Log" },
-  { href: "/admin/documents", label: "📄 Documents" },
-  { href: "/admin/groups", label: "👥 Groups" },
-  { href: "/admin/group-deposits", label: "🏦 Group Deposits" },
-  { href: "/admin/signups", label: "📝 Group Signups" },
-  { href: "/admin/rfp", label: "📩 Agent RFPs" },
-  { href: "/admin/partners", label: "🤝 Partners" },
-  { href: "/admin/quotes", label: "📝 Quotes" },
-  { href: "/admin/invoice", label: "🧾 Invoice" },
-  { href: "/admin/notify", label: "✉️ Updates" },
-  { href: "/admin/social", label: "📣 Social" },
-  { href: "/admin/outreach", label: "🤝 Outreach" },
-  { href: "/admin/deep-dive", label: "📰 Deep-Dive" },
-  { href: "/admin/social-playbook", label: "📈 Growth Playbook" },
-  { href: "/admin/activity", label: "📡 Activity" },
-  { href: "/admin/tasks", label: "✅ Tasks" },
+const TOOL_GROUPS: { title: string; tools: { href: string; label: string }[] }[] = [
+  { title: "Command", tools: [
+    { href: "/admin/elaria", label: "✦ Elaria" },
+    { href: "/admin/inbox", label: "📥 Online Requests" },
+    { href: "/admin/tasks", label: "✅ Tasks" },
+    { href: "/admin/activity", label: "📡 Activity" },
+    { href: "/admin/notify", label: "✉️ Updates" },
+  ]},
+  { title: "Front Desk & Orders", tools: [
+    { href: "/admin/reservations", label: "🛎️ Front Desk" },
+    { href: "/admin/fulfillment", label: "📦 Fulfillment" },
+    { href: "/admin/tickets", label: "🎫 Support Tickets" },
+  ]},
+  { title: "Guests & Bookings", tools: [
+    { href: "/admin/groups", label: "👥 Groups" },
+    { href: "/admin/signups", label: "📝 Group Signups" },
+    { href: "/admin/customers", label: "📇 Customers (CRM)" },
+    { href: "/admin/quotes", label: "📝 Quotes" },
+    { href: "/admin/departures", label: "🛳️ Departures" },
+    { href: "/admin/room-blocks", label: "🛏️ Room Blocks" },
+    { href: "/admin/offers", label: "🎁 Offers" },
+    { href: "/admin/rates", label: "💲 Rates" },
+  ]},
+  { title: "Money", tools: [
+    { href: "/admin/accounting", label: "📊 Accounting" },
+    { href: "/admin/sales", label: "📈 Sales" },
+    { href: "/admin/group-deposits", label: "🏦 Group Deposits" },
+    { href: "/admin/credits", label: "💳 Credits" },
+    { href: "/admin/invoice", label: "🧾 Invoice" },
+  ]},
+  { title: "Growth & Partners", tools: [
+    { href: "/admin/social", label: "📣 Social" },
+    { href: "/admin/social-playbook", label: "📈 Growth Playbook" },
+    { href: "/admin/outreach", label: "🤝 Outreach" },
+    { href: "/admin/deep-dive", label: "📰 Deep-Dive" },
+    { href: "/admin/partners", label: "🤝 Partners" },
+    { href: "/admin/rfp", label: "📩 Agent RFPs" },
+    { href: "/admin/hotel-rfp", label: "🏨 Hotel RFP" },
+  ]},
+  { title: "Tools & Secure", tools: [
+    { href: "/admin/vault", label: "🔐 Password Vault" },
+    { href: "/admin/documents", label: "📄 Documents" },
+    { href: "/admin/contacts", label: "📇 Comm Log" },
+    { href: "/admin/waivers", label: "⚖️ Waivers" },
+  ]},
 ];
 
 export default function AdminPage() {
@@ -96,19 +108,10 @@ export default function AdminPage() {
                 {"// Cruises from Galveston · Staff"}
               </div>
               <h1 className="text-3xl font-extrabold uppercase tracking-[-0.01em]">
-                Sea Pay Admin
+                Admin Dashboard
               </h1>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {TOOLS.map((t) => (
-                <Link
-                  key={t.href}
-                  href={t.href}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold px-4 py-2.5 rounded-full transition-all text-[13px]"
-                >
-                  {t.label}
-                </Link>
-              ))}
               <Link
                 href="/admin/new-booking"
                 className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all text-xs"
@@ -156,8 +159,31 @@ export default function AdminPage() {
         </div>
       </section>
 
+      {/* Tools — grouped */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {TOOL_GROUPS.map((g) => (
+            <div key={g.title} className="bg-[#0b1020] border border-white/10 rounded-2xl p-4">
+              <div className="label-mono text-[11px] uppercase tracking-[0.18em] text-sky-400/70 mb-3">{g.title}</div>
+              <div className="flex flex-wrap gap-2">
+                {g.tools.map((t) => (
+                  <Link
+                    key={t.href}
+                    href={t.href}
+                    className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-sky-400/40 text-white/80 hover:text-white font-semibold px-3.5 py-2 rounded-full transition-all text-[13px]"
+                  >
+                    {t.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Bookings list */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="label-mono text-[11px] uppercase tracking-[0.18em] text-sky-400/70 mb-3">Sea Pay Bookings</div>
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-6">
           <input
