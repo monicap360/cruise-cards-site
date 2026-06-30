@@ -18,6 +18,7 @@ async function handleLogout() {
 }
 
 const TOOLS = [
+  { href: "/admin/elaria", label: "✦ Elaria — Command Center" },
   { href: "/admin/inbox", label: "📥 Online Requests" },
   { href: "/admin/customers", label: "📇 Customers (CRM)" },
   { href: "/admin/tickets", label: "🎫 Support Tickets" },
