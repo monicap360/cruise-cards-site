@@ -46,14 +46,52 @@ const LINK_GROUPS: { title: string; links: { href: string; label: string }[] }[]
   ]},
 ];
 
+// Goes in Render (the live site uses these at runtime).
+const RENDER_KEYS: { id: string; k: string; p: string; s: "live" | "todo" }[] = [
+  { id: "sb-url", k: "NEXT_PUBLIC_SUPABASE_URL", p: "Database", s: "live" },
+  { id: "sb-anon", k: "NEXT_PUBLIC_SUPABASE_ANON_KEY", p: "Database (public)", s: "live" },
+  { id: "admin-pin", k: "ADMIN_PIN", p: "Admin login", s: "live" },
+  { id: "anthropic", k: "ANTHROPIC_API_KEY", p: "Chatbot + AI PDF reading", s: "todo" },
+  { id: "resend", k: "RESEND_API_KEY", p: "Booking emails", s: "todo" },
+  { id: "owner-email", k: "OWNER_EMAIL", p: "Alert recipient", s: "todo" },
+  { id: "booking-from", k: "BOOKING_FROM", p: "Email “from” address", s: "todo" },
+  { id: "tw-sid", k: "TWILIO_ACCOUNT_SID", p: "Text + phone ring", s: "todo" },
+  { id: "tw-token", k: "TWILIO_AUTH_TOKEN", p: "Text + phone ring", s: "todo" },
+  { id: "tw-from", k: "TWILIO_FROM", p: "Your Twilio number", s: "todo" },
+  { id: "tw-sms", k: "ALERT_SMS_TO", p: "Your # for the text", s: "todo" },
+  { id: "tw-voice", k: "TWILIO_VOICE_TO", p: "Your # for the ring", s: "todo" },
+  { id: "site-url", k: "NEXT_PUBLIC_SITE_URL", p: "Email links (optional)", s: "todo" },
+];
+
+// Store in the vault (your personal copies + human logins — not used by the app).
+const VAULT_GROUPS: { group: string; items: string[] }[] = [
+  { group: "Cruise line portals", items: ["Royal Caribbean — Cruising Power", "Carnival — GoCCL", "Norwegian (NCL)", "MSC", "Any others you sell"] },
+  { group: "Infrastructure", items: ["Render login", "Supabase login", "GitHub login", "Domain registrar", "Gmail + app password"] },
+  { group: "Service accounts", items: ["Ooma", "Twilio account", "Resend account", "Anthropic account"] },
+  { group: "Tools & social", items: ["Facebook page", "Instagram", "Jotform", "Quo", "Calendly"] },
+  { group: "Always store here", items: ["Backup copies of ALL Render keys", "2FA / MFA backup codes"] },
+];
+
+const slug = (s: string) => "v-" + s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 export default function ElariaPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [activity, setActivity] = useState<Activity[]>([]);
   const [notes, setNotes] = useState("");
   const [savedAt, setSavedAt] = useState("");
+  const [done, setDone] = useState<Record<string, boolean>>({});
+
+  function toggleDone(id: string) {
+    setDone((d) => {
+      const next = { ...d, [id]: !d[id] };
+      localStorage.setItem("elaria-checklist", JSON.stringify(next));
+      return next;
+    });
+  }
 
   useEffect(() => {
     setNotes(localStorage.getItem("elaria-notes") || "");
+    try { setDone(JSON.parse(localStorage.getItem("elaria-checklist") || "{}")); } catch { /* ignore */ }
     (async () => {
       const s: Stats = { groups: 0, guests: 0, owed: 0, fare: 0, openTickets: 0, openRequests: 0, sailings: 0 };
       try {
@@ -113,6 +151,10 @@ export default function ElariaPage() {
     { label: "Open tickets", value: String(stats.openTickets), href: "/admin/tickets", accent: "text-white" },
     { label: "Sailings live", value: String(stats.sailings), href: "/admin/departures", accent: "text-white" },
   ] : [];
+
+  const allIds = [...RENDER_KEYS.map((r) => r.id), ...VAULT_GROUPS.flatMap((g) => g.items.map((i) => slug(g.group + i)))];
+  const doneCount = allIds.filter((id) => done[id]).length;
+  const pct = Math.round((doneCount / allIds.length) * 100);
 
   return (
     <div className="relative min-h-screen bg-[#02040a] text-white overflow-hidden">
@@ -223,6 +265,63 @@ export default function ElariaPage() {
               <p className="text-sky-300/25 text-[10px] mt-1 label-mono">▮ stored locally · not in database</p>
             </div>
           </div>
+        </div>
+
+        {/* ── Keys & Setup mission checklist ── */}
+        <div className="mt-10">
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-300/70">// Keys &amp; Setup</div>
+            <div className="tech-rule flex-1 min-w-[40px] opacity-60" />
+            <span className="label-mono text-[10px] uppercase tracking-widest text-sky-300/60">{doneCount}/{allIds.length} secured · {pct}%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-white/5 overflow-hidden mb-5">
+            <div className="h-full bg-gradient-to-r from-sky-400 to-cyan-300 transition-all" style={{ width: `${pct}%` }} />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Render */}
+            <div className="bg-[#060b18]/70 backdrop-blur-sm neon-edge rounded-2xl p-5">
+              <div className="font-bold text-sm flex items-center gap-2 mb-1">⚙️ Render — engine keys</div>
+              <p className="text-white/40 text-xs mb-3">The live site uses these. Add at Render → Environment.</p>
+              <div className="space-y-1.5">
+                {RENDER_KEYS.map((r) => (
+                  <label key={r.id} className="flex items-center gap-3 cursor-pointer rounded-lg px-2 py-1.5 hover:bg-white/[0.04]">
+                    <input type="checkbox" checked={!!done[r.id]} onChange={() => toggleDone(r.id)} className="accent-sky-500 w-4 h-4 shrink-0" />
+                    <span className="flex-1 min-w-0">
+                      <span className={`font-mono text-xs ${done[r.id] ? "line-through text-white/35" : "text-sky-200/90"}`}>{r.k}</span>
+                      <span className="block text-white/35 text-[10px]">{r.p}</span>
+                    </span>
+                    <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${r.s === "live" ? "bg-green-500/15 text-green-300" : "bg-amber-400/15 text-amber-300"}`}>{r.s === "live" ? "live" : "add"}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Vault */}
+            <div className="bg-[#060b18]/70 backdrop-blur-sm neon-edge rounded-2xl p-5">
+              <div className="font-bold text-sm flex items-center gap-2 mb-1">🔐 Vault — your records</div>
+              <p className="text-white/40 text-xs mb-3">Store in the <Link href="/admin/vault" className="text-sky-400 hover:text-sky-300">Password Vault</Link>. Logins + backup copies of every key.</p>
+              <div className="space-y-3">
+                {VAULT_GROUPS.map((g) => (
+                  <div key={g.group}>
+                    <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/50 mb-1">{g.group}</div>
+                    <div className="space-y-1">
+                      {g.items.map((it) => {
+                        const id = slug(g.group + it);
+                        return (
+                          <label key={id} className="flex items-center gap-3 cursor-pointer rounded-lg px-2 py-1 hover:bg-white/[0.04]">
+                            <input type="checkbox" checked={!!done[id]} onChange={() => toggleDone(id)} className="accent-sky-500 w-4 h-4 shrink-0" />
+                            <span className={`text-xs ${done[id] ? "line-through text-white/35" : "text-white/80"}`}>{it}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <p className="text-sky-300/25 text-[10px] mt-3 label-mono">▮ checklist stored locally on this device</p>
         </div>
       </div>
     </div>
