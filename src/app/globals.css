@@ -261,5 +261,5 @@ select optgroup {
    all day. Scopes to /admin via the admin-scope wrapper (src/app/admin/layout).
    `zoom` scales text + UI uniformly without touching the public site. */
 .admin-scope {
-  zoom: 1.12;
+  zoom: 1.18;
 }
