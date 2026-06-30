@@ -27,7 +27,7 @@ const TOOL_GROUPS: { title: string; tools: { href: string; label: string }[] }[]
     { href: "/admin/notify", label: "✉️ Updates" },
   ]},
   { title: "Front Desk & Orders", tools: [
-    { href: "/admin/reservations", label: "🛎️ Front Desk" },
+    { href: "/admin/reservations", label: "🛎️ Front Desk Reservations" },
     { href: "/admin/fulfillment", label: "📦 Fulfillment" },
     { href: "/admin/tickets", label: "🎫 Support Tickets" },
   ]},
@@ -43,6 +43,7 @@ const TOOL_GROUPS: { title: string; tools: { href: string; label: string }[] }[]
     { href: "/admin/rates", label: "💲 Rates" },
   ]},
   { title: "Money", tools: [
+    { href: "/admin/reports", label: "📊 Reports" },
     { href: "/admin/accounting", label: "📊 Accounting" },
     { href: "/admin/sales", label: "📈 Sales" },
     { href: "/admin/group-deposits", label: "🏦 Group Deposits" },
