@@ -2,6 +2,7 @@
 // (see globals.css). Public chrome (navbar/footer/chatbot) is already stripped
 // from /admin by SiteChrome, so the admin is a separate surface.
 import LiveBookingAlarm from "@/components/LiveBookingAlarm";
+import AdminAssistant from "@/components/AdminAssistant";
 
 export default function AdminLayout({
   children,
@@ -12,6 +13,7 @@ export default function AdminLayout({
     <div className="admin-scope">
       {children}
       <LiveBookingAlarm />
+      <AdminAssistant />
     </div>
   );
 }
