@@ -266,6 +266,12 @@ export default function ExperienceCenterPage() {
             >
               Browse Cruises
             </Link>
+            <a
+              href="tel:+14099002110"
+              className="border border-sky-400/40 hover:border-sky-400/80 hover:bg-sky-400/10 text-sky-300 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              📞 Call the Center · (409) 900-2110
+            </a>
           </div>
         </div>
       </section>
@@ -468,7 +474,8 @@ export default function ExperienceCenterPage() {
           </h2>
           <p className="text-white/55 text-lg mb-9">
             Come visit us in Galveston or reach out — our specialists are standing by
-            to make your voyage seamless from start to finish.
+            to make your voyage seamless from start to finish. Call the center at{" "}
+            <a href="tel:+14099002110" className="text-sky-300 font-semibold hover:text-sky-200">(409) 900-2110</a>.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
@@ -477,6 +484,12 @@ export default function ExperienceCenterPage() {
             >
               Plan Your Visit
             </Link>
+            <a
+              href="tel:+14099002110"
+              className="border border-sky-400/40 hover:border-sky-400/80 hover:bg-sky-400/10 text-sky-300 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
+            >
+              📞 (409) 900-2110
+            </a>
             <Link
               href="/contact"
               className="border border-white/25 hover:border-white/70 hover:bg-white/5 text-white font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
