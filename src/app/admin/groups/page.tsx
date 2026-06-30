@@ -26,6 +26,7 @@ import {
 import { uploadGuestFile } from "@/lib/documents";
 import CabinThread from "@/components/CabinThread";
 import { GROUP_SHEETS } from "@/lib/group-sheets";
+import GroupDiscrepancies from "@/components/GroupDiscrepancies";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -304,6 +305,8 @@ export default function AdminGroupsPage() {
                         <iframe src={GROUP_SHEETS[grp.code]} title="Group planning sheet" className="w-full rounded-lg border border-white/10 bg-white" style={{ height: "520px" }} />
                       </div>
                     )}
+                    {/* Requested vs booked reconciliation */}
+                    <GroupDiscrepancies groupId={grp.id} />
                     {/* members table */}
                     {members.length > 0 && (
                       <div className="overflow-x-auto mb-4">
