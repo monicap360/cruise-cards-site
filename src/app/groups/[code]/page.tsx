@@ -10,6 +10,7 @@ import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
 import { GROUP_ANNOUNCEMENTS } from "@/lib/announcements";
 import BedConfig from "@/components/BedConfig";
+import SailCountdown from "@/components/SailCountdown";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -162,6 +163,9 @@ export default async function GroupPortalPage({
             ))}
           </div>
         )}
+        {/* Sail-day countdown */}
+        {group.sailingDate && <SailCountdown sailingDate={group.sailingDate} ship={group.ship} />}
+
         {/* Welcome */}
         <div className="rounded-2xl border border-sky-400/25 bg-sky-500/5 p-6">
           <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-2">{"// Welcome Aboard"}</div>
