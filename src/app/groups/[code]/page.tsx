@@ -9,6 +9,7 @@ import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
 import { GROUP_ANNOUNCEMENTS } from "@/lib/announcements";
+import BedConfig from "@/components/BedConfig";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -613,6 +614,7 @@ export default async function GroupPortalPage({
                           {m.cabinNumber ? (
                             <span className="text-white/40"> #{m.cabinNumber}</span>
                           ) : null}
+                          <div className="mt-1.5"><BedConfig memberId={m.id} /></div>
                         </td>
                         <td className="px-3 py-3 text-center text-white/70">
                           {m.guests || "—"}

@@ -28,6 +28,7 @@ import CabinThread from "@/components/CabinThread";
 import { GROUP_SHEETS } from "@/lib/group-sheets";
 import GroupDiscrepancies from "@/components/GroupDiscrepancies";
 import GroupCruiseCare from "@/components/GroupCruiseCare";
+import BedConfig from "@/components/BedConfig";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -327,6 +328,7 @@ export default function AdminGroupsPage() {
                                 </td>
                                 <td>
                                   {mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}
+                                  <div className="mt-1"><BedConfig memberId={mm.id} /></div>
                                   {(() => { const rm = rooms.find((x) => x.bookedBy === mm.name && x.notes); return rm ? <div className="text-white/40 text-[10px] mt-0.5 max-w-[260px]">💲 {rm.notes}</div> : null; })()}
                                 </td>
                                 <td className="text-right">{fmt$(mm.fare)}</td>
