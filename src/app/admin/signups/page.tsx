@@ -49,7 +49,7 @@ export default function SignupsPage() {
   function edit(r: SignupEntry) {
     setS({ ...r });
     setEditing(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }
   async function remove(id: string) {
     if (!confirm("Delete this signup?")) return;
@@ -119,9 +119,9 @@ export default function SignupsPage() {
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Add / edit */}
-        <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+        {/* Add / edit — pinned to the bottom via order-last */}
+        <div className="order-last bg-[#0b1020] rounded-2xl border border-white/10 p-6">
           <h2 className="font-extrabold text-lg mb-4">{editing ? "Edit signup" : "Add a family / signup"}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
             <div className="sm:col-span-2"><label className={lbl}>Group</label><input className={input} value={s.groupLabel || group} onChange={(e) => set({ groupLabel: e.target.value })} placeholder="Thanksgiving 2026 — Liberty of the Seas" /></div>
