@@ -25,6 +25,7 @@ import {
 } from "@/lib/groups";
 import { uploadGuestFile } from "@/lib/documents";
 import CabinThread from "@/components/CabinThread";
+import { GROUP_SHEETS } from "@/lib/group-sheets";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -293,6 +294,16 @@ export default function AdminGroupsPage() {
                       {bookMsg && bookBusy !== "" && <div className="text-sky-300 text-xs mt-2">{bookMsg}</div>}
                       {bookMsg && bookBusy === "" && <div className="text-green-300 text-xs mt-2">{bookMsg}</div>}
                     </div>
+                    {/* Embedded planning sheet (admin-only) */}
+                    {GROUP_SHEETS[grp.code] && (
+                      <div className="mb-4 rounded-xl border border-white/10 bg-[#0b1020] p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] uppercase tracking-wider text-sky-300/80 font-bold">📊 Planning sheet (admin-only)</span>
+                          <a href={GROUP_SHEETS[grp.code].replace("/preview", "/edit")} target="_blank" rel="noopener noreferrer" className="text-sky-400 text-xs font-bold hover:text-sky-300">Open in Google Sheets →</a>
+                        </div>
+                        <iframe src={GROUP_SHEETS[grp.code]} title="Group planning sheet" className="w-full rounded-lg border border-white/10 bg-white" style={{ height: "520px" }} />
+                      </div>
+                    )}
                     {/* members table */}
                     {members.length > 0 && (
                       <div className="overflow-x-auto mb-4">
