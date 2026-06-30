@@ -10,6 +10,14 @@ export type Announcement = {
 
 export const GROUP_ANNOUNCEMENTS: Announcement[] = [
   {
+    id: "updating",
+    tone: "info",
+    title: "🛠️ We’re still updating your group",
+    body:
+      "Thanks for your patience! We’re actively finishing your group details — cabins, guest names, and pricing may still be changing as we get everyone loaded. " +
+      "If you spot anything that looks off, or you have a request, please share it using the “Questions & Concerns” box below or call (409) 632-2106. Your feedback helps us get it perfect.",
+  },
+  {
     id: "name-check",
     tone: "warn",
     title: "📋 Please check your name is correct",
