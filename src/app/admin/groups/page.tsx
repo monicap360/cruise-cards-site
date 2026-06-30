@@ -29,6 +29,7 @@ import { GROUP_SHEETS } from "@/lib/group-sheets";
 import GroupDiscrepancies from "@/components/GroupDiscrepancies";
 import GroupCruiseCare from "@/components/GroupCruiseCare";
 import BedConfig from "@/components/BedConfig";
+import { supabase } from "@/lib/supabase";
 
 function fmt$(n: number) {
   return "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -60,6 +61,7 @@ const CABIN_TYPES = ["Interior", "Ocean View", "Balcony", "Mini-Suite", "Suite"]
 export default function AdminGroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+  const [groupStats, setGroupStats] = useState<Record<string, { fare: number; collected: number; owed: number; cabins: number; paid: number }>>({});
   const [g, setG] = useState<Group>(blankGroup());
   const [editingG, setEditingG] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -129,6 +131,20 @@ export default function AdminGroupsPage() {
 
   async function refresh() {
     setGroups(await getAllGroups());
+    try {
+      const { data } = await supabase.from("group_members").select("group_id,fare,deposit_paid,paid_in_full");
+      const stats: Record<string, { fare: number; collected: number; owed: number; cabins: number; paid: number }> = {};
+      (data || []).forEach((m: Record<string, unknown>) => {
+        const id = m.group_id as string;
+        const fare = Number(m.fare) || 0, paid = Number(m.deposit_paid) || 0;
+        const s = stats[id] || { fare: 0, collected: 0, owed: 0, cabins: 0, paid: 0 };
+        s.fare += fare; s.collected += paid; s.cabins += 1;
+        const isPaid = !!m.paid_in_full || (fare > 0 && paid >= fare);
+        if (isPaid) s.paid += 1; else s.owed += Math.max(0, fare - paid);
+        stats[id] = s;
+      });
+      setGroupStats(stats);
+    } catch { /* ignore */ }
     setLoading(false);
   }
   useEffect(() => { refresh(); }, []);
@@ -275,6 +291,21 @@ export default function AdminGroupsPage() {
                     <div className="font-extrabold">{grp.name}</div>
                     <div className="text-white/55 text-sm">{grp.ship}{grp.sailingDate ? ` · ${grp.sailingDate}` : ""}</div>
                     <div className="text-white/40 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}{grp.sailingDate ? <> · <span className="text-sky-300 font-bold">PIN {grp.sailingDate.slice(5, 7)}{grp.sailingDate.slice(8, 10)}</span> <span className="text-white/30">(what guests enter)</span></> : null}</div>
+                    {groupStats[grp.id] && groupStats[grp.id].cabins > 0 && (() => {
+                      const s = groupStats[grp.id];
+                      const pct = s.fare > 0 ? Math.round((s.collected / s.fare) * 100) : 0;
+                      return (
+                        <div className="mt-2 max-w-sm">
+                          <div className="flex justify-between items-baseline text-[10px] label-mono uppercase tracking-wider mb-1">
+                            <span className="text-green-300">{s.paid}/{s.cabins} cabins paid</span>
+                            <span>{fmt$(s.collected)} in · {s.owed > 0 ? <span className="text-amber-300">{fmt$(s.owed)} owed</span> : <span className="text-green-300">paid up ✓</span>}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-sky-400 to-green-400 transition-all" style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
