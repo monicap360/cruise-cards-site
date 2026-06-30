@@ -32,6 +32,7 @@ const TOOL_GROUPS: { title: string; tools: { href: string; label: string }[] }[]
   ]},
   { title: "Guests & Bookings", tools: [
     { href: "/admin/groups", label: "👥 Groups" },
+    { href: "/admin/individual-bookings", label: "🎟️ Individual Bookings" },
     { href: "/admin/signups", label: "📝 Group Signups" },
     { href: "/admin/customers", label: "📇 Customers (CRM)" },
     { href: "/admin/quotes", label: "📝 Quotes" },
