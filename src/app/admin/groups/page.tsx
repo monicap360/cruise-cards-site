@@ -39,7 +39,7 @@ function blankGroup(): Group {
     id: newGroupId(), code: newGroupCode(), name: "", leaderName: "", leaderEmail: "",
     leaderPhone: "", ship: "", cruiseLine: "", sailingDate: "", returnDate: "", nights: 0,
     depositDueDate: "", finalPaymentDate: "", blockSize: 0, releaseDate: "",
-    groupRate: 0, contract: "", contractUrl: "", contractName: "", notes: "",
+    groupRate: 0, contract: "", contractUrl: "", contractName: "", notes: "", setupStatus: "building",
   };
 }
 function blankMember(groupId: string): GroupMember {
@@ -148,6 +148,12 @@ export default function AdminGroupsPage() {
     setLoading(false);
   }
   useEffect(() => { refresh(); }, []);
+
+  async function toggleSetup(grp: Group) {
+    const next = grp.setupStatus === "finalized" ? "building" : "finalized";
+    setGroups((gs) => gs.map((x) => (x.id === grp.id ? { ...x, setupStatus: next } : x)));
+    await supabase.from("groups").update({ setup_status: next }).eq("id", grp.id);
+  }
 
   const setGroupF = (p: Partial<Group>) => setG((s) => ({ ...s, ...p }));
   const setMemberF = (p: Partial<GroupMember>) => setM((s) => ({ ...s, ...p }));
@@ -288,7 +294,11 @@ export default function AdminGroupsPage() {
               <div key={grp.id} className="bg-[#0b1020] rounded-xl border border-white/10 overflow-hidden">
                 <div className="p-4 flex items-start gap-4 flex-wrap">
                   <div className="flex-1 min-w-[12rem]">
-                    <div className="font-extrabold">{grp.name}</div>
+                    <div className="font-extrabold flex items-center gap-2 flex-wrap">{grp.name}
+                      <button onClick={() => toggleSetup(grp)} title="Toggle build status — guests see this on their portal" className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${grp.setupStatus === "finalized" ? "bg-green-500/15 text-green-300 border-green-400/30" : "bg-amber-400/15 text-amber-300 border-amber-400/30"}`}>
+                        {grp.setupStatus === "finalized" ? "✅ Finalized" : "🛠️ Building"}
+                      </button>
+                    </div>
                     <div className="text-white/55 text-sm">{grp.ship}{grp.sailingDate ? ` · ${grp.sailingDate}` : ""}</div>
                     <div className="text-white/40 text-xs mt-0.5">Leader: {grp.leaderName || "—"} · Code {grp.code}{grp.sailingDate ? <> · <span className="text-sky-300 font-bold">PIN {grp.sailingDate.slice(5, 7)}{grp.sailingDate.slice(8, 10)}</span> <span className="text-white/30">(what guests enter)</span></> : null}</div>
                     {groupStats[grp.id] && groupStats[grp.id].cabins > 0 && (() => {

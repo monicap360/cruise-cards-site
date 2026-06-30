@@ -39,6 +39,7 @@ export type Group = {
   contractUrl: string; // uploaded group-contract PDF (Storage URL)
   contractName: string; // original file name
   notes: string;
+  setupStatus: string; // "building" | "finalized" — has staff finished loading this group?
   createdAt?: string;
 };
 
@@ -111,6 +112,7 @@ function toGroup(r: Record<string, unknown>): Group {
     contractUrl: (r.contract_url as string) ?? "",
     contractName: (r.contract_name as string) ?? "",
     notes: (r.notes as string) ?? "",
+    setupStatus: (r.setup_status as string) ?? "building",
     createdAt: (r.created_at as string) ?? "",
   };
 }
