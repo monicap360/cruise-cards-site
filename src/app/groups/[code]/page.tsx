@@ -8,6 +8,7 @@ import CruisePackingList from "@/components/CruisePackingList";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { FB_GROUP_URL } from "@/lib/social";
 import GroupGate from "@/components/GroupGate";
+import { GROUP_ANNOUNCEMENTS } from "@/lib/announcements";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -149,6 +150,17 @@ export default async function GroupPortalPage({
       </section>
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+        {/* Group notices */}
+        {GROUP_ANNOUNCEMENTS.length > 0 && (
+          <div className="space-y-3">
+            {GROUP_ANNOUNCEMENTS.map((a) => (
+              <div key={a.id} className={`rounded-2xl border p-5 ${a.tone === "warn" ? "border-amber-400/30 bg-amber-400/10" : a.tone === "success" ? "border-green-400/30 bg-green-400/10" : "border-sky-400/25 bg-sky-500/5"}`}>
+                <div className="font-bold text-white">{a.title}</div>
+                <p className="text-white/70 text-sm mt-1">{a.body}</p>
+              </div>
+            ))}
+          </div>
+        )}
         {/* Welcome */}
         <div className="rounded-2xl border border-sky-400/25 bg-sky-500/5 p-6">
           <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-2">{"// Welcome Aboard"}</div>
