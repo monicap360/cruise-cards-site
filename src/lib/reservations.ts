@@ -55,8 +55,8 @@ export type Reservation = {
 // A line item on a front-desk checkout / guest order.
 export type CheckoutItem = { name: string; price: number; qty: number; free: boolean; partner?: string };
 
-// No merchant account — cash, check, or personal Apple Cash only.
-export const PAYMENT_METHODS = ["Cash", "Check", "Apple Cash", "Comp / Waived"] as const;
+// No merchant account — cash, check, Apple Cash, or a PayPal.Me link.
+export const PAYMENT_METHODS = ["Cash", "Check", "Apple Cash", "PayPal", "Comp / Waived"] as const;
 
 // Things the front desk handles when a guest arrives at the location.
 export const ARRIVAL_TASKS: { key: string; label: string; icon: string }[] = [

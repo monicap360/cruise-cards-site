@@ -7,6 +7,7 @@ import {
   ORDER_STATUSES, STATUS_BADGE,
   getOrders, setOrderStatus, setOrderPaid, deleteOrder,
 } from "@/lib/fulfillment";
+import { PAYPAL_ME, paypalLink } from "@/lib/paypal";
 
 const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -102,6 +103,13 @@ export default function FulfillmentPage() {
                 </div>
 
                 <div className="flex items-center gap-2 flex-wrap mt-3 pt-3 border-t border-white/10 text-xs font-bold">
+                  {PAYPAL_ME && o.total > 0 && !o.paid && (
+                    <>
+                      <a href={paypalLink(o.total)} target="_blank" rel="noopener noreferrer" className="text-[#0070ba] hover:opacity-80 bg-white px-2.5 py-1 rounded-full">💸 PayPal {money(o.total)}</a>
+                      <button onClick={() => { navigator.clipboard?.writeText(paypalLink(o.total)); }} className="text-white/55 hover:text-white">Copy pay link</button>
+                      <span className="text-white/15">|</span>
+                    </>
+                  )}
                   <button onClick={() => togglePaid(o)} className={o.paid ? "text-white/50 hover:text-white" : "text-green-300 hover:text-green-200"}>{o.paid ? "Mark unpaid" : "✓ Mark paid"}</button>
                   <span className="text-white/15">|</span>
                   <button onClick={() => status(o, "fulfilled")} className="text-green-300 hover:text-green-200">Fulfill</button>
