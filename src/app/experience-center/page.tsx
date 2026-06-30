@@ -227,19 +227,23 @@ export default function ExperienceCenterPage() {
           <p className="text-holo font-bold text-2xl sm:text-3xl uppercase tracking-wide mb-7">
             Cruises Start Here.
           </p>
-          <p className="text-white/55 text-lg max-w-2xl mx-auto mb-12">
-            Not a call center. Not just a website. A place you walk into — where
-            your whole cruise comes together, from first idea to the moment you
-            board.
+          <p className="text-white/55 text-lg max-w-2xl mx-auto mb-7">
+            Not a call center. Not just a website. A place where your whole cruise
+            comes together, from first idea to the moment you board.
           </p>
+
+          {/* Current status — appointment only (no public opening date) */}
+          <div className="inline-flex items-center gap-2 bg-sky-400/10 border border-sky-400/30 text-sky-200 text-sm px-5 py-2.5 rounded-full mb-10">
+            📅 Currently by appointment only — now booking new reservations
+          </div>
 
           {/* Arrival info bar */}
           <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden mb-12">
             {[
-              { label: "Walk right in", sub: "No appointment needed" },
+              { label: "By appointment", sub: "New reservations now" },
               { label: "Easy to reach", sub: "Minutes from the port" },
-              { label: "English & Spanish", sub: "Specialists in person" },
-              { label: "Mon–Sat", sub: "9am – 6pm CST" },
+              { label: "English & Spanish", sub: "Specialists ready to help" },
+              { label: "Mon–Sat", sub: "Appointments available" },
             ].map((b, i) => (
               <div key={b.label} className="bg-[#05070d] px-5 py-6 text-left">
                 <div className="label-mono text-sky-400/70 text-xs mb-3">
@@ -258,7 +262,7 @@ export default function ExperienceCenterPage() {
               href="/reserve"
               className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
             >
-              Plan Your Visit
+              Book an Appointment
             </Link>
             <Link
               href="/deals"
@@ -482,7 +486,7 @@ export default function ExperienceCenterPage() {
               href="/reserve"
               className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-all"
             >
-              Plan Your Visit
+              Book an Appointment
             </Link>
             <a
               href="tel:+14099002110"
