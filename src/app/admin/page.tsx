@@ -22,6 +22,7 @@ const TOOLS = [
   { href: "/admin/inbox", label: "📥 Online Requests" },
   { href: "/admin/customers", label: "📇 Customers (CRM)" },
   { href: "/admin/tickets", label: "🎫 Support Tickets" },
+  { href: "/admin/fulfillment", label: "📦 Fulfillment (Orders)" },
   { href: "/admin/vault", label: "🔐 Password Vault" },
   { href: "/admin/hotel-rfp", label: "🏨 Hotel RFP" },
   { href: "/admin/reservations", label: "🛎️ Front Desk" },

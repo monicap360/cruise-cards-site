@@ -19,6 +19,7 @@ import {
   RESERVATION_STATUSES,
   ARRIVAL_TASKS,
 } from "@/lib/reservations";
+import FrontDeskCheckout from "@/components/FrontDeskCheckout";
 
 const QUICK_NEXT: Partial<Record<ReservationStatus, ReservationStatus>> = {
   requested: "reserved",
@@ -36,6 +37,7 @@ export default function ReservationsPage() {
   const [reschedId, setReschedId] = useState<string>("");
   const [reschedDate, setReschedDate] = useState("");
   const [reschedTime, setReschedTime] = useState("");
+  const [checkoutId, setCheckoutId] = useState<string>("");
 
   async function load() {
     const data = await getReservations();
@@ -312,6 +314,12 @@ export default function ReservationsPage() {
                       >
                         Reschedule
                       </button>
+                      <button
+                        onClick={() => setCheckoutId(checkoutId === r.id ? "" : r.id)}
+                        className="text-sky-300 hover:text-sky-200 text-xs font-bold px-3 py-2"
+                      >
+                        💳 Checkout
+                      </button>
                       <Link
                         href={`/admin/reservations/${r.id}`}
                         className="text-sky-400 hover:text-sky-300 text-xs font-bold px-3 py-2"
@@ -343,6 +351,12 @@ export default function ReservationsPage() {
                           </button>
                         );
                       })}
+                    </div>
+                  )}
+
+                  {checkoutId === r.id && (
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      <FrontDeskCheckout reservation={r} />
                     </div>
                   )}
                 </div>
