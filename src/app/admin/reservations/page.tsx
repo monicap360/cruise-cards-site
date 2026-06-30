@@ -7,6 +7,8 @@ import {
   type ReservationStatus,
   getReservations,
   updateReservationStatus,
+  updateArrivalTasks,
+  rescheduleReservation,
   isActive,
   fmtDate,
   fmtTime,
@@ -15,6 +17,7 @@ import {
   STATUS_COLOR,
   STATUS_LABEL,
   RESERVATION_STATUSES,
+  ARRIVAL_TASKS,
 } from "@/lib/reservations";
 
 const QUICK_NEXT: Partial<Record<ReservationStatus, ReservationStatus>> = {
@@ -30,6 +33,9 @@ export default function ReservationsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<"today" | "upcoming" | "all">("today");
   const [loading, setLoading] = useState(true);
+  const [reschedId, setReschedId] = useState<string>("");
+  const [reschedDate, setReschedDate] = useState("");
+  const [reschedTime, setReschedTime] = useState("");
 
   async function load() {
     const data = await getReservations();
@@ -46,6 +52,28 @@ export default function ReservationsPage() {
   async function quickAdvance(r: Reservation, next: ReservationStatus) {
     setReservations((rs) => rs.map((x) => (x.id === r.id ? { ...x, status: next } : x)));
     await updateReservationStatus(r.id, next);
+  }
+
+  async function setStatus(r: Reservation, status: ReservationStatus) {
+    setReservations((rs) => rs.map((x) => (x.id === r.id ? { ...x, status } : x)));
+    await updateReservationStatus(r.id, status);
+  }
+
+  async function toggleTask(r: Reservation, key: string) {
+    const tasks = { ...(r.arrivalTasks || {}), [key]: !r.arrivalTasks?.[key] };
+    setReservations((rs) => rs.map((x) => (x.id === r.id ? { ...x, arrivalTasks: tasks } : x)));
+    try { await updateArrivalTasks(r.id, tasks); } catch { /* arrival_tasks column may not exist yet */ }
+  }
+
+  function openReschedule(r: Reservation) {
+    setReschedId(r.id);
+    setReschedDate(r.reservationDate || today);
+    setReschedTime(r.reservationTime || "");
+  }
+  async function saveReschedule(r: Reservation) {
+    setReservations((rs) => rs.map((x) => (x.id === r.id ? { ...x, reservationDate: reschedDate, reservationTime: reschedTime } : x)));
+    setReschedId("");
+    await rescheduleReservation(r.id, reschedDate, reschedTime);
   }
 
   const filtered = useMemo(() => {
@@ -263,14 +291,27 @@ export default function ReservationsPage() {
                       </div>
                     </Link>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      {next && (
+                      {r.status === "requested" ? (
+                        <button
+                          onClick={() => setStatus(r, "reserved")}
+                          className="bg-green-500/20 text-green-200 border border-green-400/30 hover:bg-green-500/30 text-xs font-bold px-4 py-2 rounded-full transition-all"
+                        >
+                          ✓ Approve
+                        </button>
+                      ) : next ? (
                         <button
                           onClick={() => quickAdvance(r, next)}
                           className="bg-white text-black hover:bg-white/90 text-xs font-bold px-4 py-2 rounded-full transition-all"
                         >
                           → {STATUS_LABEL[next]}
                         </button>
-                      )}
+                      ) : null}
+                      <button
+                        onClick={() => openReschedule(r)}
+                        className="text-amber-300 hover:text-amber-200 text-xs font-bold px-3 py-2"
+                      >
+                        Reschedule
+                      </button>
                       <Link
                         href={`/admin/reservations/${r.id}`}
                         className="text-sky-400 hover:text-sky-300 text-xs font-bold px-3 py-2"
@@ -279,6 +320,31 @@ export default function ReservationsPage() {
                       </Link>
                     </div>
                   </div>
+
+                  {reschedId === r.id && (
+                    <div className="mt-3 pt-3 border-t border-white/10 flex flex-wrap items-end gap-2">
+                      <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80 self-center">Reschedule to:</span>
+                      <input type="date" value={reschedDate} onChange={(e) => setReschedDate(e.target.value)} className="bg-white/5 border border-white/15 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky-400/60" />
+                      <input type="time" value={reschedTime} onChange={(e) => setReschedTime(e.target.value)} className="bg-white/5 border border-white/15 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky-400/60" />
+                      <button onClick={() => saveReschedule(r)} className="bg-white text-black hover:bg-white/90 text-xs font-bold px-4 py-1.5 rounded-full">Save</button>
+                      <button onClick={() => setReschedId("")} className="text-white/50 hover:text-white text-xs font-bold px-2">Cancel</button>
+                    </div>
+                  )}
+
+                  {r.serviceType !== "Phone Call / Callback" && (
+                    <div className="mt-3 pt-3 border-t border-white/10 flex flex-wrap gap-2 items-center">
+                      <span className="label-mono text-[10px] uppercase tracking-wider text-white/40 mr-1">Arrival:</span>
+                      {ARRIVAL_TASKS.map((tk) => {
+                        const done = !!r.arrivalTasks?.[tk.key];
+                        return (
+                          <button key={tk.key} onClick={() => toggleTask(r, tk.key)}
+                            className={`text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all ${done ? "bg-green-500/15 text-green-300 border-green-400/30" : "bg-white/5 text-white/50 border-white/15 hover:text-white"}`}>
+                            {done ? "✓ " : ""}{tk.icon} {tk.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}

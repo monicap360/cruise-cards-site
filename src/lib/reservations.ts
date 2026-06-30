@@ -46,8 +46,20 @@ export type Reservation = {
   // Staff confirmed a physical photo ID at the desk (no image is ever stored)
   idVerified: boolean;
 
+  // Arrival-day tasks checked off at the desk (boarding passes, parking, etc.)
+  arrivalTasks?: Record<string, boolean>;
+
   notes: string;
 };
+
+// Things the front desk handles when a guest arrives at the location.
+export const ARRIVAL_TASKS: { key: string; label: string; icon: string }[] = [
+  { key: "boardingPrinted", label: "Boarding passes printed", icon: "🖨️" },
+  { key: "boardingPickedUp", label: "Boarding passes picked up", icon: "🎫" },
+  { key: "luggageTags", label: "Luggage tags printed", icon: "🏷️" },
+  { key: "parking", label: "Parking arranged", icon: "🅿️" },
+  { key: "docsReviewed", label: "Documents reviewed", icon: "📋" },
+];
 
 // Services offered at the Experience Center front desk
 export const SERVICE_TYPES = [
@@ -328,6 +340,7 @@ function toReservation(row: Record<string, unknown>): Reservation {
     requestSummary: (row.request_summary as string) ?? "",
     aiBrief: (row.ai_brief as string) ?? "",
     idVerified: (row.id_verified as boolean) ?? false,
+    arrivalTasks: (row.arrival_tasks as Record<string, boolean>) ?? {},
     notes: (row.notes as string) ?? "",
   };
 }
@@ -383,6 +396,26 @@ export async function updateReservationStatus(
   status: ReservationStatus
 ): Promise<void> {
   await supabase.from("reservations").update({ status }).eq("id", id);
+}
+
+// Front-desk arrival checklist (needs the reservations.arrival_tasks column).
+export async function updateArrivalTasks(
+  id: string,
+  tasks: Record<string, boolean>
+): Promise<void> {
+  await supabase.from("reservations").update({ arrival_tasks: tasks }).eq("id", id);
+}
+
+// Reschedule an arrival appointment to a new date/time.
+export async function rescheduleReservation(
+  id: string,
+  date: string,
+  time: string
+): Promise<void> {
+  await supabase
+    .from("reservations")
+    .update({ reservation_date: date, reservation_time: time })
+    .eq("id", id);
 }
 
 export async function deleteReservation(id: string): Promise<void> {
