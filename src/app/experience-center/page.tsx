@@ -1,5 +1,6 @@
 import Link from "next/link";
 import StoreHours from "@/components/StoreHours";
+import { IN_HOUSE_SERVICES } from "@/lib/services";
 
 export const metadata = {
   title: "Cruise Experience Center — Galveston Walk-In Cruise Help",
@@ -331,6 +332,37 @@ export default function ExperienceCenterPage() {
               </span>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* In-House Services & Pricing */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+        <div className="max-w-2xl mb-10">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// In-House Services"}</div>
+          <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">What We Do At The Desk</h2>
+          <p className="text-white/55 text-lg">Most services are free with your booking. A few are paid add-ons — here&rsquo;s the full menu.</p>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
+          <div className="bg-[#05070d] p-7">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wide bg-green-500/15 text-green-300 border border-green-400/30 px-2.5 py-1 rounded-full mb-5">Free / Included</span>
+            <ul className="space-y-2.5">
+              {IN_HOUSE_SERVICES.filter((s) => s.free).map((s) => (
+                <li key={s.name} className="flex items-start gap-2 text-sm text-white/75"><span className="text-green-400 mt-0.5 flex-shrink-0">✓</span>{s.name}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-[#05070d] p-7">
+            <span className="inline-block text-[10px] font-bold uppercase tracking-wide bg-sky-400/15 text-sky-300 border border-sky-400/30 px-2.5 py-1 rounded-full mb-5">Paid Add-Ons</span>
+            <ul className="space-y-2.5">
+              {IN_HOUSE_SERVICES.filter((s) => !s.free).map((s) => (
+                <li key={s.name} className="flex items-start justify-between gap-3 text-sm text-white/75">
+                  <span className="flex items-start gap-2"><span className="text-sky-400 mt-0.5 flex-shrink-0">+</span>{s.name}</span>
+                  <span className="text-white/50 whitespace-nowrap text-xs">{s.price ? `$${s.price}${s.unit ? ` ${s.unit}` : ""}` : s.note || "ask us"}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-white/35 text-xs mt-5">Prices confirmed at the desk.</p>
+          </div>
         </div>
       </section>
 
