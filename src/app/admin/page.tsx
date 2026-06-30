@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import GoLiveChecklist from "@/components/GoLiveChecklist";
 import {
   type Booking,
   getBookings,
@@ -160,8 +161,13 @@ export default function AdminPage() {
         </div>
       </section>
 
-      {/* Tools — grouped */}
+      {/* Go-Live checklist */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <GoLiveChecklist />
+      </div>
+
+      {/* Tools — grouped */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {TOOL_GROUPS.map((g) => (
             <div key={g.title} className="bg-[#0b1020] border border-white/10 rounded-2xl p-4">
