@@ -11,6 +11,8 @@ import GroupGate from "@/components/GroupGate";
 import { GROUP_ANNOUNCEMENTS } from "@/lib/announcements";
 import BedConfig from "@/components/BedConfig";
 import SailCountdown from "@/components/SailCountdown";
+import EmbarkGuide from "@/components/EmbarkGuide";
+import { embarkForGroup } from "@/lib/embark-guides";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -780,6 +782,9 @@ export default async function GroupPortalPage({
         <div className="bg-[#0b1020]/40 border border-white/10 rounded-2xl p-6">
           <CruisePackingList />
         </div>
+
+        {/* Before You Sail — embark city things to do */}
+        {(() => { const eg = embarkForGroup(group.code); return eg ? <EmbarkGuide guide={eg} /> : null; })()}
 
         {/* Questions & Concerns (tickets) */}
         <div className="rounded-2xl border border-white/10 bg-[#0b1020]/40 p-6">
