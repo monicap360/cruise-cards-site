@@ -18,6 +18,8 @@ export default function CabinBoardPage() {
   const [members, setMembers] = useState<Mem[]>([]);
   const [ibs, setIbs] = useState<IB[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "owes" | "none" | "paid" | "checkin">("all");
 
   useEffect(() => {
     (async () => {
@@ -30,20 +32,43 @@ export default function CabinBoardPage() {
     })();
   }, []);
 
-  const ships = useMemo(() => {
+  type Enriched = Cabin & { statusKey: string; text: string; ship: string };
+
+  const all = useMemo<Enriched[]>(() => {
     const gById = new Map(groups.map((g) => [g.id, g]));
-    const byShip = new Map<string, Cabin[]>();
+    const out: Enriched[] = [];
     for (const m of members) {
       const g = gById.get(m.group_id);
-      const ship = (g?.ship || "Unassigned").toLowerCase();
-      const arr = byShip.get(ship) || []; arr.push({ kind: "group", m, groupName: g?.name || "—", date: g?.sailing_date || "" }); byShip.set(ship, arr);
+      const ship = g?.ship || "Unassigned";
+      const fare = m.fare || 0, paid = m.deposit_paid || 0;
+      const statusKey = (m.paid_in_full || (fare > 0 && paid >= fare)) ? "paid" : paid > 0 ? "owes" : "none";
+      out.push({ kind: "group", m, groupName: g?.name || "—", date: g?.sailing_date || "", statusKey, ship, text: `${m.name} ${m.cabin_number} ${g?.name || ""} ${ship}`.toLowerCase() });
     }
     for (const b of ibs) {
-      const ship = (b.ship || "Unassigned").toLowerCase();
-      const arr = byShip.get(ship) || []; arr.push({ kind: "ind", b }); byShip.set(ship, arr);
+      const statusKey = /complete/i.test(b.checkin_status) ? "checkedin" : "checkin";
+      out.push({ kind: "ind", b, statusKey, ship: b.ship || "Unassigned", text: `${b.guest_name} ${b.booking_number} ${b.ship}`.toLowerCase() });
+    }
+    return out;
+  }, [groups, members, ibs]);
+
+  const counts = useMemo(() => ({
+    owes: all.filter((c) => c.statusKey === "owes").length,
+    none: all.filter((c) => c.statusKey === "none").length,
+    paid: all.filter((c) => c.statusKey === "paid").length,
+    checkin: all.filter((c) => c.statusKey === "checkin").length,
+  }), [all]);
+
+  const ships = useMemo(() => {
+    const s = search.toLowerCase();
+    const filtered = all.filter((c) =>
+      (!s || c.text.includes(s)) && (statusFilter === "all" || c.statusKey === statusFilter));
+    const byShip = new Map<string, Enriched[]>();
+    for (const c of filtered) {
+      const ship = c.ship.toLowerCase();
+      const arr = byShip.get(ship) || []; arr.push(c); byShip.set(ship, arr);
     }
     return Array.from(byShip.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [groups, members, ibs]);
+  }, [all, search, statusFilter]);
 
   function memStatus(m: Mem) {
     const fare = m.fare || 0, paid = m.deposit_paid || 0;
@@ -64,6 +89,17 @@ export default function CabinBoardPage() {
           </div>
           <Link href="/admin" className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white">← Admin</Link>
         </div>
+
+        {!loading && (
+          <div className="flex flex-wrap gap-2 mb-6 items-center">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search guest, cabin #, group, booking #…"
+              className="flex-1 min-w-48 bg-white/5 border border-white/15 rounded-xl px-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-sky-400/60" />
+            {([["all", "All"], ["owes", `Owes (${counts.owes})`], ["none", `No deposit (${counts.none})`], ["paid", `Paid (${counts.paid})`], ["checkin", `Needs check-in (${counts.checkin})`]] as const).map(([k, lbl]) => (
+              <button key={k} onClick={() => setStatusFilter(k)}
+                className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2 rounded-full ${statusFilter === k ? "bg-white text-black" : "bg-white/5 text-white/60 border border-white/10 hover:text-white"}`}>{lbl}</button>
+            ))}
+          </div>
+        )}
 
         {loading ? <div className="text-white/50">Loading…</div> : ships.length === 0 ? (
           <div className="text-white/45 text-center py-12">No cabins yet.</div>
