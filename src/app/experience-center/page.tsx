@@ -229,7 +229,8 @@ export default function ExperienceCenterPage() {
           </p>
           <p className="text-white/55 text-lg max-w-2xl mx-auto mb-7">
             Not a call center. Not just a website. A place where your whole cruise
-            comes together, from first idea to the moment you board.
+            comes together, from first idea to the moment you board.{" "}
+            <span className="text-white/80">This page is a preview of the full Experience Center we&rsquo;re building</span> — new reservations are open now, by appointment.
           </p>
 
           {/* Current status — appointment only (no public opening date) */}
@@ -283,17 +284,17 @@ export default function ExperienceCenterPage() {
       {/* Services Grid — every desk is bookable */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-28">
         <div className="max-w-2xl mb-4">
-          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// Everything Under One Roof"}</div>
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-4">{"// The Vision — Everything Under One Roof"}</div>
           <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-[-0.01em] mb-4">
             Six Desks. One Roof.
           </h2>
           <p className="text-white/55 text-lg">
-            From booking your first cruise to printing your boarding pass — tap a
-            desk to start.
+            Here&rsquo;s every desk we&rsquo;re building. Booking and new reservations
+            are available now by appointment — the rest opens as we complete the center.
           </p>
         </div>
         <div className="label-mono text-[11px] uppercase text-white/40 mb-10">
-          Select a service to book →
+          Tap a desk to explore →
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
