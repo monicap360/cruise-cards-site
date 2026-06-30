@@ -59,8 +59,10 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      // Vanity group link → hosted-group page
+      // Vanity group links → hosted-group page
       { source: "/thanksgiving-alston-group", destination: "/groups/thanksgiving-alston-group" },
+      { source: "/gabbys-alaska", destination: "/groups/gabby-group" },
+      { source: "/gabby", destination: "/groups/gabby-group" },
     ];
   },
 };
