@@ -64,6 +64,7 @@ export default function AdminGroupsPage() {
   const [editingG, setEditingG] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [groupTab, setGroupTab] = useState<"manage" | "reservations" | "signups" | "orders">("manage");
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [m, setM] = useState<GroupMember>(blankMember(""));
   const [rooms, setRooms] = useState<GroupRoom[]>([]);
@@ -278,7 +279,7 @@ export default function AdminGroupsPage() {
                   <div className="flex flex-col items-end gap-2">
                     <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
                     <div className="flex gap-3">
-                      <button onClick={() => openMembers(grp)} className="text-xs font-bold text-sky-400 hover:text-sky-300">{openId === grp.id ? "Hide" : "Manage members"}</button>
+                      <button onClick={() => { openMembers(grp); setGroupTab("manage"); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">{openId === grp.id ? "Hide" : "Open group"}</button>
                       <button onClick={() => { setG(grp); setEditingG(true); setShowForm(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
                       <button onClick={() => removeG(grp.id)} className="text-xs font-bold text-red-300 hover:text-red-200">Delete</button>
                     </div>
@@ -287,6 +288,14 @@ export default function AdminGroupsPage() {
 
                 {openId === grp.id && (
                   <div className="border-t border-white/10 p-4 bg-white/5">
+                    {/* Group tabs */}
+                    <div className="flex gap-1 mb-4 border-b border-white/10 flex-wrap">
+                      {([["manage", "Members & Rooms"], ["reservations", "Reservations"], ["signups", "Signups"], ["orders", "Orders"]] as const).map(([k, lbl]) => (
+                        <button key={k} onClick={() => setGroupTab(k)} className={`px-4 py-2 text-xs font-bold uppercase tracking-wider border-b-2 -mb-px ${groupTab === k ? "border-sky-400 text-white" : "border-transparent text-white/45 hover:text-white"}`}>{lbl}</button>
+                      ))}
+                    </div>
+
+                    {groupTab === "manage" && (<>
                     {/* Upload booking confirmation (AI) */}
                     <div className="mb-4 rounded-xl border border-sky-400/25 bg-sky-500/[0.06] p-4">
                       <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -448,6 +457,53 @@ export default function AdminGroupsPage() {
                         <button onClick={() => setR(blankRoom(grp.id))} className="border border-white/15 text-white/80 hover:border-white/40 hover:bg-white/5 font-semibold text-sm px-5 py-2 rounded-full">Clear</button>
                       </div>
                     </div>
+                    </>)}
+
+                    {groupTab === "reservations" && (
+                      <div>
+                        <div className="font-bold text-sm mb-3">📋 Reservations — {members.length} cabin{members.length === 1 ? "" : "s"}</div>
+                        {members.length === 0 ? (
+                          <p className="text-white/45 text-sm">No reservations yet.</p>
+                        ) : (
+                          <div className="overflow-x-auto rounded-xl border border-white/10">
+                            <table className="w-full text-sm min-w-[640px]">
+                              <thead><tr className="bg-white/5 text-white/45 text-[10px] uppercase tracking-wider">
+                                <th className="text-left px-3 py-2">Res #</th><th className="text-left px-3 py-2">Lead</th><th className="text-left px-3 py-2">Cabin</th><th className="text-center px-3 py-2">Guests</th><th className="text-right px-3 py-2">Fare</th><th className="text-center px-3 py-2">Status</th><th className="text-right px-3 py-2">Balance</th>
+                              </tr></thead>
+                              <tbody>
+                                {members.map((mm) => (
+                                  <tr key={mm.id} className="border-t border-white/10">
+                                    <td className="px-3 py-2 font-mono text-xs text-sky-300">{mm.confirmationNumber || "—"}</td>
+                                    <td className="px-3 py-2 font-semibold">{mm.name}</td>
+                                    <td className="px-3 py-2 text-white/70">{mm.cabinType}{mm.cabinNumber ? ` #${mm.cabinNumber}` : ""}</td>
+                                    <td className="px-3 py-2 text-center text-white/70">{mm.guests || "—"}</td>
+                                    <td className="px-3 py-2 text-right">{fmt$(mm.fare)}</td>
+                                    <td className="px-3 py-2 text-center">{mm.paidInFull ? <span className="text-green-300 font-bold text-xs">Paid</span> : mm.depositPaid > 0 ? <span className="text-sky-300 text-xs">Deposit</span> : <span className="text-white/40 text-xs">—</span>}</td>
+                                    <td className="px-3 py-2 text-right font-bold">{fmt$(memberBalance(mm))}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {groupTab === "signups" && (
+                      <div className="bg-[#0b1020] rounded-xl border border-white/10 p-6 text-center">
+                        <div className="font-bold mb-1">📝 Group Signups</div>
+                        <p className="text-white/50 text-sm mb-4">Families, DOBs, deposits &amp; confirmations for this group.</p>
+                        <Link href="/admin/signups" className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">Open Signup Tracker →</Link>
+                      </div>
+                    )}
+
+                    {groupTab === "orders" && (
+                      <div className="bg-[#0b1020] rounded-xl border border-white/10 p-6 text-center">
+                        <div className="font-bold mb-1">📦 Group Orders</div>
+                        <p className="text-white/50 text-sm mb-4">Extras, add-ons &amp; purchases for this group.</p>
+                        <Link href="/admin/orders" className="inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">Open Group Orders →</Link>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
