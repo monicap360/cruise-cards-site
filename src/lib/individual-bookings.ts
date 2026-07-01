@@ -20,6 +20,7 @@ export type IndividualBooking = {
   token: string;
   cabinType: string;
   grossAmount: number;
+  statusNote?: string; // live "what's going on" banner shown on the portal
   createdAt?: string;
 };
 

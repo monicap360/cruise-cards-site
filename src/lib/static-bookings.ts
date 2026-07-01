@@ -20,6 +20,8 @@ export const STATIC_BOOKINGS: IndividualBooking[] = [
     token: "zn88d6",
     cabinType: "Balcony (BL) · Cabin 11207 · 2 guests",
     grossAmount: 2613.5,
+    statusNote:
+      "We're updating your reservation right now — this is your live link, so keep it handy. As we finalize your details (cabin, pricing, check-in, and any changes), the latest will always show right here. We'll keep you posted every step of the way. Questions? Call us at (409) 632-2106.",
   },
 ];
 

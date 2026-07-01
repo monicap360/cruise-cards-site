@@ -122,6 +122,17 @@ export default function ReservationPortal() {
           <button onClick={logout} className="label-mono text-[11px] uppercase tracking-wider text-white/50 hover:text-white border border-white/15 rounded-full px-4 py-2">Log out</button>
         </div>
 
+        {/* Live status — what's going on */}
+        {booking.statusNote && (
+          <div className="flex items-start gap-3 rounded-2xl border border-sky-400/30 bg-sky-500/[0.08] p-4">
+            <span className="text-2xl leading-none">📋</span>
+            <div>
+              <div className="text-sky-200 font-bold text-sm">Reservation update — we're working on your booking</div>
+              <p className="text-white/75 text-sm mt-1 leading-relaxed">{booking.statusNote}</p>
+            </div>
+          </div>
+        )}
+
         {/* Summary */}
         <div className={card}>
           <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-3">Reservation Summary</div>
