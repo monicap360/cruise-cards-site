@@ -56,6 +56,43 @@ function dateRangeLabel(start: string, end: string): string {
   return `${s} – ${e}`;
 }
 
+type ItinDay = { day: number; date: string; title: string; type: "embark" | "port" | "sea" | "debark" };
+
+// Build a sensible day-by-day schedule from the ports + length: embark Galveston
+// on day 1, return on the last day, ports spread across the middle days, sea days
+// fill the rest. (A typical schedule — exact times confirmed on cruise docs.)
+function buildItinerary(sailingDate: string, nights: number, ports: string[]): ItinDay[] {
+  const totalDays = nights + 1;
+  const middleCount = Math.max(0, nights - 1);
+  const slots: (string | null)[] = Array(middleCount).fill(null);
+  if (ports.length && middleCount) {
+    ports.forEach((p, i) => {
+      const pos =
+        ports.length === 1
+          ? Math.floor(middleCount / 2)
+          : Math.round((i * (middleCount - 1)) / (ports.length - 1));
+      let idx = Math.min(Math.max(pos, 0), middleCount - 1);
+      while (idx < middleCount && slots[idx] !== null) idx++;
+      if (idx >= middleCount) idx = slots.findIndex((s) => s === null);
+      if (idx >= 0) slots[idx] = p;
+    });
+  }
+  const days: ItinDay[] = [];
+  for (let d = 0; d < totalDays; d++) {
+    const date = addDays(sailingDate, d);
+    if (d === 0) days.push({ day: 1, date, title: "Depart Galveston", type: "embark" });
+    else if (d === totalDays - 1) days.push({ day: d + 1, date, title: "Return to Galveston", type: "debark" });
+    else {
+      const slot = slots[d - 1];
+      days.push({ day: d + 1, date, title: slot ?? "Fun Day at Sea", type: slot ? "port" : "sea" });
+    }
+  }
+  return days;
+}
+
+const ITIN_ICON: Record<ItinDay["type"], string> = { embark: "🚢", port: "🏝️", sea: "🌊", debark: "⚓" };
+const ITIN_TAG: Record<ItinDay["type"], string> = { embark: "Embark", port: "Port of Call", sea: "At Sea", debark: "Debark" };
+
 export default async function SailingOptionsPage({
   params,
 }: {
@@ -95,6 +132,7 @@ export default async function SailingOptionsPage({
     nights: block.nights,
   });
   const ports = portsFromItinerary(block.itinerary);
+  const itinerary = buildItinerary(block.sailingDate, block.nights, ports);
   const rateMap = await getRateMap();
 
   const cabinPrices = block.cabins.map((c) => c.price).filter((p) => p > 0);
@@ -218,6 +256,38 @@ export default async function SailingOptionsPage({
             };
           })()}
         />
+      </section>
+
+      {/* Day-by-day itinerary */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+          {"// Day-by-Day Itinerary"}
+        </div>
+        <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">
+          Your {block.nights}-{durationWord(block.cruiseLine)} Journey
+        </h2>
+        <p className="text-white/45 text-sm mb-6">
+          A typical schedule for this round-trip sailing. Exact arrival times and any
+          tender ports are confirmed on your cruise documents.
+        </p>
+        <div className="rounded-2xl border border-white/10 bg-[#0b1020] overflow-hidden divide-y divide-white/10">
+          {itinerary.map((it) => (
+            <div key={it.day} className="flex items-center gap-4 p-4 hover:bg-white/[0.02] transition-colors">
+              <div className="flex flex-col items-center w-12 shrink-0">
+                <span className="label-mono text-[9px] uppercase text-white/40">Day</span>
+                <span className="text-2xl font-extrabold text-white leading-none">{it.day}</span>
+              </div>
+              <div className="w-9 text-center shrink-0 text-2xl">{ITIN_ICON[it.type]}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-white font-bold uppercase tracking-tight text-sm">{it.title}</div>
+                <div className="text-white/45 text-xs mt-0.5">{fmtDate(it.date)}</div>
+              </div>
+              <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/70 bg-sky-400/10 border border-sky-400/20 px-2.5 py-1 rounded-full shrink-0">
+                {ITIN_TAG[it.type]}
+              </span>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Ports of call */}
