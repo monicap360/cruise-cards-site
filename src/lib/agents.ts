@@ -31,7 +31,9 @@ export const AGENTS: Agent[] = [
       "Accessibility & special needs",
     ],
     schedule: [
-      { day: "Mon – Fri", hours: "9:00 AM – 5:00 PM CT" },
+      { day: "Mon – Wed", hours: "9:00 AM – 5:00 PM CT" },
+      { day: "Thursday", hours: "Off" },
+      { day: "Friday", hours: "9:00 AM – 5:00 PM CT" },
       { day: "Saturday", hours: "By appointment" },
       { day: "Sunday", hours: "Closed" },
     ],
