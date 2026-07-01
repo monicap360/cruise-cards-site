@@ -15,6 +15,8 @@ export const GROUP_PASSENGERS: Record<string, GroupPassenger[]> = {
     { name: "Peter Von Marensdorff", dob: "May 14, 1990", vifp: "", stateroom: "4220" },
     { name: "Kristin Munsch", dob: "Jan 1, 1996", vifp: "", stateroom: "4220" },
     { name: "Stacy Munsch", dob: "Jun 21, 1970", vifp: "", stateroom: "4220" },
+    { name: "Robert Munsch", dob: "", vifp: "", stateroom: "TBD" },
+    { name: "Robert Stewart", dob: "", vifp: "", stateroom: "TBD" },
   ],
 };
 

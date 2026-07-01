@@ -32,7 +32,7 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
   "gabby-group": {
     airline: "Southwest",
     confirmation: "",
-    passengers: 5,
+    passengers: 7,
     paidInFull: true,
     statusNote:
       "Everyone is ticketed and paid in full. We're simply moving each traveler out of the group block into their own Southwest booking so you can view and manage your flights directly at southwest.com. Individual confirmation numbers appear in the table below as they're issued — same flights, same times, no action needed.",
@@ -41,6 +41,8 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
       { name: "Peter Von Marensdorff", confirmation: "" },
       { name: "Kristin Munsch", confirmation: "" },
       { name: "Stacy Munsch", confirmation: "" },
+      { name: "Robert Munsch", confirmation: "" },
+      { name: "Robert Stewart", confirmation: "" },
     ],
     priceDisclaimer:
       "The total group price includes all government-imposed taxes and fees, including the September 11th Security Fee, and applicable international taxes and fees, effective as of the date of the Group Travel Agreement.",
