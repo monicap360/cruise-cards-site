@@ -31,6 +31,7 @@ const MORE = [
   { href: "/group-signup", label: "Start a Group" },
   { href: "/group-leader", label: "Manage My Group" },
   { href: "/request-group-space", label: "Travel Agents" },
+  { href: "/our-story", label: "Our Story" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];

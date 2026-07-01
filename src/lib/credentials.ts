@@ -1,9 +1,18 @@
 // Trust & credential signals shown across the site. Edit here to update.
 // (Add your CLIA member # once you have it handy and it can be shown too.)
 
-export type Credential = { icon: string; title: string; blurb: string };
+export type Credential = { icon: string; title: string; blurb: string; href?: string };
+
+export const PRESS_URL =
+  "https://www.yahoo.com/lifestyle/articles/harrowing-cruise-experiences-could-avoided-231511000.html";
 
 export const CREDENTIALS: Credential[] = [
+  {
+    icon: "📰",
+    title: "Featured in the Houston Chronicle",
+    blurb: "Monica was interviewed as a cruise expert on why travel protection matters. Read the feature →",
+    href: PRESS_URL,
+  },
   {
     icon: "⚓",
     title: "CLIA Member Agency",

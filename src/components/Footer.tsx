@@ -125,6 +125,7 @@ export default function Footer() {
                 { href: "/terms", label: "Terms & Conditions" },
                 { href: "/vacation-protection", label: "Vacation Protection" },
                 { href: "/experience-center", label: "Experience Center" },
+                { href: "/our-story", label: "Our Story" },
                 { href: "/about", label: "About Us" },
                 { href: "/contact", label: "Contact" },
               ].map((link) => (

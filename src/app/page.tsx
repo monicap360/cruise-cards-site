@@ -3,6 +3,7 @@ import DestinationCard from "@/components/DestinationCard";
 import CelebrationStrip from "@/components/CelebrationStrip";
 import { FEATURED_DESTINATIONS } from "@/lib/destinations";
 import { durationWordCap } from "@/lib/sea-pay";
+import { PRESS_URL } from "@/lib/credentials";
 
 const features = [
   {
@@ -209,6 +210,34 @@ export default function Home() {
             honest advice, no pressure, and a local Galveston team that treats you
             like a neighbor, from our island to your stateroom.
           </p>
+        </div>
+      </section>
+
+      {/* ── As featured in the Houston Chronicle ─────────────────────────── */}
+      <section className="bg-[#05070d] text-white border-t border-white/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <a
+            href={PRESS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col sm:flex-row items-center gap-4 sm:gap-6 rounded-2xl border border-sky-400/25 bg-[#0b1020] px-6 py-6 hover:border-sky-400/60 transition-colors text-center sm:text-left"
+          >
+            <div className="text-4xl shrink-0">📰</div>
+            <div className="flex-1">
+              <div className="label-mono text-[10px] uppercase tracking-[0.2em] text-sky-400/80 mb-1">
+                As featured in
+              </div>
+              <div className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
+                The Houston Chronicle
+              </div>
+              <p className="text-white/55 text-sm mt-1">
+                Monica Pena, interviewed as a cruise expert on why travel protection matters for cruisers.
+              </p>
+            </div>
+            <span className="label-mono text-[11px] uppercase tracking-wider text-sky-300 group-hover:text-sky-200 shrink-0">
+              Read the feature →
+            </span>
+          </a>
         </div>
       </section>
 
