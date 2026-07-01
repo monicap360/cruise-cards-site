@@ -156,11 +156,11 @@ export default async function GroupPortalPage({
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         {/* Group setup status */}
         <div className={`rounded-2xl border p-5 ${group.setupStatus === "finalized" ? "border-green-400/30 bg-green-400/10" : "border-amber-400/30 bg-amber-400/10"}`}>
-          <div className="font-bold text-white">{group.setupStatus === "finalized" ? "✅ Your group is finalized!" : "🛠️ We’re still finalizing your group"}</div>
+          <div className="font-bold text-white">{group.setupStatus === "finalized" ? "✅ Your group is finalized!" : "🛠️ Your Cruise Director of Sales is finalizing your group"}</div>
           <p className="text-white/70 text-sm mt-1">
             {group.setupStatus === "finalized"
-              ? "Everything’s loaded. Please review your cabin, guest names, and details — and if anything needs changing, leave a note on your room in the rooming list below and we’ll take care of it."
-              : "Thanks for your patience! Your cabins, guest names, and pricing may still be changing as we finish loading everyone. We’ll let you know the moment it’s finalized — feel free to leave any notes on your room below in the meantime."}
+              ? "Your Cruise Director of Sales has everything loaded. Please review your cabin, guest names, and details — and if anything needs changing, leave a note on your room in the rooming list below and we’ll take care of it."
+              : "Thanks for your patience! Your Cruise Director of Sales is still adding your group’s details, so cabins, guest names, and pricing may still change as everyone gets loaded. We’ll let you know the moment it’s finalized — feel free to leave any notes on your room below in the meantime."}
           </p>
         </div>
 
