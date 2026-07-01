@@ -38,7 +38,10 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
       "Everyone is ticketed and paid in full. We're simply moving each traveler out of the group block into their own Southwest booking so you can view and manage your flights directly at southwest.com. Individual confirmation numbers appear in the table below as they're issued — same flights, same times, no action needed.",
     travelerConfirmations: [
       { name: "Gabby Lopez & Ty Munsch", confirmation: "CGEGLG" },
-      { name: "Munsch family (4 travelers)", confirmation: "" },
+      { name: "Munsch family — traveler 3", confirmation: "" },
+      { name: "Munsch family — traveler 4", confirmation: "" },
+      { name: "Munsch family — traveler 5", confirmation: "" },
+      { name: "Munsch family — traveler 6", confirmation: "" },
       { name: "Peter", confirmation: "" },
     ],
     priceDisclaimer:
