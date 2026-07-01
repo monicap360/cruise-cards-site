@@ -1,6 +1,7 @@
 import Link from "next/link";
 import StoreHours from "@/components/StoreHours";
 import { IN_HOUSE_SERVICES } from "@/lib/services";
+import Reviews from "@/components/Reviews";
 
 export const metadata = {
   title: "Cruise Experience Center — Galveston Walk-In Cruise Help",
@@ -364,6 +365,11 @@ export default function ExperienceCenterPage() {
             <p className="text-white/35 text-xs mt-5">Prices confirmed at the desk.</p>
           </div>
         </div>
+      </section>
+
+      {/* Reviews */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+        <Reviews />
       </section>
 
       {/* Store Hours */}

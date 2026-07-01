@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReputationPlan from "@/components/ReputationPlan";
 
 // Elaria — Monica's PERSONAL command center (not cruise operations — that lives
 // in the cruise admin). Tracks her bills & due dates, a prioritized to-do list,
@@ -140,6 +141,9 @@ export default function ElariaPage() {
             <Link href="/admin/vault" className="hover:text-white">◇ vault →</Link>
           </div>
         </div>
+
+        {/* Reputation action plan */}
+        <div className="mb-8"><ReputationPlan /></div>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-9">
