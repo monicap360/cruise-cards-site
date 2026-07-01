@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { getAllGuestProfiles, LOYALTY_PROGRAMS, type GuestProfile } from "@/lib/guest-profile";
+import { getPayments, addPayment, deletePayment, newPaymentId, type Payment } from "@/lib/payments";
+
+const PAY_METHODS = ["PayPal", "Cash", "Check", "Apple Cash", "Card", "Cruise line direct", "Other"];
 
 const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 const cap = (s: string) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : "Unassigned");
@@ -26,7 +29,7 @@ type Cabin = { kind: "group"; m: Mem; groupName: string; date: string } | { kind
 // Editable fields shared by both kinds.
 type EditForm = {
   kind: "group" | "ind"; id: string; name: string; confirmation: string; cabinType: string;
-  cabinNumber: string; deck: string; loyaltyProgram: string; loyaltyNumber: string; gross: string; net: string; paid: string;
+  cabinNumber: string; deck: string; loyaltyProgram: string; loyaltyNumber: string; gross: string; net: string; paid: string; paidInFull: boolean;
 };
 
 export default function CabinBoardPage() {
@@ -39,6 +42,10 @@ export default function CabinBoardPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "owes" | "none" | "paid" | "checkin">("all");
   const [edit, setEdit] = useState<EditForm | null>(null);
   const [saving, setSaving] = useState(false);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [payAmount, setPayAmount] = useState("");
+  const [payMethod, setPayMethod] = useState("PayPal");
+  const [payNote, setPayNote] = useState("");
 
   async function refresh() {
     const g = await supabase.from("groups").select("id,name,ship,sailing_date");
@@ -64,6 +71,33 @@ export default function CabinBoardPage() {
   }
 
   useEffect(() => { refresh(); }, []);
+
+  // Load the payment log for the member being edited (admin card).
+  useEffect(() => {
+    if (edit && edit.kind === "group") getPayments(edit.id).then(setPayments).catch(() => setPayments([]));
+    else setPayments([]);
+  }, [edit?.id, edit?.kind]);
+
+  const paymentsTotal = useMemo(() => payments.reduce((s, p) => s + p.amount, 0), [payments]);
+
+  async function syncPaidTotal(memberId: string, list: Payment[]) {
+    const sum = list.reduce((s, p) => s + p.amount, 0);
+    await supabase.from("group_members").update({ deposit_paid: sum }).eq("id", memberId);
+    setEdit((e) => (e && e.id === memberId ? { ...e, paid: String(sum) } : e));
+  }
+  async function addPay() {
+    if (!edit || !(Number(payAmount) > 0)) return;
+    await addPayment({ id: newPaymentId(), memberId: edit.id, amount: Number(payAmount), method: payMethod, note: payNote });
+    setPayAmount(""); setPayNote("");
+    const list = await getPayments(edit.id); setPayments(list);
+    await syncPaidTotal(edit.id, list);
+  }
+  async function removePay(id: string) {
+    if (!edit) return;
+    await deletePayment(id);
+    const list = await getPayments(edit.id); setPayments(list);
+    await syncPaidTotal(edit.id, list);
+  }
 
   // Guest-submitted profiles, keyed for enrichment (loyalty/deck/confirmation).
   const profByName = useMemo(() => { const map = new Map<string, GuestProfile>(); for (const p of profiles) if (p.name) map.set(p.name.trim().toLowerCase(), p); return map; }, [profiles]);
@@ -126,7 +160,7 @@ export default function CabinBoardPage() {
       cabinType: m.cabin_type || prof?.cabinType || "", cabinNumber: m.cabin_number || "", deck: m.deck || prof?.deck || "",
       loyaltyProgram: m.loyalty_program || prof?.loyaltyProgram || "", loyaltyNumber: m.loyalty_number || prof?.loyaltyNumber || "",
       gross: m.gross_amount ? String(m.gross_amount) : m.fare ? String(m.fare) : "", net: m.net_amount ? String(m.net_amount) : "",
-      paid: m.deposit_paid ? String(m.deposit_paid) : "",
+      paid: m.deposit_paid ? String(m.deposit_paid) : "", paidInFull: !!m.paid_in_full,
     });
   }
   function openEditIB(b: IB, prof?: GuestProfile) {
@@ -134,7 +168,7 @@ export default function CabinBoardPage() {
       kind: "ind", id: b.id, name: b.guest_name, confirmation: b.booking_number || prof?.confirmationNumber || "",
       cabinType: b.cabin_type || prof?.cabinType || "", cabinNumber: "", deck: b.deck || prof?.deck || "",
       loyaltyProgram: b.loyalty_program || prof?.loyaltyProgram || "", loyaltyNumber: b.loyalty_number || prof?.loyaltyNumber || "",
-      gross: b.gross_amount ? String(b.gross_amount) : "", net: b.net_amount ? String(b.net_amount) : "", paid: "",
+      gross: b.gross_amount ? String(b.gross_amount) : "", net: b.net_amount ? String(b.net_amount) : "", paid: "", paidInFull: false,
     });
   }
 
@@ -148,7 +182,7 @@ export default function CabinBoardPage() {
         const { error } = await supabase.from("group_members").update({
           cabin_type: edit.cabinType, cabin_number: edit.cabinNumber, deck: edit.deck, confirmation_number: edit.confirmation,
           loyalty_program: edit.loyaltyProgram, loyalty_number: edit.loyaltyNumber, gross_amount: gross, net_amount: net,
-          fare: gross, deposit_paid: paid, paid_in_full: gross > 0 && paid >= gross,
+          fare: gross, deposit_paid: paid, paid_in_full: edit.paidInFull || (gross > 0 && paid >= gross),
         }).eq("id", edit.id);
         if (error) throw error;
       } else {
@@ -304,10 +338,6 @@ export default function CabinBoardPage() {
                 <input className={field + " mt-1"} inputMode="decimal" value={edit.gross} onChange={(e) => setEdit({ ...edit, gross: e.target.value })} placeholder="what the guest pays" /></label>
               <label className="block"><span className={label}>Net amount ($)</span>
                 <input className={field + " mt-1"} inputMode="decimal" value={edit.net} onChange={(e) => setEdit({ ...edit, net: e.target.value })} placeholder="cruise-line cost" /></label>
-              {edit.kind === "group" && (
-                <label className="block col-span-2"><span className={label}>Paid so far ($) — log PayPal / check / card payments here</span>
-                  <input className={field + " mt-1"} inputMode="decimal" value={edit.paid} onChange={(e) => setEdit({ ...edit, paid: e.target.value })} placeholder="0" /></label>
-              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-4">
@@ -318,10 +348,43 @@ export default function CabinBoardPage() {
               {edit.kind === "group" && (
                 <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
                   <span className="text-white/55 text-xs">Balance due</span>
-                  <span className={`text-xl font-extrabold ${editGross - (Number(edit.paid) || 0) <= 0 ? "text-green-300" : "text-amber-300"}`}>{money(Math.max(0, editGross - (Number(edit.paid) || 0)))}</span>
+                  <span className={`text-xl font-extrabold ${editGross - paymentsTotal <= 0 ? "text-green-300" : "text-amber-300"}`}>{money(Math.max(0, editGross - paymentsTotal))}</span>
                 </div>
               )}
             </div>
+
+            {/* Admin payment log — every payment, any method */}
+            {edit.kind === "group" && (
+              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className={label}>Payments — all methods (admin)</span>
+                  <span className="text-white/70 text-sm font-bold">Total paid {money(paymentsTotal)}</span>
+                </div>
+                {payments.length > 0 && (
+                  <div className="space-y-1 mb-3">
+                    {payments.map((p) => (
+                      <div key={p.id} className="flex items-center gap-2 text-sm">
+                        <span className="font-bold text-white">{money(p.amount)}</span>
+                        <span className="text-white/50 text-xs">{p.method}{p.note ? ` · ${p.note}` : ""}{p.createdAt ? ` · ${p.createdAt.slice(0, 10)}` : ""}</span>
+                        <button onClick={() => removePay(p.id)} className="ml-auto text-red-300/70 hover:text-red-200 text-xs">×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="grid grid-cols-[90px_1fr_auto] gap-2">
+                  <input className={field} inputMode="decimal" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} placeholder="$ amt" />
+                  <select className={field} value={payMethod} onChange={(e) => setPayMethod(e.target.value)}>
+                    {PAY_METHODS.map((m) => <option key={m} value={m} className="bg-[#0b1020]">{m}</option>)}
+                  </select>
+                  <button onClick={addPay} className="bg-white text-black hover:bg-white/90 font-bold uppercase tracking-wider text-[11px] px-4 rounded-xl">Add</button>
+                </div>
+                <input className={field + " mt-2"} value={payNote} onChange={(e) => setPayNote(e.target.value)} placeholder="Note (optional) — e.g. deposit, invoice #, paid via Apple Cash" />
+                <label className="flex items-center gap-2 mt-3 text-sm text-white/70 cursor-pointer">
+                  <input type="checkbox" checked={edit.paidInFull} onChange={(e) => setEdit({ ...edit, paidInFull: e.target.checked })} className="accent-sky-500 w-4 h-4" />
+                  Mark as <span className="font-bold text-green-300">PAID</span> (paid another way — shows &ldquo;Paid&rdquo; to the group)
+                </label>
+              </div>
+            )}
 
             <div className="flex gap-2 mt-5">
               <button onClick={saveEdit} disabled={saving} className="flex-1 bg-white text-black hover:bg-white/90 disabled:opacity-50 font-bold uppercase tracking-wider text-sm py-3 rounded-full">{saving ? "Saving…" : "Save"}</button>
