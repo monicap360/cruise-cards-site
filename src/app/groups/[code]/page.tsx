@@ -292,20 +292,37 @@ export default async function GroupPortalPage({
               </div>
             )}
             {flightInfo.travelerConfirmations && flightInfo.travelerConfirmations.length > 0 && (
-              <div className="mb-4 rounded-xl border border-white/10 bg-[#0b1020] p-4">
-                <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-2">Confirmation Numbers</div>
-                <div className="divide-y divide-white/10">
-                  {flightInfo.travelerConfirmations.map((t, i) => (
-                    <div key={i} className="flex items-center justify-between gap-3 py-2">
-                      <span className="text-white/80 text-sm">{t.name}</span>
-                      {t.confirmation ? (
-                        <span className="font-mono font-bold text-green-300 text-sm">✓ {t.confirmation}</span>
-                      ) : (
-                        <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2.5 py-1">Reissued</span>
-                      )}
-                    </div>
-                  ))}
+              <div className="mb-4 rounded-xl border border-white/10 bg-[#0b1020] overflow-hidden">
+                <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-white/10">
+                  <span className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70">Confirmation Numbers</span>
+                  <a href="https://www.southwest.com" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300 text-xs font-bold">View on southwest.com ↗</a>
                 </div>
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-white/40 label-mono text-[9px] uppercase tracking-wider">
+                      <th className="text-left font-bold px-4 py-2">Traveler</th>
+                      <th className="text-center font-bold px-3 py-2">Status</th>
+                      <th className="text-right font-bold px-4 py-2">Confirmation #</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {flightInfo.travelerConfirmations.map((t, i) => (
+                      <tr key={i} className="border-t border-white/10">
+                        <td className="px-4 py-2.5 text-white/85">{t.name}</td>
+                        <td className="px-3 py-2.5 text-center">
+                          <span className="label-mono text-[9px] uppercase tracking-wider text-green-300 bg-green-500/10 border border-green-400/25 rounded-full px-2 py-0.5">✓ Ticketed &amp; paid</span>
+                        </td>
+                        <td className="px-4 py-2.5 text-right">
+                          {t.confirmation ? (
+                            <span className="font-mono font-bold text-green-300">{t.confirmation}</span>
+                          ) : (
+                            <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80">Individual&nbsp;# reissuing</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

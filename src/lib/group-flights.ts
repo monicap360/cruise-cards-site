@@ -35,7 +35,7 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
     passengers: 7,
     paidInFull: true,
     statusNote:
-      "Gabby and Ty are all set — confirmation CGEGLG. We're finishing the individual tickets for the rest of the group, and each traveler's confirmation number will appear right here on your portal as soon as it's issued. Same flights, same times — no action needed on your end.",
+      "Everyone is ticketed and paid in full. We're simply moving each traveler out of the group block into their own Southwest booking so you can view and manage your flights directly at southwest.com. Individual confirmation numbers appear in the table below as they're issued — same flights, same times, no action needed.",
     travelerConfirmations: [
       { name: "Gabby Lopez & Ty Munsch", confirmation: "CGEGLG" },
       { name: "Munsch family (4 travelers)", confirmation: "" },
