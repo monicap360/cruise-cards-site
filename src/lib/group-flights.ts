@@ -42,7 +42,7 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
       { name: "Traveler 4", confirmation: "" },
       { name: "Traveler 5", confirmation: "" },
       { name: "Traveler 6", confirmation: "" },
-      { name: "Traveler 7", confirmation: "" },
+      { name: "Peter", confirmation: "" },
     ],
     priceDisclaimer:
       "The total group price includes all government-imposed taxes and fees, including the September 11th Security Fee, and applicable international taxes and fees, effective as of the date of the Group Travel Agreement.",
