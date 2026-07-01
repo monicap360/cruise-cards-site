@@ -149,12 +149,13 @@ export default function ElariaPage() {
           </div>
           <h1 className="text-5xl sm:text-6xl font-extrabold uppercase tracking-[-0.03em] text-holo text-glow leading-none">Elaria</h1>
           <p className="text-white/50 text-sm mt-2 max-w-md">Your private hub — bills, to-dos, ideas, and your secure keys. Ask Elaria (bottom-left) what to pay and do first.</p>
-          <div className="mt-4 flex items-center gap-4 flex-wrap label-mono text-[10px] uppercase tracking-widest text-white/40">
-            <span>◇ personal — not cruise ops</span>
-            <span className="text-sky-400/60">●</span>
-            <Link href="/admin" className="hover:text-white">◇ cruise business →</Link>
-            <span className="text-sky-400/60">●</span>
-            <Link href="/admin/vault" className="hover:text-white">◇ vault →</Link>
+          <div className="mt-4 flex items-center justify-between gap-3 flex-wrap label-mono text-[10px] uppercase tracking-widest text-white/40">
+            <span>◇ personal command center</span>
+            <div className="flex items-center gap-3 text-[9px] text-white/35">
+              <Link href="/admin/vault" className="hover:text-white">vault →</Link>
+              <span className="text-sky-400/40">●</span>
+              <Link href="/admin" className="hover:text-white">cruise ops →</Link>
+            </div>
           </div>
         </div>
 

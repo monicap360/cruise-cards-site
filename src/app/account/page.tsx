@@ -9,6 +9,7 @@ import type { CustomerCredit } from "@/lib/credits";
 import ChatWidget from "@/components/ChatWidget";
 import BookingRequestForm from "@/components/BookingRequestForm";
 import { getDocumentsForEmail, type GuestDocument } from "@/lib/documents";
+import { getGuestProfile, saveGuestProfile, LOYALTY_PROGRAMS, type GuestProfile } from "@/lib/guest-profile";
 
 // Secure e-signature document (Jotform Sign). Change the id to swap documents.
 const SIGN_URL = "https://www.jotform.com/sign/252315585270052";
@@ -27,6 +28,17 @@ export default function AccountPage() {
   const [qText, setQText] = useState("");
   const [qSent, setQSent] = useState(false);
   const [documents, setDocuments] = useState<GuestDocument[]>([]);
+
+  // Guest cruise profile (loyalty #, confirmation, cabin/deck) → shows on Cabin Board.
+  const [profile, setProfile] = useState<GuestProfile>({
+    email: "", name: "", confirmationNumber: "", ship: "", cabinType: "", deck: "", loyaltyProgram: "", loyaltyNumber: "",
+  });
+  const [profileSaved, setProfileSaved] = useState(false);
+
+  async function saveProfile() {
+    const ok = await saveGuestProfile({ ...profile, email, name: profile.name || name });
+    if (ok) { setProfileSaved(true); setTimeout(() => setProfileSaved(false), 4000); }
+  }
 
   async function login() {
     if (!email.trim()) return;
@@ -47,6 +59,11 @@ export default function AccountPage() {
     } catch {
       setDocuments([]);
     }
+    try {
+      const p = await getGuestProfile(email);
+      if (p) setProfile(p);
+      else setProfile((prev) => ({ ...prev, email, name: name || prev.name }));
+    } catch { /* table may not exist yet */ }
     setLoggedIn(true);
     setLoading(false);
   }
@@ -185,6 +202,61 @@ export default function AccountPage() {
               is reviewing your request — check back soon.
             </p>
           )}
+        </div>
+
+        {/* My cruise profile — loyalty #, confirmation, cabin/deck */}
+        <div className="bg-[#0b1020] border border-sky-400/25 rounded-2xl p-6">
+          <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+            {"// My Cruise Profile"}
+          </div>
+          <p className="text-white/55 text-sm mb-4">
+            Add your booking confirmation and your cruise-line loyalty number
+            (Carnival <strong className="text-white/80">VIFP</strong>, Royal{" "}
+            <strong className="text-white/80">Crown &amp; Anchor</strong>, etc.) so we can link
+            your perks and check you in faster. This updates our front desk instantly.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="block sm:col-span-2">
+              <span className="text-white/45 text-xs">Booking confirmation #</span>
+              <input className={field + " mt-1 font-mono"} value={profile.confirmationNumber}
+                onChange={(e) => setProfile({ ...profile, confirmationNumber: e.target.value })} placeholder="e.g. ZN88D6" />
+            </label>
+            <label className="block">
+              <span className="text-white/45 text-xs">Ship</span>
+              <input className={field + " mt-1"} value={profile.ship}
+                onChange={(e) => setProfile({ ...profile, ship: e.target.value })} placeholder="Carnival Jubilee" />
+            </label>
+            <label className="block">
+              <span className="text-white/45 text-xs">Cabin type</span>
+              <input className={field + " mt-1"} value={profile.cabinType}
+                onChange={(e) => setProfile({ ...profile, cabinType: e.target.value })} placeholder="Balcony" />
+            </label>
+            <label className="block">
+              <span className="text-white/45 text-xs">Deck</span>
+              <input className={field + " mt-1"} value={profile.deck}
+                onChange={(e) => setProfile({ ...profile, deck: e.target.value })} placeholder="8" />
+            </label>
+            <label className="block">
+              <span className="text-white/45 text-xs">Loyalty program</span>
+              <select className={field + " mt-1"} value={profile.loyaltyProgram}
+                onChange={(e) => setProfile({ ...profile, loyaltyProgram: e.target.value })}>
+                <option value="" className="bg-[#0b1020]">Select…</option>
+                {LOYALTY_PROGRAMS.map((p) => <option key={p} value={p} className="bg-[#0b1020]">{p}</option>)}
+              </select>
+            </label>
+            <label className="block sm:col-span-2">
+              <span className="text-white/45 text-xs">Loyalty number (VIFP / Crown &amp; Anchor / etc.)</span>
+              <input className={field + " mt-1 font-mono"} value={profile.loyaltyNumber}
+                onChange={(e) => setProfile({ ...profile, loyaltyNumber: e.target.value })} placeholder="Your loyalty number" />
+            </label>
+          </div>
+          <div className="flex items-center gap-3 mt-4">
+            <button onClick={saveProfile}
+              className="bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-all">
+              Save my profile
+            </button>
+            {profileSaved && <span className="text-green-300 text-sm">✓ Saved — thank you!</span>}
+          </div>
         </div>
 
         {/* Credits */}

@@ -89,11 +89,31 @@ create table if not exists agent_status (
   slug text primary key, status text default 'available', message text,
   tenant_id text not null default 'cfg', updated_at timestamptz default now());
 
+-- Guest self-service profile (loyalty #, confirmation, cabin/deck) → Cabin Board
+create table if not exists guest_profiles (
+  email text primary key, name text, confirmation_number text, ship text, cabin_type text,
+  deck text, loyalty_program text, loyalty_number text,
+  tenant_id text not null default 'cfg', updated_at timestamptz default now());
+
 -- new columns on existing tables
 alter table reservations  add column if not exists arrival_tasks jsonb default '{}'::jsonb;
 alter table group_members add column if not exists admin_notes text;
 alter table groups        add column if not exists setup_status text default 'building';
 alter table groups        add column if not exists director_name text;
+
+-- Cabin Board: deck, confirmation #, loyalty #, and gross/net (profit) per cabin
+alter table group_members add column if not exists deck text;
+alter table group_members add column if not exists confirmation_number text;
+alter table group_members add column if not exists gross_amount numeric default 0;
+alter table group_members add column if not exists net_amount numeric default 0;
+alter table group_members add column if not exists loyalty_program text;
+alter table group_members add column if not exists loyalty_number text;
+alter table individual_bookings add column if not exists cabin_type text;
+alter table individual_bookings add column if not exists deck text;
+alter table individual_bookings add column if not exists gross_amount numeric default 0;
+alter table individual_bookings add column if not exists net_amount numeric default 0;
+alter table individual_bookings add column if not exists loyalty_program text;
+alter table individual_bookings add column if not exists loyalty_number text;
 
 -- ── C) Row-level security (allow-all for now) ───────────────────────────────
 do $$
@@ -101,7 +121,7 @@ declare t text;
 begin
   foreach t in array array[
     'tenants','memberships','tickets','ticket_messages','vault','cabin_care','cabin_beds',
-    'orders','individual_bookings','group_messages','hotel_rfps','payments','agent_status'
+    'orders','individual_bookings','group_messages','hotel_rfps','payments','agent_status','guest_profiles'
   ] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists "allow all %s" on public.%I', t, t);
