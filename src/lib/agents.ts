@@ -33,10 +33,11 @@ export const AGENTS: Agent[] = [
     ],
     schedule: [
       { day: "Mon – Wed", hours: "7:30 AM – 7:00 PM CT" },
-      { day: "Thu – Fri", hours: "Off" },
+      { day: "Thursday", hours: "Off" },
+      { day: "Friday", hours: "7:30 AM – 7:00 PM CT" },
       { day: "Sat – Sun", hours: "7:30 AM – 2:30 PM CT" },
     ],
-    offDays: [4, 5], // Thursday & Friday
+    offDays: [4], // Thursday
     bookingUrl: "/book-a-call",
     phone: "(409) 632-2106",
     email: "cruisesfromgalveston.texas@gmail.com",
