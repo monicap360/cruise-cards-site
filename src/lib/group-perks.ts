@@ -12,8 +12,8 @@ export const GROUP_PERKS: Record<string, GroupPerk[]> = {
     },
     {
       icon: "💳",
-      title: "$300 onboard credit",
-      detail: "$300 USD All-Departments onboard credit — spend it on dining, drinks, excursions, the spa, or the shops.",
+      title: "$300 onboard credit — select rooms",
+      detail: "$300 USD All-Departments onboard credit on qualifying staterooms only (not every room). Not sure if yours qualifies? Just ask us.",
     },
   ],
 };
