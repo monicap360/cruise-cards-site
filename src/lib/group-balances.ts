@@ -1,11 +1,23 @@
 // Outstanding amounts still to collect per group member, shown as an "Amounts
 // Due" callout on the group portal (so guests know what's left to pay).
 
-export type BalanceDue = { who: string; item: string; amount: number };
+export type BalanceDue = {
+  who: string;
+  item: string;
+  amount: number;
+  payTo?: string; // if set, pay this person directly (not the agency)
+  note?: string;
+};
 
 export const GROUP_BALANCES: Record<string, BalanceDue[]> = {
   "gabby-group": [
-    { who: "Peter", item: "Carnival Vacation Protection", amount: 49.0 },
+    {
+      who: "Peter",
+      item: "Carnival Vacation Protection",
+      amount: 49.0,
+      payTo: "Gabby",
+      note: "Gabby already paid this — please reimburse Gabby directly.",
+    },
   ],
 };
 

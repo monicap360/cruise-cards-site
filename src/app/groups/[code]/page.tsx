@@ -651,19 +651,26 @@ export default async function GroupPortalPage({
             <div className="rounded-2xl border border-amber-400/30 bg-amber-500/[0.06] p-5">
               <div className="divide-y divide-white/10">
                 {groupBalances.map((b, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 py-2">
-                    <span className="text-white/85 text-sm"><strong className="text-white">{b.who}</strong> — {b.item}</span>
-                    <span className="text-amber-300 font-extrabold">{money(b.amount)}</span>
+                  <div key={i} className="flex items-start justify-between gap-3 py-2">
+                    <div className="min-w-0">
+                      <span className="text-white/85 text-sm"><strong className="text-white">{b.who}</strong> — {b.item}</span>
+                      {b.payTo && (
+                        <div className="text-sky-300/90 text-xs mt-0.5">→ Pay <strong className="text-sky-200">{b.payTo}</strong> directly{b.note ? ` · ${b.note}` : ""}</div>
+                      )}
+                    </div>
+                    <span className="text-amber-300 font-extrabold shrink-0">{money(b.amount)}</span>
                   </div>
                 ))}
               </div>
               <div className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-white/15">
-                <span className="text-white/60 text-sm font-bold uppercase tracking-wider">Total to collect</span>
+                <span className="text-white/60 text-sm font-bold uppercase tracking-wider">Total outstanding</span>
                 <span className="text-amber-200 font-extrabold text-lg">{money(groupBalances.reduce((s, b) => s + b.amount, 0))}</span>
               </div>
-              <p className="text-white/55 text-xs mt-3">
-                To pay: <strong className="text-white/80">Zelle</strong> {PAY_ZELLE} · <strong className="text-white/80">Cash App</strong> {PAY_CASHAPP} · <strong className="text-white/80">Venmo</strong> {PAY_VENMO} — or call (409) 632-2106.
-              </p>
+              {groupBalances.some((b) => !b.payTo) && (
+                <p className="text-white/55 text-xs mt-3">
+                  To pay us: <strong className="text-white/80">Zelle</strong> {PAY_ZELLE} · <strong className="text-white/80">Cash App</strong> {PAY_CASHAPP} · <strong className="text-white/80">Venmo</strong> {PAY_VENMO} — or call (409) 632-2106.
+                </p>
+              )}
             </div>
           </div>
         )}
