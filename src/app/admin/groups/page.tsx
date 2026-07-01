@@ -29,6 +29,7 @@ import { GROUP_SHEETS } from "@/lib/group-sheets";
 import GroupDiscrepancies from "@/components/GroupDiscrepancies";
 import GroupCruiseCare from "@/components/GroupCruiseCare";
 import BedConfig from "@/components/BedConfig";
+import CopyGroupLink from "@/components/CopyGroupLink";
 import { supabase } from "@/lib/supabase";
 
 function fmt$(n: number) {
@@ -325,7 +326,10 @@ export default function AdminGroupsPage() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <CopyGroupLink code={grp.code} sailingDate={grp.sailingDate} />
+                      <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
+                    </div>
                     <div className="flex gap-3">
                       <button onClick={() => { openMembers(grp); setGroupTab("manage"); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">{openId === grp.id ? "Hide" : "Open group"}</button>
                       <button onClick={() => { setG(grp); setEditingG(true); setShowForm(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
