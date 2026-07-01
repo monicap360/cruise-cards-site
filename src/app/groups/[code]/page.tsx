@@ -264,92 +264,6 @@ export default async function GroupPortalPage({
           {stat(members.length - depositCount, "Pending")}
         </div>
 
-        {/* Cruise details */}
-        {groupCruise && (
-          <div>
-            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
-              {"// Cruise Details"}
-            </div>
-            <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-6">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <div className="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">
-                    {groupCruise.nights}-Day {groupCruise.itinerary}
-                  </div>
-                  <div className="text-sky-300 text-sm font-semibold mt-1">{groupCruise.ship} · {groupCruise.line}</div>
-                  <div className="text-white/60 text-sm mt-0.5">{groupCruise.sailDate} → {groupCruise.returnDate} · from {groupCruise.embarkPort}</div>
-                </div>
-                {groupCruise.paidInFull && (
-                  <span className="bg-green-500/15 text-green-300 border border-green-400/30 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
-                    ✓ All rooms paid in full
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
-                <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Group booking #</div>
-                  <div className="font-mono font-bold text-white mt-1">{groupCruise.bookingNumber}</div>
-                </div>
-                {groupCruise.stateroom && (
-                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Stateroom</div>
-                    <div className="font-bold text-white mt-1">#{groupCruise.stateroom}</div>
-                  </div>
-                )}
-                {groupCruise.cabinDetail && (
-                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3 col-span-2">
-                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Cabin</div>
-                    <div className="text-white/85 text-sm mt-1">{groupCruise.cabinDetail}</div>
-                  </div>
-                )}
-              </div>
-
-              {/* Day-by-day ship itinerary */}
-              {groupCruise.itineraryDays && groupCruise.itineraryDays.length > 0 && (
-                <div className="mt-5 pt-5 border-t border-white/10">
-                  <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-3">Ship Itinerary</div>
-                  <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/10">
-                    {groupCruise.itineraryDays.map((d) => (
-                      <div key={d.day} className="flex items-center gap-4 px-4 py-2.5">
-                        <div className="flex flex-col items-center w-10 shrink-0">
-                          <span className="label-mono text-[8px] uppercase text-white/40">Day</span>
-                          <span className="text-lg font-extrabold text-white leading-none">{d.day}</span>
-                        </div>
-                        <div className="text-white/45 text-xs w-20 shrink-0">{d.date}</div>
-                        <div className="flex-1 min-w-0">
-                          <span className="text-white font-semibold text-sm">{d.port}</span>
-                          {d.note && <span className="text-white/45 text-xs ml-2">{d.note}</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-white/35 text-[11px] mt-2">Ports &amp; times follow the current sailing plan — confirm on your cruise documents.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Included for your group */}
-        {groupPerks.length > 0 && (
-          <div>
-            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
-              {"// Included For Your Group"}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {groupPerks.map((p) => (
-                <div key={p.title} className="flex items-start gap-4 rounded-2xl border border-green-400/25 bg-green-500/[0.06] p-5">
-                  <span className="text-3xl shrink-0">{p.icon}</span>
-                  <div>
-                    <div className="text-white font-bold">✓ {p.title}</div>
-                    <p className="text-white/60 text-sm mt-1 leading-relaxed">{p.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Flight schedule */}
         {flightInfo && flightInfo.legs.length > 0 && (
           <div>
@@ -525,6 +439,92 @@ export default async function GroupPortalPage({
               <p className="text-white/40 text-[11px] mt-2">
                 Night before your cruise, near Sea-Tac — the hotel offers <strong className="text-white/70">free airport transportation</strong>.
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Cruise details */}
+        {groupCruise && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Cruise Details"}
+            </div>
+            <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-6">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">
+                    {groupCruise.nights}-Day {groupCruise.itinerary}
+                  </div>
+                  <div className="text-sky-300 text-sm font-semibold mt-1">{groupCruise.ship} · {groupCruise.line}</div>
+                  <div className="text-white/60 text-sm mt-0.5">{groupCruise.sailDate} → {groupCruise.returnDate} · from {groupCruise.embarkPort}</div>
+                </div>
+                {groupCruise.paidInFull && (
+                  <span className="bg-green-500/15 text-green-300 border border-green-400/30 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+                    ✓ All rooms paid in full
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Group booking #</div>
+                  <div className="font-mono font-bold text-white mt-1">{groupCruise.bookingNumber}</div>
+                </div>
+                {groupCruise.stateroom && (
+                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Stateroom</div>
+                    <div className="font-bold text-white mt-1">#{groupCruise.stateroom}</div>
+                  </div>
+                )}
+                {groupCruise.cabinDetail && (
+                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3 col-span-2">
+                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Cabin</div>
+                    <div className="text-white/85 text-sm mt-1">{groupCruise.cabinDetail}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Day-by-day ship itinerary */}
+              {groupCruise.itineraryDays && groupCruise.itineraryDays.length > 0 && (
+                <div className="mt-5 pt-5 border-t border-white/10">
+                  <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-3">Ship Itinerary</div>
+                  <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/10">
+                    {groupCruise.itineraryDays.map((d) => (
+                      <div key={d.day} className="flex items-center gap-4 px-4 py-2.5">
+                        <div className="flex flex-col items-center w-10 shrink-0">
+                          <span className="label-mono text-[8px] uppercase text-white/40">Day</span>
+                          <span className="text-lg font-extrabold text-white leading-none">{d.day}</span>
+                        </div>
+                        <div className="text-white/45 text-xs w-20 shrink-0">{d.date}</div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-white font-semibold text-sm">{d.port}</span>
+                          {d.note && <span className="text-white/45 text-xs ml-2">{d.note}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-white/35 text-[11px] mt-2">Ports &amp; times follow the current sailing plan — confirm on your cruise documents.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Included for your group */}
+        {groupPerks.length > 0 && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Included For Your Group"}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {groupPerks.map((p) => (
+                <div key={p.title} className="flex items-start gap-4 rounded-2xl border border-green-400/25 bg-green-500/[0.06] p-5">
+                  <span className="text-3xl shrink-0">{p.icon}</span>
+                  <div>
+                    <div className="text-white font-bold">✓ {p.title}</div>
+                    <p className="text-white/60 text-sm mt-1 leading-relaxed">{p.detail}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
