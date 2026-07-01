@@ -95,6 +95,12 @@ create table if not exists guest_profiles (
   deck text, loyalty_program text, loyalty_number text,
   tenant_id text not null default 'cfg', updated_at timestamptz default now());
 
+-- Group passenger self-service info (VIFP, email, phone) shown on the manifest
+create table if not exists group_passenger_info (
+  id text primary key, group_code text, passenger_name text,
+  vifp text, email text, phone text,
+  tenant_id text not null default 'cfg', updated_at timestamptz default now());
+
 -- new columns on existing tables
 alter table reservations  add column if not exists arrival_tasks jsonb default '{}'::jsonb;
 alter table group_members add column if not exists admin_notes text;
@@ -125,7 +131,7 @@ declare t text;
 begin
   foreach t in array array[
     'tenants','memberships','tickets','ticket_messages','vault','cabin_care','cabin_beds',
-    'orders','individual_bookings','group_messages','hotel_rfps','payments','agent_status','guest_profiles'
+    'orders','individual_bookings','group_messages','hotel_rfps','payments','agent_status','guest_profiles','group_passenger_info'
   ] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists "allow all %s" on public.%I', t, t);

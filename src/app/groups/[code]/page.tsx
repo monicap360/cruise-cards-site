@@ -20,6 +20,7 @@ import { hotelForGroup } from "@/lib/group-hotel";
 import { balancesForGroup } from "@/lib/group-balances";
 import { passengersForGroup } from "@/lib/group-passengers";
 import GroupContactForm from "@/components/GroupContactForm";
+import GroupManifest from "@/components/GroupManifest";
 import { PAY_ZELLE, PAY_CASHAPP, PAY_VENMO } from "@/lib/payment-methods";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
@@ -539,7 +540,7 @@ export default async function GroupPortalPage({
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                 <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Group booking #</div>
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Booking #</div>
                   <div className="font-mono font-bold text-white mt-1">{groupCruise.bookingNumber}</div>
                 </div>
                 {groupCruise.stateroom && (
@@ -582,6 +583,19 @@ export default async function GroupPortalPage({
                         <div className="px-3 py-2.5">
                           <div className="text-white/55 text-xs font-semibold">{d.date}</div>
                           {d.note && <div className="text-sky-300/70 text-[11px] mt-0.5">{d.note}</div>}
+                          {d.things && d.things.length > 0 && (
+                            <div className="mt-2 pt-2 border-t border-white/10">
+                              <div className="label-mono text-[8px] uppercase tracking-wider text-white/35 mb-1">Things to do in port</div>
+                              <ul className="space-y-0.5">
+                                {d.things.map((t) => (
+                                  <li key={t} className="text-white/65 text-[11px] flex gap-1.5 leading-snug">
+                                    <span className="text-sky-400/60 shrink-0">•</span>
+                                    <span>{t}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -599,36 +613,9 @@ export default async function GroupPortalPage({
             <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
               {"// Guest Manifest"}
             </div>
-            <div className="rounded-2xl border border-white/10 bg-[#0b1020] overflow-hidden">
-              <table className="w-full text-sm min-w-[520px]">
-                <thead>
-                  <tr className="bg-white/5 text-white/50 label-mono text-[10px] uppercase tracking-wider">
-                    <th className="text-left font-bold px-4 py-3">Guest</th>
-                    <th className="text-left font-bold px-3 py-3">Date of birth</th>
-                    <th className="text-left font-bold px-3 py-3">VIFP #</th>
-                    <th className="text-center font-bold px-4 py-3">Stateroom</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupPassengers.map((p) => (
-                    <tr key={p.name} className="border-t border-white/10">
-                      <td className="px-4 py-3 font-bold text-white capitalize">{p.name}</td>
-                      <td className="px-3 py-3 text-white/70">{p.dob || "—"}</td>
-                      <td className="px-3 py-3">
-                        {p.vifp ? (
-                          <span className="font-mono text-sky-200">{p.vifp}</span>
-                        ) : (
-                          <span className="label-mono text-[9px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2 py-0.5">Needed</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-center text-white/80 font-mono">#{p.stateroom}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <GroupManifest passengers={groupPassengers} groupCode={group.code} />
             <p className="text-white/40 text-[11px] mt-2">
-              Don&rsquo;t have your Carnival <strong className="text-white/70">VIFP number</strong> on file? Add it in the form above or text it to us — it links your past-guest perks.
+              Each guest: add your <strong className="text-white/70">VIFP #, email &amp; phone</strong> in your row and tap <strong className="text-white/70">Save</strong>. You can edit anytime — it updates our file instantly.
             </p>
           </div>
         )}
