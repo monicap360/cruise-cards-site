@@ -59,6 +59,10 @@ export async function getIndividualBookings(): Promise<IndividualBooking[]> {
 }
 
 export async function getBookingByToken(token: string): Promise<IndividualBooking | null> {
+  // Hand-created (code-defined) bookings first, then the database.
+  const { staticBookingByToken } = await import("@/lib/static-bookings");
+  const stat = staticBookingByToken(token);
+  if (stat) return stat;
   const { data, error } = await supabase.from("individual_bookings").select("*").eq("token", token).single();
   if (error || !data) return null;
   return toIB(data);
