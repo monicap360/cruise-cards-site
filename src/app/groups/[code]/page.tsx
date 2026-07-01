@@ -273,7 +273,7 @@ export default async function GroupPortalPage({
               </div>
               <div className="flex items-center gap-2 flex-wrap text-xs">
                 <span className="bg-sky-400/10 border border-sky-400/25 text-sky-200 rounded-full px-3 py-1 font-semibold">
-                  {flightInfo.airline} · Conf <span className="font-mono">#{flightInfo.confirmation}</span>
+                  {flightInfo.airline}{flightInfo.confirmation ? <> · Conf <span className="font-mono">#{flightInfo.confirmation}</span></> : null}
                 </span>
                 {flightInfo.passengers ? (
                   <span className="text-white/45">{flightInfo.passengers} passengers</span>
@@ -289,6 +289,23 @@ export default async function GroupPortalPage({
               <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3">
                 <span className="text-lg leading-none">✈️</span>
                 <p className="text-white/75 text-sm leading-relaxed"><strong className="text-amber-200">Flights update:</strong> {flightInfo.statusNote.replace(/^Flights update:\s*/, "")}</p>
+              </div>
+            )}
+            {flightInfo.travelerConfirmations && flightInfo.travelerConfirmations.length > 0 && (
+              <div className="mb-4 rounded-xl border border-white/10 bg-[#0b1020] p-4">
+                <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-2">Confirmation Numbers</div>
+                <div className="divide-y divide-white/10">
+                  {flightInfo.travelerConfirmations.map((t, i) => (
+                    <div key={i} className="flex items-center justify-between gap-3 py-2">
+                      <span className="text-white/80 text-sm">{t.name}</span>
+                      {t.confirmation ? (
+                        <span className="font-mono font-bold text-green-300 text-sm">✓ {t.confirmation}</span>
+                      ) : (
+                        <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2.5 py-1">Pending</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

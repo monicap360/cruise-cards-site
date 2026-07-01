@@ -23,16 +23,27 @@ export type GroupFlightInfo = {
   priceDisclaimer?: string;
   paidInFull?: boolean;
   statusNote?: string;
+  // Per-traveler confirmation numbers (Southwest issues these per traveler set).
+  // Blank confirmation = still being issued.
+  travelerConfirmations?: { name: string; confirmation: string }[];
 };
 
 export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
   "gabby-group": {
     airline: "Southwest",
-    confirmation: "CGEGLG",
+    confirmation: "",
     passengers: 7,
     paidInFull: true,
     statusNote:
       "Gabby and Ty are all set — confirmation CGEGLG. We're finishing the individual tickets for the rest of the group, and each traveler's confirmation number will appear right here on your portal as soon as it's issued. Same flights, same times — no action needed on your end.",
+    travelerConfirmations: [
+      { name: "Gabby Lopez & Ty Munsch", confirmation: "CGEGLG" },
+      { name: "Traveler 3", confirmation: "" },
+      { name: "Traveler 4", confirmation: "" },
+      { name: "Traveler 5", confirmation: "" },
+      { name: "Traveler 6", confirmation: "" },
+      { name: "Traveler 7", confirmation: "" },
+    ],
     priceDisclaimer:
       "The total group price includes all government-imposed taxes and fees, including the September 11th Security Fee, and applicable international taxes and fees, effective as of the date of the Group Travel Agreement.",
     legs: [
