@@ -12,6 +12,11 @@ export type BalanceDue = {
 export const GROUP_BALANCES: Record<string, BalanceDue[]> = {
   "gabby-group": [
     {
+      who: "Group",
+      item: "DoubleTree Seattle Airport hotel — 3 rooms (Jul 29 night)",
+      amount: 677.64,
+    },
+    {
       who: "Peter",
       item: "Carnival Vacation Protection",
       amount: 49.0,
