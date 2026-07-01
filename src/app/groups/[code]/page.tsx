@@ -13,7 +13,7 @@ import BedConfig from "@/components/BedConfig";
 import SailCountdown from "@/components/SailCountdown";
 import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
-import { flightsForGroup } from "@/lib/group-flights";
+import { groupFlightInfo } from "@/lib/group-flights";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -92,7 +92,7 @@ export default async function GroupPortalPage({
   const depositCount = members.filter(
     (m) => m.paidInFull || m.depositPaid > 0
   ).length;
-  const groupFlights = flightsForGroup(group.code);
+  const flightInfo = groupFlightInfo(group.code);
 
   // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
   // otherwise Western Caribbean → Cozumel).
@@ -253,44 +253,73 @@ export default async function GroupPortalPage({
         </div>
 
         {/* Flight schedule */}
-        {groupFlights.length > 0 && (
+        {flightInfo && flightInfo.legs.length > 0 && (
           <div>
-            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
-              {"// Flight Schedule"}
+            <div className="flex items-center gap-3 flex-wrap mb-4">
+              <div className="label-mono text-base uppercase text-sky-400/80 font-bold">
+                {"// Flight Schedule"}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <span className="bg-sky-400/10 border border-sky-400/25 text-sky-200 rounded-full px-3 py-1 font-semibold">
+                  {flightInfo.airline} · Conf <span className="font-mono">#{flightInfo.confirmation}</span>
+                </span>
+                {flightInfo.passengers ? (
+                  <span className="text-white/45">{flightInfo.passengers} passengers</span>
+                ) : null}
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {groupFlights.map((f) => (
-                <div key={f.label} className="rounded-2xl border border-white/10 bg-[#0b1020] p-5">
+              {flightInfo.legs.map((leg) => (
+                <div key={leg.label} className="rounded-2xl border border-white/10 bg-[#0b1020] p-5">
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="label-mono text-[10px] uppercase tracking-wider text-sky-300/80">
-                      {f.label === "Outbound" ? "🛫 Outbound" : "🛬 Return"}
+                      {leg.label === "Outbound" ? "🛫 Outbound" : "🛬 Return"}
                     </span>
-                    <span className="text-white/50 text-xs font-semibold">{f.airline}</span>
+                    <span className="text-white/60 text-xs font-bold">{leg.date}</span>
                   </div>
-                  <div className="text-white font-bold">{f.date}</div>
-                  <div className="flex items-end gap-3 mt-2">
-                    <div>
-                      <div className="text-2xl font-extrabold text-white leading-none">{f.depart}</div>
-                      <div className="label-mono text-[9px] uppercase text-white/40 mt-1">Depart</div>
+                  {leg.segments.length > 0 ? (
+                    <div className="space-y-3">
+                      {leg.segments.map((s, i) => (
+                        <div key={i}>
+                          {i > 0 && (
+                            <div className="text-white/30 text-[10px] uppercase tracking-wider text-center mb-2">
+                              ↕ Connect in {s.from}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <div className="text-center w-14 shrink-0">
+                              <div className="font-extrabold text-white leading-none">{s.from}</div>
+                              <div className="text-white/50 text-xs mt-1">{s.departTime}</div>
+                            </div>
+                            <div className="flex-1 flex flex-col items-center">
+                              <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/70">✈ {s.flightNo}</span>
+                              <div className="w-full flex items-center gap-1 mt-0.5">
+                                <div className="h-px flex-1 bg-white/15" />
+                                <div className="h-px flex-1 bg-white/15" />
+                              </div>
+                            </div>
+                            <div className="text-center w-16 shrink-0">
+                              <div className="font-extrabold text-white leading-none">{s.to}</div>
+                              <div className="text-white/50 text-xs mt-1">{s.arriveTime}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex-1 flex items-center gap-2 pb-2">
-                      <div className="h-px flex-1 bg-white/15" />
-                      <span className="text-sky-400/70 text-sm">✈</span>
-                      <div className="h-px flex-1 bg-white/15" />
-                    </div>
-                    {f.arrive && (
-                      <div className="text-right">
-                        <div className="text-2xl font-extrabold text-white leading-none">{f.arrive}</div>
-                        <div className="label-mono text-[9px] uppercase text-white/40 mt-1">Arrive</div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-white/50 text-xs mt-3 pt-3 border-t border-white/10">{f.stops}</div>
+                  ) : (
+                    <div className="text-white/60 text-sm">{leg.summary}</div>
+                  )}
+                  {leg.note && (
+                    <div className="text-amber-300/80 text-xs mt-3 pt-3 border-t border-white/10">⚠ {leg.note}</div>
+                  )}
                 </div>
               ))}
             </div>
-            <p className="text-white/35 text-xs mt-3">
-              Group air is a guide — always confirm times on your Southwest confirmation, as airlines can adjust schedules.
+            {flightInfo.priceDisclaimer && (
+              <p className="text-white/35 text-[11px] mt-3 leading-relaxed">{flightInfo.priceDisclaimer}</p>
+            )}
+            <p className="text-white/35 text-xs mt-2">
+              Always confirm times on your {flightInfo.airline} confirmation — airlines can adjust schedules.
             </p>
           </div>
         )}
