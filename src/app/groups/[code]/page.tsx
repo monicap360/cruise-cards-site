@@ -414,11 +414,11 @@ export default async function GroupPortalPage({
           </div>
         )}
 
-        {/* Pre-cruise hotel */}
+        {/* Hotel (after flights) */}
         {groupHotel && (
           <div>
             <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
-              {"// Pre-Cruise Hotel"}
+              {"// Hotel — Night Before Your Cruise"}
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#0b1020] p-6">
               <div className="flex items-start justify-between gap-3 flex-wrap">
