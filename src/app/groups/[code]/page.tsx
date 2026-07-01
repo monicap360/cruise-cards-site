@@ -17,6 +17,9 @@ import { groupFlightInfo } from "@/lib/group-flights";
 import { perksForGroup } from "@/lib/group-perks";
 import { cruiseForGroup } from "@/lib/group-cruise";
 import { hotelForGroup } from "@/lib/group-hotel";
+import { balancesForGroup } from "@/lib/group-balances";
+import GroupContactForm from "@/components/GroupContactForm";
+import { PAY_ZELLE, PAY_CASHAPP, PAY_VENMO } from "@/lib/payment-methods";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -99,6 +102,7 @@ export default async function GroupPortalPage({
   const groupPerks = perksForGroup(group.code);
   const groupCruise = cruiseForGroup(group.code);
   const groupHotel = hotelForGroup(group.code);
+  const groupBalances = balancesForGroup(group.code);
   const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Destination hero photo — chosen from the itinerary (Alaska → glacier,
@@ -264,6 +268,9 @@ export default async function GroupPortalPage({
           {stat(members.length - depositCount, "Pending")}
         </div>
 
+        {/* Collect contact info from every passenger */}
+        <GroupContactForm groupCode={group.code} />
+
         {/* Flight schedule */}
         {flightInfo && flightInfo.legs.length > 0 && (
           <div>
@@ -380,9 +387,21 @@ export default async function GroupPortalPage({
               {"// Hotel — Night Before Your Cruise"}
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#0b1020] p-6">
+              {groupHotel.photos && groupHotel.photos.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mb-5">
+                  {groupHotel.photos.map((src, i) => (
+                    <Photo key={i} src={src} alt={`${groupHotel.name} photo ${i + 1}`} overlay={false} className="h-28 rounded-xl" />
+                  ))}
+                </div>
+              )}
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
-                  <div className="text-xl font-extrabold text-white">🏨 {groupHotel.name}</div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xl font-extrabold text-white">🏨 {groupHotel.name}</span>
+                    {groupHotel.paid === false && (
+                      <span className="label-mono text-[9px] uppercase tracking-wider text-amber-300 bg-amber-400/10 border border-amber-400/30 rounded-full px-2.5 py-1">⚠ Not yet paid</span>
+                    )}
+                  </div>
                   {groupHotel.rating && (
                     <div className="text-white/55 text-sm mt-1">
                       <span className="text-green-300 font-bold">{groupHotel.rating}</span>
@@ -473,6 +492,13 @@ export default async function GroupPortalPage({
                   <div className="text-white font-bold mt-0.5">{money(groupHotel.total)}</div>
                 </div>
               </div>
+
+              {groupHotel.paid === false && (
+                <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3">
+                  <span className="text-amber-200 font-semibold text-sm">Balance due — payment not yet received</span>
+                  <span className="text-amber-300 font-extrabold">{money(groupHotel.total)}</span>
+                </div>
+              )}
 
               {/* Cancellation policy */}
               {groupHotel.freeCancelUntil && (
@@ -570,6 +596,32 @@ export default async function GroupPortalPage({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Amounts due */}
+        {groupBalances.length > 0 && (
+          <div>
+            <div className="label-mono text-base uppercase text-amber-300/80 font-bold mb-4">
+              {"// Amounts Due"}
+            </div>
+            <div className="rounded-2xl border border-amber-400/30 bg-amber-500/[0.06] p-5">
+              <div className="divide-y divide-white/10">
+                {groupBalances.map((b, i) => (
+                  <div key={i} className="flex items-center justify-between gap-3 py-2">
+                    <span className="text-white/85 text-sm"><strong className="text-white">{b.who}</strong> — {b.item}</span>
+                    <span className="text-amber-300 font-extrabold">{money(b.amount)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-between gap-3 pt-3 mt-2 border-t border-white/15">
+                <span className="text-white/60 text-sm font-bold uppercase tracking-wider">Total to collect</span>
+                <span className="text-amber-200 font-extrabold text-lg">{money(groupBalances.reduce((s, b) => s + b.amount, 0))}</span>
+              </div>
+              <p className="text-white/55 text-xs mt-3">
+                To pay: <strong className="text-white/80">Zelle</strong> {PAY_ZELLE} · <strong className="text-white/80">Cash App</strong> {PAY_CASHAPP} · <strong className="text-white/80">Venmo</strong> {PAY_VENMO} — or call (409) 632-2106.
+              </p>
             </div>
           </div>
         )}

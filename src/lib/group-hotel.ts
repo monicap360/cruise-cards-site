@@ -26,6 +26,8 @@ export type GroupHotel = {
   minAge?: number;        // minimum check-in age
   freeCancelUntil?: string;
   cancelNote?: string;
+  paid?: boolean;         // false → show "not yet paid / balance due"
+  photos?: string[];      // /public paths, e.g. "/hotels/doubletree-seatac-1.jpg"
 };
 
 export const GROUP_HOTELS: Record<string, GroupHotel> = {
@@ -63,6 +65,13 @@ export const GROUP_HOTELS: Record<string, GroupHotel> = {
     minAge: 18,
     freeCancelUntil: "Jul 28, 2026 at 11:59 PM (hotel local time)",
     cancelNote: "After that, cancellations/changes are subject to a fee of up to 100% of the reservation (per room).",
+    paid: false,
+    // Drop the hotel photos in /public/hotels with these exact names to show them.
+    photos: [
+      "/hotels/doubletree-seatac-1.jpg",
+      "/hotels/doubletree-seatac-2.jpg",
+      "/hotels/doubletree-seatac-3.jpg",
+    ],
   },
 };
 
