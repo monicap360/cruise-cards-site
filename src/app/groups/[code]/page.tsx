@@ -478,9 +478,19 @@ export default async function GroupPortalPage({
                       </div>
                       <div className="text-white font-semibold text-sm mt-0.5 capitalize">{r.name}</div>
                       <div className="text-white/50 text-xs">{r.occupancy}{typeof r.amount === "number" ? " · due" : ""}</div>
+                      {r.checkInName ? (
+                        <div className="text-green-300/90 text-[11px] mt-1.5">🪪 Check-in: {r.checkInName}</div>
+                      ) : r.checkInNeeded ? (
+                        <div className="text-amber-300/90 text-[11px] mt-1.5 font-semibold">⚠ Need name of guest checking in with photo ID</div>
+                      ) : null}
                     </div>
                   ))}
                 </div>
+              )}
+              {groupHotel.rooms?.some((r) => r.checkInNeeded && !r.checkInName) && (
+                <p className="text-amber-200/80 text-[11px] mt-2">
+                  Each room needs <strong>one adult (18+) to check in with a photo ID</strong>. Please send us the name of the guest checking into <strong>Room 2</strong> so it matches their ID.
+                </p>
               )}
 
               {/* Pricing (no pay-at-property) */}
