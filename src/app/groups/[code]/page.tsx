@@ -301,7 +301,7 @@ export default async function GroupPortalPage({
                       {t.confirmation ? (
                         <span className="font-mono font-bold text-green-300 text-sm">✓ {t.confirmation}</span>
                       ) : (
-                        <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2.5 py-1">Pending</span>
+                        <span className="label-mono text-[10px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2.5 py-1">Reissued</span>
                       )}
                     </div>
                   ))}

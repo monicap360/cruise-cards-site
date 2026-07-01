@@ -38,10 +38,7 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
       "Gabby and Ty are all set — confirmation CGEGLG. We're finishing the individual tickets for the rest of the group, and each traveler's confirmation number will appear right here on your portal as soon as it's issued. Same flights, same times — no action needed on your end.",
     travelerConfirmations: [
       { name: "Gabby Lopez & Ty Munsch", confirmation: "CGEGLG" },
-      { name: "Traveler 3", confirmation: "" },
-      { name: "Traveler 4", confirmation: "" },
-      { name: "Traveler 5", confirmation: "" },
-      { name: "Traveler 6", confirmation: "" },
+      { name: "Munsch family (4 travelers)", confirmation: "" },
       { name: "Peter", confirmation: "" },
     ],
     priceDisclaimer:
