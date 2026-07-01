@@ -70,9 +70,26 @@ function FindInner() {
     setLimit(PAGE_SIZE);
   }, [q, ship, line, port, month, nights, sort]);
 
+  // If a cruise line is chosen and the selected ship isn't part of that line,
+  // drop the stale ship so the two filters never contradict each other.
+  useEffect(() => {
+    if (line && ship && !blocks.some((b) => b.cruiseLine === line && b.ship === ship)) {
+      setShip("");
+    }
+  }, [line, ship, blocks]);
+
+  // Ship list narrows to the selected cruise line — so clicking a line only
+  // pulls up that line's ships (not every ship at the port).
   const shipsList = useMemo(
-    () => Array.from(new Set(blocks.map((b) => b.ship))).sort(),
-    [blocks]
+    () =>
+      Array.from(
+        new Set(
+          blocks
+            .filter((b) => !line || b.cruiseLine === line)
+            .map((b) => b.ship)
+        )
+      ).sort(),
+    [blocks, line]
   );
   const lines = useMemo(
     () => Array.from(new Set(blocks.map((b) => b.cruiseLine))).sort(),
