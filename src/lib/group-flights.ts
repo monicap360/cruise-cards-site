@@ -32,7 +32,7 @@ export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
     passengers: 7,
     paidInFull: true,
     statusNote:
-      "Flights update: We're moving your seats from the group block to individual tickets so each traveler gets their own confirmation number. Your tickets are being reissued now — same flights, same times. Updated confirmation numbers will appear right here on your portal as soon as they're issued. No action needed on your end.",
+      "Gabby and Ty are all set — confirmation CGEGLG. We're finishing the individual tickets for the rest of the group, and each traveler's confirmation number will appear right here on your portal as soon as it's issued. Same flights, same times — no action needed on your end.",
     priceDisclaimer:
       "The total group price includes all government-imposed taxes and fees, including the September 11th Security Fee, and applicable international taxes and fees, effective as of the date of the Group Travel Agreement.",
     legs: [
