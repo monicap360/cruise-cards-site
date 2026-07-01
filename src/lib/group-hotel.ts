@@ -1,6 +1,6 @@
 // Per-group pre/post-cruise hotel, shown on the group portal. Keyed by code.
 
-export type GroupHotelRoom = { room: number; name: string; occupancy: string };
+export type GroupHotelRoom = { room: number; name: string; occupancy: string; amount?: number };
 
 export type GroupHotel = {
   name: string;
@@ -56,9 +56,9 @@ export const GROUP_HOTELS: Record<string, GroupHotel> = {
       "Meeting rooms",
     ],
     rooms: [
-      { room: 1, name: "Gabriela Lopez", occupancy: "2 adults" },
-      { room: 2, name: "Gabriela Lopez", occupancy: "1 adult" },
-      { room: 3, name: "Gabriela Lopez", occupancy: "1 adult" },
+      { room: 1, name: "Gabriela Lopez", occupancy: "2 adults", amount: 225.88 },
+      { room: 2, name: "Gabriela Lopez", occupancy: "1 adult", amount: 225.88 },
+      { room: 3, name: "Gabriela Lopez", occupancy: "1 adult", amount: 225.88 },
     ],
     checkInTime: "3:00 PM",
     checkOutTime: "Noon",

@@ -467,14 +467,17 @@ export default async function GroupPortalPage({
                 </div>
               )}
 
-              {/* Rooms breakdown */}
+              {/* Rooms breakdown — with amount due per room */}
               {groupHotel.rooms && groupHotel.rooms.length > 0 && (
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {groupHotel.rooms.map((r) => (
                     <div key={r.room} className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-                      <div className="label-mono text-[9px] uppercase text-white/40">Room {r.room}</div>
+                      <div className="flex items-center justify-between">
+                        <span className="label-mono text-[9px] uppercase text-white/40">Room {r.room}</span>
+                        {typeof r.amount === "number" && <span className="text-amber-300 font-bold text-sm">{money(r.amount)}</span>}
+                      </div>
                       <div className="text-white font-semibold text-sm mt-0.5 capitalize">{r.name}</div>
-                      <div className="text-white/50 text-xs">{r.occupancy}</div>
+                      <div className="text-white/50 text-xs">{r.occupancy}{typeof r.amount === "number" ? " · due" : ""}</div>
                     </div>
                   ))}
                 </div>
@@ -497,9 +500,14 @@ export default async function GroupPortalPage({
               </div>
 
               {groupHotel.paid === false && (
-                <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3">
-                  <span className="text-amber-200 font-semibold text-sm">Balance due — payment not yet received</span>
-                  <span className="text-amber-300 font-extrabold">{money(groupHotel.total)}</span>
+                <div className="mt-3 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-amber-200 font-bold text-sm uppercase tracking-wider">Grand total due — please send for payment</span>
+                    <span className="text-amber-300 font-extrabold text-lg">{money(groupHotel.total)}</span>
+                  </div>
+                  <p className="text-white/60 text-xs mt-2">
+                    Send to us: <strong className="text-white/80">Zelle</strong> {PAY_ZELLE} · <strong className="text-white/80">Cash App</strong> {PAY_CASHAPP} · <strong className="text-white/80">Venmo</strong> {PAY_VENMO} — or call (409) 632-2106.
+                  </p>
                 </div>
               )}
 
