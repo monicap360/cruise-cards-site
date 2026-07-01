@@ -560,20 +560,28 @@ export default async function GroupPortalPage({
               {groupCruise.itineraryDays && groupCruise.itineraryDays.length > 0 && (
                 <div className="mt-5 pt-5 border-t border-white/10">
                   <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-3">Ship Itinerary</div>
-                  <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {groupCruise.itineraryDays.map((d) => (
-                      <div key={d.day} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5">
-                        <div className="flex flex-col items-center w-9 shrink-0">
-                          <span className="label-mono text-[8px] uppercase text-white/40">Day</span>
-                          <span className="text-lg font-extrabold text-white leading-none">{d.day}</span>
+                      <div key={d.day} className="rounded-2xl overflow-hidden border border-white/10 bg-[#05070d]">
+                        <div className="relative h-40">
+                          {d.photo ? (
+                            <Photo src={d.photo} alt={d.port} overlay={false} className="absolute inset-0" />
+                          ) : (
+                            <div className="absolute inset-0 bg-gradient-to-br from-sky-700/40 to-[#0a1f44]" />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/25 to-transparent" />
+                          <span className="absolute top-2.5 left-2.5 hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
+                            Day {d.day}
+                          </span>
+                          <div className="absolute bottom-2.5 left-3 right-3">
+                            <div className="text-white font-extrabold text-base uppercase tracking-tight leading-tight drop-shadow-[0_1px_5px_rgba(0,0,0,0.9)]">
+                              {d.port}
+                            </div>
+                          </div>
                         </div>
-                        {d.photo && (
-                          <Photo src={d.photo} alt={d.port} overlay={false} className="w-20 h-14 rounded-lg shrink-0" />
-                        )}
-                        <div className="text-white/45 text-xs w-16 sm:w-20 shrink-0">{d.date}</div>
-                        <div className="flex-1 min-w-0">
-                          <span className="text-white font-semibold text-sm">{d.port}</span>
-                          {d.note && <span className="text-white/45 text-xs sm:ml-2 block sm:inline">{d.note}</span>}
+                        <div className="px-3 py-2.5">
+                          <div className="text-white/55 text-xs font-semibold">{d.date}</div>
+                          {d.note && <div className="text-sky-300/70 text-[11px] mt-0.5">{d.note}</div>}
                         </div>
                       </div>
                     ))}
