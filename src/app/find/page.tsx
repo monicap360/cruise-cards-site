@@ -7,7 +7,7 @@ import Photo from "@/components/Photo";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { type SailingBlock } from "@/lib/room-blocks";
 import { destinationWithPhoto, cruiseItineraryTitle } from "@/lib/destinations";
-import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
+import { fmt$, fmtDate } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
 function monthLabel(ym: string): string {
@@ -329,14 +329,16 @@ function FindInner() {
                       })
                       .filter((r) => r.from > 0)
                       .sort((a, c) => a.from - c.from);
+                    const durCap = /carnival/i.test(b.cruiseLine) ? "Day" : "Night";
+                    const itinTitle = cruiseItineraryTitle(b.itinerary).title;
                     return (
                       <Link
                         key={b.id}
                         href={`/sailings/${b.id}`}
-                        className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-sky-400/40 transition-colors flex flex-col sm:flex-row"
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b1020] hover:border-sky-400/40 hover:bg-[#0d1327] transition-colors flex flex-col sm:flex-row"
                       >
                         {/* Destination photo */}
-                        <div className="relative sm:w-52 h-40 sm:h-auto flex-shrink-0">
+                        <div className="relative sm:w-60 h-48 sm:h-auto flex-shrink-0">
                           <Photo
                             src={`/destinations/${dest.slug}.jpg`}
                             alt={dest.name}
@@ -344,72 +346,65 @@ function FindInner() {
                             overlay={false}
                             className="absolute inset-0"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/80 via-[#05070d]/10 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1020] via-[#0b1020]/25 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:via-transparent sm:to-[#0b1020]" />
                           <span className="absolute top-3 left-3 hud label-mono text-[10px] uppercase tracking-wider text-white px-2.5 py-1 rounded-full">
-                            {b.nights} {durationWord(b.cruiseLine)}
+                            {b.nights}-{durCap}
                           </span>
-                          <span className="absolute bottom-2.5 left-3 right-3 text-white text-sm font-extrabold uppercase tracking-tight leading-tight drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
+                          <span className="absolute bottom-3 left-3 right-3 text-white text-lg font-extrabold uppercase tracking-tight leading-none drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
                             {dest.name}
                           </span>
                         </div>
                         {/* Details */}
                         <div className="flex-1 p-5 flex flex-col">
-                          <CruiseLineLogo
-                            line={b.cruiseLine}
-                            className="h-4 max-w-[130px] mb-1.5"
-                          />
-                          <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white leading-tight">
+                          <div className="flex items-center justify-between gap-2">
+                            <CruiseLineLogo line={b.cruiseLine} className="h-4 max-w-[130px]" />
+                            <span className="label-mono text-[10px] uppercase tracking-wider text-white/40 whitespace-nowrap">
+                              {available} cabin{available === 1 ? "" : "s"} open
+                            </span>
+                          </div>
+                          <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white leading-tight mt-1.5">
                             {b.ship}
                           </div>
-                          <div className="text-holo text-xs font-bold uppercase tracking-wide mt-0.5">
-                            {b.nights}-{durationWord(b.cruiseLine)} {cruiseItineraryTitle(b.itinerary).title}
+                          <div className="text-holo text-sm font-bold uppercase tracking-wide leading-tight">
+                            {b.nights}-{durCap} {itinTitle}
                           </div>
-                          <div className="text-white/55 text-sm mt-1">
-                            {fmtDate(b.sailingDate)} → returns{" "}
-                            {fmtDate(b.returnDate)}
+                          <div className="text-white/50 text-xs mt-1.5 flex items-center gap-1.5 flex-wrap">
+                            <span>{fmtDate(b.sailingDate)}</span>
+                            <span className="text-white/25">→</span>
+                            <span>{fmtDate(b.returnDate)}</span>
                           </div>
-                          <p className="text-white/45 text-sm mt-1 flex-1">
-                            <span className="text-sky-400/80">Galveston</span> →{" "}
-                            {b.itinerary} →{" "}
+                          <p className="text-white/40 text-xs mt-1 flex-1">
+                            <span className="text-sky-400/80">Galveston</span> → {b.itinerary} →{" "}
                             <span className="text-sky-400/80">Galveston</span>
                           </p>
                           {rooms.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
+                            <div className="flex flex-wrap gap-1.5 mt-3">
                               {rooms.map((r) => (
                                 <span
                                   key={r.type}
                                   className="text-[10px] bg-white/5 border border-white/10 rounded-full px-2 py-0.5 text-white/70"
                                 >
-                                  {r.type}{" "}
-                                  <span className="text-holo font-bold">{fmt$(r.from)}</span>
+                                  {r.type} <span className="text-holo font-bold">{fmt$(r.from)}</span>
                                 </span>
                               ))}
                             </div>
                           )}
-                          <div className="flex items-end justify-between border-t border-white/10 pt-3 mt-3">
+                          <div className="flex items-end justify-between border-t border-white/10 pt-3 mt-3 gap-3">
                             <div>
                               {from < Infinity && (
                                 <>
-                                  <span className="text-white/40 label-mono text-[10px] uppercase">
-                                    From
-                                  </span>
+                                  <span className="text-white/40 label-mono text-[10px] uppercase">From</span>
                                   <div className="text-holo font-extrabold text-2xl leading-none">
                                     {fmt$(from)}
-                                    <span className="text-white/40 text-xs font-normal">
-                                      {" "}
-                                      / person
-                                    </span>
+                                    <span className="text-white/40 text-xs font-normal"> / person</span>
                                   </div>
                                 </>
                               )}
                               <div className="text-green-300/90 text-[10px] mt-1 font-semibold">
-                                ✓ Taxes, port fees &amp; gov fees included
-                              </div>
-                              <div className="text-white/35 text-[10px] mt-0.5">
-                                dbl occ · {available} cabins open
+                                ✓ Taxes, port &amp; gov fees included · dbl occ
                               </div>
                             </div>
-                            <span className="bg-white text-black group-hover:bg-white/90 font-semibold uppercase tracking-wider text-[11px] px-5 py-2.5 rounded-full transition-all">
+                            <span className="bg-white text-black group-hover:bg-white/90 font-semibold uppercase tracking-wider text-[11px] px-5 py-2.5 rounded-full transition-all whitespace-nowrap self-center">
                               See options →
                             </span>
                           </div>
