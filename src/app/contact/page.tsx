@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import ArrivalNotice from "@/components/ArrivalNotice";
 
 function fmtSail(d: string): string {
   return new Date(d + "T12:00:00").toLocaleDateString("en-US", {
@@ -54,6 +55,10 @@ export default function ContactPage() {
             cruise specialist will get back to you within 24 hours.
           </p>
         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <ArrivalNotice />
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

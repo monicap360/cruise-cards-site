@@ -15,6 +15,11 @@ export const GROUP_PERKS: Record<string, GroupPerk[]> = {
       title: "$300 onboard credit",
       detail: "$300 USD All-Departments onboard credit — spend it on dining, drinks, excursions, the spa, or the shops.",
     },
+    {
+      icon: "🛡️",
+      title: "Carnival Vacation Protection — Peter",
+      detail: "Peter's booking is covered by Carnival Vacation Protection (trip cancellation/interruption, delay & baggage coverage).",
+    },
   ],
 };
 

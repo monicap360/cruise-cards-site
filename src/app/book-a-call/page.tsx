@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BOOKING_CALENDAR_URL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/shop";
+import ArrivalNotice from "@/components/ArrivalNotice";
 
 export const metadata: Metadata = {
   title: "Book a Call — Cruises from Galveston",
@@ -12,6 +13,7 @@ export default function BookACallPage() {
   return (
     <div className="min-h-screen bg-[#05070d] text-white">
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+        <div className="mb-8"><ArrivalNotice /></div>
         <div className="text-center mb-8">
           <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-2">{"// Talk to a Specialist"}</div>
           <h1 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-[-0.02em]">Book a Call</h1>
