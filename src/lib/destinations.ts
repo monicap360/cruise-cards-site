@@ -244,6 +244,47 @@ export function portsFromItinerary(itinerary: string): string[] {
     .filter((p) => !/galveston|sea day|at sea/i.test(p));
 }
 
+// Map each port to its cruise region (+ country highlight) so a sailing can show
+// a proper itinerary name like "Western Caribbean Cruise to Mexico" instead of a
+// bare port. Order doesn't matter; classification picks the dominant region.
+const PORT_REGION: { re: RegExp; region: string; country?: string }[] = [
+  { re: /cozumel|costa ?maya|progreso|yucat|mahahual|calica/i, region: "Western Caribbean", country: "Mexico" },
+  { re: /grand cayman|cayman/i, region: "Western Caribbean", country: "Grand Cayman" },
+  { re: /roat[aá]n|mahogany|honduras/i, region: "Western Caribbean", country: "Honduras" },
+  { re: /belize|harvest caye/i, region: "Western Caribbean", country: "Belize" },
+  { re: /montego|ocho rios|falmouth|jamaica/i, region: "Western Caribbean", country: "Jamaica" },
+  { re: /key west/i, region: "Western Caribbean", country: "Key West" },
+  { re: /nassau|coco ?cay|bimini|freeport|ocean cay|half moon|castaway|stirrup|celebration key/i, region: "Bahamas" },
+  { re: /san juan|puerto rico|st\.? ?thomas|st\.? ?maarten|st\.? ?martin|tortola|amber cove|dominican|grand turk/i, region: "Eastern Caribbean" },
+];
+
+// A friendly itinerary title + region from the port list.
+export function cruiseItineraryTitle(itinerary: string): { region: string; title: string } {
+  const ports = portsFromItinerary(itinerary);
+  const regions = new Set<string>();
+  const countries: string[] = [];
+  for (const p of ports) {
+    const hit = PORT_REGION.find((x) => x.re.test(p));
+    if (hit) {
+      regions.add(hit.region);
+      if (hit.country && !countries.includes(hit.country)) countries.push(hit.country);
+    }
+  }
+  let region = "Caribbean";
+  if (regions.has("Eastern Caribbean")) region = "Eastern Caribbean";
+  else if (regions.has("Western Caribbean")) region = "Western Caribbean";
+  else if (regions.has("Bahamas")) region = "Bahamas";
+  else if (regions.size === 1) region = [...regions][0];
+
+  let to = "";
+  if (countries.includes("Mexico")) to = "Mexico";
+  else if (countries.length === 1) to = countries[0];
+
+  const title =
+    region === "Bahamas" ? "Bahamas Cruise" : `${region} Cruise${to ? ` to ${to}` : ""}`;
+  return { region, title };
+}
+
 // Destination slugs we actually have a photo for in /public/destinations.
 const PHOTO_SLUGS = new Set([
   "belize", "bimini", "castaway-cay", "celebration-key", "cococay",

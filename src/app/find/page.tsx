@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Photo from "@/components/Photo";
 import CruiseLineLogo from "@/components/CruiseLineLogo";
 import { type SailingBlock } from "@/lib/room-blocks";
-import { destinationWithPhoto } from "@/lib/destinations";
+import { destinationWithPhoto, cruiseItineraryTitle } from "@/lib/destinations";
 import { fmt$, fmtDate, durationWord } from "@/lib/sea-pay";
 import { SEARCH_CONTENT } from "@/lib/search-content";
 
@@ -360,6 +360,9 @@ function FindInner() {
                           />
                           <div className="text-xl font-extrabold uppercase tracking-[-0.01em] text-white leading-tight">
                             {b.ship}
+                          </div>
+                          <div className="text-holo text-xs font-bold uppercase tracking-wide mt-0.5">
+                            {b.nights}-{durationWord(b.cruiseLine)} {cruiseItineraryTitle(b.itinerary).title}
                           </div>
                           <div className="text-white/55 text-sm mt-1">
                             {fmtDate(b.sailingDate)} → returns{" "}

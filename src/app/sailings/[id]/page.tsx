@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import ShipImage from "@/components/ShipImage";
 import CabinShowcase from "@/components/CabinShowcase";
@@ -5,7 +6,7 @@ import CruiseTicket from "@/components/CruiseTicket";
 import CruiseInclusions from "@/components/CruiseInclusions";
 import CruiseOffers from "@/components/CruiseOffers";
 import DestinationCard from "@/components/DestinationCard";
-import { portsFromItinerary, destinationFor } from "@/lib/destinations";
+import { portsFromItinerary, destinationFor, cruiseItineraryTitle } from "@/lib/destinations";
 import { destinations as destPages } from "@/app/destinations/destination-data";
 import {
   getSailingBlock,
@@ -19,6 +20,38 @@ import { getRateMap, rateKey } from "@/lib/rates";
 import { fmtDate, durationWord } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
+
+// SEO: real per-sailing <title> + meta description targeting the exact searches
+// ("N-Night Western Caribbean Cruise from Galveston", ports, ship) — pages had
+// none before, so this is a big local-SEO win over the OTAs.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const block = await getSailingBlock(id);
+  if (!block) return { title: "Sailing not found — Cruises from Galveston" };
+  const { region } = cruiseItineraryTitle(block.itinerary);
+  const durCap = /carnival/i.test(block.cruiseLine) ? "Day" : "Night";
+  const ports = portsFromItinerary(block.itinerary).join(", ");
+  const prices = block.cabins.map((c) => c.price).filter((p) => p > 0);
+  const from = prices.length ? Math.min(...prices) : 0;
+  const title = `${block.nights}-${durCap} ${region} Cruise from Galveston on ${block.ship}${
+    ports ? ` — ${ports}` : ""
+  }`;
+  const description = `Book a ${block.nights}-${durCap.toLowerCase()} ${region} cruise from Galveston on ${block.ship} (${block.cruiseLine})${
+    ports ? `, visiting ${ports}` : ""
+  }. Round-trip from the Port of Galveston, TX${
+    from > 0 ? `, from $${from} per person` : ""
+  } — government taxes & port fees included. Pick your exact cabin on a live deck map.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://cruisesfromgalveston.net/sailings/${block.id}` },
+    openGraph: { title, description, type: "website" },
+  };
+}
 
 const ORDER: CabinCategory[] = [
   "Interior",
@@ -178,6 +211,10 @@ export default async function SailingOptionsPage({
           <h1 className="text-4xl sm:text-6xl font-extrabold uppercase tracking-[-0.02em] leading-[0.95] mb-3">
             {block.ship}
           </h1>
+          <p className="text-holo text-lg sm:text-2xl font-extrabold uppercase tracking-tight mb-2">
+            {block.nights}-{/carnival/i.test(block.cruiseLine) ? "Day" : "Night"}{" "}
+            {cruiseItineraryTitle(block.itinerary).title} from Galveston
+          </p>
           <p className="text-white/70 text-lg">
             {fmtDate(block.sailingDate)} · {block.nights}{" "}
             {durationWord(block.cruiseLine)} · {block.itinerary}
@@ -264,7 +301,8 @@ export default async function SailingOptionsPage({
           {"// Day-by-Day Itinerary"}
         </div>
         <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-2">
-          Your {block.nights}-{durationWord(block.cruiseLine)} Journey
+          Your {block.nights}-{/carnival/i.test(block.cruiseLine) ? "Day" : "Night"}{" "}
+          {cruiseItineraryTitle(block.itinerary).region} Cruise from Galveston
         </h2>
         <p className="text-white/45 text-sm mb-6">
           A typical schedule for this round-trip sailing. Exact arrival times and any
