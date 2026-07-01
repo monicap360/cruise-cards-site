@@ -51,12 +51,6 @@ const ADDONS: Addon[] = [
     price: (guests, nights) => 16.5 * guests * nights,
   },
   {
-    id: "protection",
-    label: "Vacation protection",
-    note: "$79 per person",
-    price: (guests) => 79 * guests,
-  },
-  {
     id: "shuttle",
     label: "Hotel → terminal shuttle",
     note: "$8 per person",
@@ -161,6 +155,9 @@ function BookCabinContent() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [addons, setAddons] = useState<Record<string, boolean>>({});
+  // Required, documented travel-protection decision (add or decline w/ risk ack).
+  const [protectionChoice, setProtectionChoice] = useState<"" | "added" | "declined">("");
+  const PROTECTION_PP = 79;
   const [discounts, setDiscounts] = useState<Record<string, boolean>>({});
 
   // Pre/post-cruise hotel + flights
@@ -332,8 +329,9 @@ function BookCabinContent() {
   const hotelNights = (preHotel ? preNights : 0) + (postHotel ? postNights : 0);
   const hotelTotal = hotelNights * hotelRate * Math.max(1, hotelRooms);
 
+  const protectionCost = protectionChoice === "added" ? PROTECTION_PP * numGuests : 0;
   const estimatedTotal =
-    Math.max(0, cruiseFare - discountAmount) + addonsTotal + hotelTotal;
+    Math.max(0, cruiseFare - discountAmount) + addonsTotal + hotelTotal + protectionCost;
   const depositTotal = DEPOSIT_PP * numGuests;
 
   const today = new Date().toISOString().slice(0, 10);
@@ -348,7 +346,7 @@ function BookCabinContent() {
   const emergencyOk = emName && emPhone;
   const tierOk = !!selectedCategory;
   const canSubmit =
-    tierOk && guestsOk && emergencyOk && allAcked && !submitting;
+    tierOk && guestsOk && emergencyOk && allAcked && protectionChoice !== "" && !submitting;
 
   const lead = guestList[0] ?? emptyGuest();
 
@@ -398,12 +396,18 @@ function BookCabinContent() {
       emRelation ? ` (${emRelation})` : ""
     } | ${emPhone}.`;
 
+    const protectionLine =
+      protectionChoice === "added"
+        ? ` TRAVEL PROTECTION: ADDED (${fmt$(PROTECTION_PP)}/pp = ${fmt$(protectionCost)}) · recorded ${new Date().toISOString()}.`
+        : ` TRAVEL PROTECTION: DECLINED — guest explicitly declined and acknowledged that cruise-line cancellation penalties apply and they may lose their deposit or more if they cancel without protection · recorded ${new Date().toISOString()}.`;
+
     const message =
       `CABIN BOOKING REQUEST — ${selectedCategory || "cabin"} on ${ship} ${sailDate}` +
       `${nights ? ` (${nights} nights)` : ""}. ` +
       `From ${fmt$(selectedPrice)}/pp × ${numGuests} = ${fmt$(cruiseFare)} cruise fare.` +
       `${discountLine}${addonLines}${hotelLine}${flightLine}` +
       ` Estimated total ${fmt$(estimatedTotal)} · deposit ${fmt$(depositTotal)}.` +
+      `${protectionLine}` +
       ` ${guestLines}${em}` +
       (notes ? ` Notes: ${notes}` : "") +
       " Acknowledged all booking terms.";
@@ -955,6 +959,32 @@ function BookCabinContent() {
               />
             </div>
 
+            {/* Travel Protection decision — REQUIRED & recorded */}
+            <div className="bg-[#0b1020] rounded-2xl border border-amber-400/30 p-6">
+              <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-1">
+                Travel Protection <span className="text-amber-300">(required choice)</span>
+              </h3>
+              <p className="text-white/50 text-xs mb-4">
+                Cancellation penalties are set by the cruise line — not by us. Protecting your trip is the only way to safeguard your money if you have to cancel. Please choose one:
+              </p>
+              <div className="space-y-3">
+                <label className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all ${protectionChoice === "added" ? "border-green-400/60 bg-green-400/10" : "border-white/15 bg-white/5 hover:border-white/30"}`}>
+                  <input type="radio" name="protection" checked={protectionChoice === "added"} onChange={() => setProtectionChoice("added")} className="mt-1 accent-green-500 w-4 h-4 flex-shrink-0" />
+                  <div>
+                    <div className="text-white text-sm font-semibold">✅ Yes — add Vacation Protection <span className="text-green-300">(recommended)</span> · {fmt$(PROTECTION_PP)}/person</div>
+                    <div className="text-white/45 text-xs mt-0.5">A covered cancellation can refund your money. Peace of mind for a small cost.</div>
+                  </div>
+                </label>
+                <label className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition-all ${protectionChoice === "declined" ? "border-amber-400/60 bg-amber-400/10" : "border-white/15 bg-white/5 hover:border-white/30"}`}>
+                  <input type="radio" name="protection" checked={protectionChoice === "declined"} onChange={() => setProtectionChoice("declined")} className="mt-1 accent-amber-500 w-4 h-4 flex-shrink-0" />
+                  <div>
+                    <div className="text-white text-sm font-semibold">❌ No thanks — I decline protection</div>
+                    <div className="text-white/55 text-xs mt-0.5">I understand that if I cancel, the cruise line&rsquo;s cancellation penalties apply, I may lose my deposit or more, and that declining protection is at my own risk.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
             {/* Acknowledgments */}
             <div className="bg-[#0b1020] rounded-2xl border border-white/10 p-6">
               <h3 className="font-extrabold uppercase tracking-[-0.01em] text-white text-base mb-4">
@@ -1011,6 +1041,13 @@ function BookCabinContent() {
                     <span>{fmt$(a.amount)}</span>
                   </div>
                 ))}
+
+                {protectionChoice === "added" && (
+                  <div className="flex justify-between text-white/60 text-xs">
+                    <span>Vacation protection</span>
+                    <span>{fmt$(protectionCost)}</span>
+                  </div>
+                )}
 
                 {anyDiscount && (
                   <div className="flex justify-between text-sky-300 text-xs">
@@ -1070,8 +1107,8 @@ function BookCabinContent() {
 
               {!canSubmit && !submitting && (
                 <p className="text-white/35 text-[11px] text-center">
-                  Complete all guests, emergency contact &amp; acknowledgments
-                  to submit.
+                  Complete all guests, emergency contact, your travel‑protection
+                  choice &amp; acknowledgments to submit.
                 </p>
               )}
 
