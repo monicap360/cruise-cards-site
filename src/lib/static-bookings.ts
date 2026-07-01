@@ -7,7 +7,7 @@ import type { IndividualBooking } from "@/lib/individual-bookings";
 export const STATIC_BOOKINGS: IndividualBooking[] = [
   {
     id: "ib-ZN88D6",
-    guestName: "Savannah Morton",
+    guestName: "Samantha Morton",
     cruiseLine: "Carnival Cruise Line",
     ship: "Carnival Jubilee",
     sailDate: "2026-07-04",
