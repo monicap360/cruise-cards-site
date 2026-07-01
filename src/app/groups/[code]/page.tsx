@@ -438,18 +438,77 @@ export default async function GroupPortalPage({
                       {groupHotel.reviews ? ` · ${groupHotel.reviews}` : ""}
                     </div>
                   )}
-                  <div className="text-white/70 text-sm mt-2">
-                    {groupHotel.roomCount} rooms · {groupHotel.roomDescription}
+                  {groupHotel.address && (
+                    <div className="text-white/60 text-sm mt-2">
+                      📍 {groupHotel.address}{" "}
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(groupHotel.address)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sky-400 hover:text-sky-300 font-semibold whitespace-nowrap"
+                      >
+                        Get directions →
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Stay</div>
+                  <div className="text-white font-bold text-sm mt-1">{groupHotel.checkIn}</div>
+                  <div className="text-white/60 text-sm">→ {groupHotel.checkOut}</div>
+                  <div className="text-white/40 text-xs mt-0.5">
+                    {groupHotel.nights}-night · {groupHotel.roomCount} rooms{groupHotel.guests ? ` · ${groupHotel.guests} guests` : ""}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Check-in → Check-out</div>
-                  <div className="text-white font-bold text-sm mt-1">{groupHotel.checkIn}</div>
-                  <div className="text-white/60 text-sm">{groupHotel.checkOut}</div>
-                  <div className="text-white/40 text-xs mt-0.5">{groupHotel.nights}-night stay</div>
-                </div>
               </div>
-              <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+
+              {/* Call to confirm */}
+              {groupHotel.phone && (
+                <div className="mt-4 flex items-center gap-3 rounded-xl border border-sky-400/25 bg-sky-500/[0.07] px-4 py-3">
+                  <span className="text-xl">📞</span>
+                  <div className="flex-1">
+                    <div className="text-white font-semibold text-sm">Call the hotel to confirm your booking</div>
+                    <a href={`tel:${groupHotel.phone.replace(/[^0-9+]/g, "")}`} className="text-sky-300 hover:text-sky-200 font-bold">
+                      {groupHotel.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Room + check-in details */}
+              <div className="mt-4 text-white/70 text-sm">{groupHotel.roomDescription}</div>
+              <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                <div><span className="label-mono text-[9px] uppercase text-white/40 block">Check-in</span>{groupHotel.checkIn}{groupHotel.checkInTime ? ` · after ${groupHotel.checkInTime}` : ""}</div>
+                <div><span className="label-mono text-[9px] uppercase text-white/40 block">Check-out</span>{groupHotel.checkOut}{groupHotel.checkOutTime ? ` · by ${groupHotel.checkOutTime}` : ""}</div>
+                {groupHotel.minAge && <div><span className="label-mono text-[9px] uppercase text-white/40 block">Min. check-in age</span>{groupHotel.minAge}</div>}
+              </div>
+
+              {/* Amenities */}
+              {groupHotel.amenities && groupHotel.amenities.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {groupHotel.amenities.map((a) => (
+                    <span key={a} className={`text-[11px] rounded-full px-2.5 py-1 border ${/airport/i.test(a) ? "bg-green-500/10 border-green-400/25 text-green-300" : "bg-white/5 border-white/10 text-white/70"}`}>
+                      {/airport/i.test(a) ? "🚐 " : ""}{a}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Rooms breakdown */}
+              {groupHotel.rooms && groupHotel.rooms.length > 0 && (
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {groupHotel.rooms.map((r) => (
+                    <div key={r.room} className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                      <div className="label-mono text-[9px] uppercase text-white/40">Room {r.room}</div>
+                      <div className="text-white font-semibold text-sm mt-0.5 capitalize">{r.name}</div>
+                      <div className="text-white/50 text-xs">{r.occupancy}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pricing (no pay-at-property) */}
+              <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-3 gap-3 text-sm">
                 <div>
                   <div className="label-mono text-[9px] uppercase text-white/40">Rooms ({groupHotel.roomCount})</div>
                   <div className="text-white/85 mt-0.5">{money(groupHotel.roomsSubtotal)}</div>
@@ -462,14 +521,17 @@ export default async function GroupPortalPage({
                   <div className="label-mono text-[9px] uppercase text-white/40">Total</div>
                   <div className="text-white font-bold mt-0.5">{money(groupHotel.total)}</div>
                 </div>
-                <div>
-                  <div className="label-mono text-[9px] uppercase text-amber-300/70">Pay at property</div>
-                  <div className="text-amber-300 font-bold mt-0.5">{money(groupHotel.payAtProperty)}</div>
-                </div>
               </div>
-              <p className="text-white/40 text-[11px] mt-3">
-                💳 Nothing due now — the hotel is paid directly at the property on arrival ({money(groupHotel.payAtProperty)}).
-                This is the night before your cruise, near Sea-Tac for your morning flight arrival.
+
+              {/* Cancellation policy */}
+              {groupHotel.freeCancelUntil && (
+                <div className="mt-4 text-xs">
+                  <span className="text-green-300 font-semibold">✓ Free cancellation until {groupHotel.freeCancelUntil}.</span>
+                  {groupHotel.cancelNote && <span className="text-white/45"> {groupHotel.cancelNote}</span>}
+                </div>
+              )}
+              <p className="text-white/40 text-[11px] mt-2">
+                Night before your cruise, near Sea-Tac — the hotel offers <strong className="text-white/70">free airport transportation</strong>.
               </p>
             </div>
           </div>
