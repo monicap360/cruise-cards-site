@@ -26,7 +26,7 @@ type Cabin = { kind: "group"; m: Mem; groupName: string; date: string } | { kind
 // Editable fields shared by both kinds.
 type EditForm = {
   kind: "group" | "ind"; id: string; name: string; confirmation: string; cabinType: string;
-  cabinNumber: string; deck: string; loyaltyProgram: string; loyaltyNumber: string; gross: string; net: string;
+  cabinNumber: string; deck: string; loyaltyProgram: string; loyaltyNumber: string; gross: string; net: string; paid: string;
 };
 
 export default function CabinBoardPage() {
@@ -125,7 +125,8 @@ export default function CabinBoardPage() {
       kind: "group", id: m.id, name: m.name, confirmation: m.confirmation_number || prof?.confirmationNumber || "",
       cabinType: m.cabin_type || prof?.cabinType || "", cabinNumber: m.cabin_number || "", deck: m.deck || prof?.deck || "",
       loyaltyProgram: m.loyalty_program || prof?.loyaltyProgram || "", loyaltyNumber: m.loyalty_number || prof?.loyaltyNumber || "",
-      gross: m.gross_amount ? String(m.gross_amount) : "", net: m.net_amount ? String(m.net_amount) : "",
+      gross: m.gross_amount ? String(m.gross_amount) : m.fare ? String(m.fare) : "", net: m.net_amount ? String(m.net_amount) : "",
+      paid: m.deposit_paid ? String(m.deposit_paid) : "",
     });
   }
   function openEditIB(b: IB, prof?: GuestProfile) {
@@ -133,7 +134,7 @@ export default function CabinBoardPage() {
       kind: "ind", id: b.id, name: b.guest_name, confirmation: b.booking_number || prof?.confirmationNumber || "",
       cabinType: b.cabin_type || prof?.cabinType || "", cabinNumber: "", deck: b.deck || prof?.deck || "",
       loyaltyProgram: b.loyalty_program || prof?.loyaltyProgram || "", loyaltyNumber: b.loyalty_number || prof?.loyaltyNumber || "",
-      gross: b.gross_amount ? String(b.gross_amount) : "", net: b.net_amount ? String(b.net_amount) : "",
+      gross: b.gross_amount ? String(b.gross_amount) : "", net: b.net_amount ? String(b.net_amount) : "", paid: "",
     });
   }
 
@@ -143,9 +144,11 @@ export default function CabinBoardPage() {
     const gross = Number(edit.gross) || 0, net = Number(edit.net) || 0;
     try {
       if (edit.kind === "group") {
+        const paid = Number(edit.paid) || 0;
         const { error } = await supabase.from("group_members").update({
           cabin_type: edit.cabinType, cabin_number: edit.cabinNumber, deck: edit.deck, confirmation_number: edit.confirmation,
           loyalty_program: edit.loyaltyProgram, loyalty_number: edit.loyaltyNumber, gross_amount: gross, net_amount: net,
+          fare: gross, deposit_paid: paid, paid_in_full: gross > 0 && paid >= gross,
         }).eq("id", edit.id);
         if (error) throw error;
       } else {
@@ -298,14 +301,26 @@ export default function CabinBoardPage() {
                 <input className={field + " mt-1 font-mono"} value={edit.loyaltyNumber} onChange={(e) => setEdit({ ...edit, loyaltyNumber: e.target.value })} placeholder="Loyalty number" /></label>
 
               <label className="block"><span className={label}>Gross amount ($)</span>
-                <input className={field + " mt-1"} inputMode="decimal" value={edit.gross} onChange={(e) => setEdit({ ...edit, gross: e.target.value })} placeholder="0" /></label>
+                <input className={field + " mt-1"} inputMode="decimal" value={edit.gross} onChange={(e) => setEdit({ ...edit, gross: e.target.value })} placeholder="what the guest pays" /></label>
               <label className="block"><span className={label}>Net amount ($)</span>
-                <input className={field + " mt-1"} inputMode="decimal" value={edit.net} onChange={(e) => setEdit({ ...edit, net: e.target.value })} placeholder="0" /></label>
+                <input className={field + " mt-1"} inputMode="decimal" value={edit.net} onChange={(e) => setEdit({ ...edit, net: e.target.value })} placeholder="cruise-line cost" /></label>
+              {edit.kind === "group" && (
+                <label className="block col-span-2"><span className={label}>Paid so far ($) — log PayPal / check / card payments here</span>
+                  <input className={field + " mt-1"} inputMode="decimal" value={edit.paid} onChange={(e) => setEdit({ ...edit, paid: e.target.value })} placeholder="0" /></label>
+              )}
             </div>
 
-            <div className="flex items-center justify-between mt-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <span className="text-white/55 text-sm">Profit (gross − net)</span>
-              <span className={`text-2xl font-extrabold ${editProfit >= 0 ? "text-green-300" : "text-red-300"}`}>{money(editProfit)}</span>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <span className="text-white/55 text-xs">Profit (gross − net)</span>
+                <span className={`text-xl font-extrabold ${editProfit >= 0 ? "text-green-300" : "text-red-300"}`}>{money(editProfit)}</span>
+              </div>
+              {edit.kind === "group" && (
+                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                  <span className="text-white/55 text-xs">Balance due</span>
+                  <span className={`text-xl font-extrabold ${editGross - (Number(edit.paid) || 0) <= 0 ? "text-green-300" : "text-amber-300"}`}>{money(Math.max(0, editGross - (Number(edit.paid) || 0)))}</span>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2 mt-5">
