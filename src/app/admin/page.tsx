@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import GoLiveChecklist from "@/components/GoLiveChecklist";
 import AgentStatusSetter from "@/components/AgentStatusSetter";
 import AdminTodo from "@/components/AdminTodo";
+import SocialMonitor from "@/components/SocialMonitor";
 import {
   type Booking,
   getBookings,
@@ -194,6 +195,11 @@ export default function AdminPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Social monitor */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <SocialMonitor />
       </div>
 
       {/* Bookings list */}
