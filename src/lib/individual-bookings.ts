@@ -21,6 +21,8 @@ export type IndividualBooking = {
   cabinType: string;
   grossAmount: number;
   statusNote?: string; // live "what's going on" banner shown on the portal
+  protectionNote?: string; // travel-protection update
+  protectionUrl?: string;  // e.g. Travel Defenders link
   createdAt?: string;
 };
 

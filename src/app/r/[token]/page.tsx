@@ -133,6 +133,25 @@ export default function ReservationPortal() {
           </div>
         )}
 
+        {/* Travel protection update */}
+        {booking.protectionNote && (
+          <div className="rounded-2xl border border-amber-400/30 bg-amber-500/[0.07] p-5">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl leading-none">🛡️</span>
+              <div>
+                <div className="text-amber-200 font-bold text-sm">Travel Protection — important update</div>
+                <p className="text-white/75 text-sm mt-1 leading-relaxed">{booking.protectionNote}</p>
+                {booking.protectionUrl && (
+                  <a href={booking.protectionUrl} target="_blank" rel="noopener noreferrer"
+                    className="inline-block mt-3 bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full">
+                    View Travel Defenders protection →
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Summary */}
         <div className={card}>
           <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-3">Reservation Summary</div>
