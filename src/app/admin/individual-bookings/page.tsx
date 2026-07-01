@@ -146,7 +146,7 @@ export default function IndividualBookingsPage() {
                     <div className="text-white/35 text-xs font-mono">#{b.bookingNumber}{b.passengers?.length ? ` · ${b.passengers.length} pax` : ""}{b.contact ? ` · ${b.contact}` : ""}</div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <CopyReservationLink token={b.token} sailDate={b.sailDate} />
+                    <CopyReservationLink token={b.token} sailDate={b.sailDate} name={b.guestName} email={b.contact} />
                     {b.token && <Link href={`/r/${b.token}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open ↗</Link>}
                     <button onClick={() => edit(b)} className="text-xs font-bold text-sky-400 hover:text-sky-300">Edit</button>
                     <button onClick={() => remove(b.id)} className="text-red-300/70 hover:text-red-200 text-xs font-bold">×</button>

@@ -327,7 +327,7 @@ export default function AdminGroupsPage() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-2 flex-wrap justify-end">
-                      <CopyGroupLink code={grp.code} sailingDate={grp.sailingDate} />
+                      <CopyGroupLink code={grp.code} sailingDate={grp.sailingDate} name={grp.leaderName} email={grp.leaderEmail} />
                       <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
                     </div>
                     <div className="flex gap-3">
