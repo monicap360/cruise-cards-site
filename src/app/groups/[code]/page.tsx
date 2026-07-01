@@ -16,6 +16,7 @@ import { embarkForGroup } from "@/lib/embark-guides";
 import { groupFlightInfo } from "@/lib/group-flights";
 import { perksForGroup } from "@/lib/group-perks";
 import { cruiseForGroup } from "@/lib/group-cruise";
+import { hotelForGroup } from "@/lib/group-hotel";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -97,6 +98,8 @@ export default async function GroupPortalPage({
   const flightInfo = groupFlightInfo(group.code);
   const groupPerks = perksForGroup(group.code);
   const groupCruise = cruiseForGroup(group.code);
+  const groupHotel = hotelForGroup(group.code);
+  const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Destination hero photo — chosen from the itinerary (Alaska → glacier,
   // Bahamas → Nassau, otherwise Western Caribbean → Cozumel).
@@ -416,6 +419,59 @@ export default async function GroupPortalPage({
             <p className="text-white/35 text-xs mt-2">
               Always confirm times on your {flightInfo.airline} confirmation — airlines can adjust schedules.
             </p>
+          </div>
+        )}
+
+        {/* Pre-cruise hotel */}
+        {groupHotel && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Pre-Cruise Hotel"}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[#0b1020] p-6">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="text-xl font-extrabold text-white">🏨 {groupHotel.name}</div>
+                  {groupHotel.rating && (
+                    <div className="text-white/55 text-sm mt-1">
+                      <span className="text-green-300 font-bold">{groupHotel.rating}</span>
+                      {groupHotel.reviews ? ` · ${groupHotel.reviews}` : ""}
+                    </div>
+                  )}
+                  <div className="text-white/70 text-sm mt-2">
+                    {groupHotel.roomCount} rooms · {groupHotel.roomDescription}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Check-in → Check-out</div>
+                  <div className="text-white font-bold text-sm mt-1">{groupHotel.checkIn}</div>
+                  <div className="text-white/60 text-sm">{groupHotel.checkOut}</div>
+                  <div className="text-white/40 text-xs mt-0.5">{groupHotel.nights}-night stay</div>
+                </div>
+              </div>
+              <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                <div>
+                  <div className="label-mono text-[9px] uppercase text-white/40">Rooms ({groupHotel.roomCount})</div>
+                  <div className="text-white/85 mt-0.5">{money(groupHotel.roomsSubtotal)}</div>
+                </div>
+                <div>
+                  <div className="label-mono text-[9px] uppercase text-white/40">Taxes</div>
+                  <div className="text-white/85 mt-0.5">{money(groupHotel.taxes)}</div>
+                </div>
+                <div>
+                  <div className="label-mono text-[9px] uppercase text-white/40">Total</div>
+                  <div className="text-white font-bold mt-0.5">{money(groupHotel.total)}</div>
+                </div>
+                <div>
+                  <div className="label-mono text-[9px] uppercase text-amber-300/70">Pay at property</div>
+                  <div className="text-amber-300 font-bold mt-0.5">{money(groupHotel.payAtProperty)}</div>
+                </div>
+              </div>
+              <p className="text-white/40 text-[11px] mt-3">
+                💳 Nothing due now — the hotel is paid directly at the property on arrival ({money(groupHotel.payAtProperty)}).
+                This is the night before your cruise, near Sea-Tac for your morning flight arrival.
+              </p>
+            </div>
           </div>
         )}
 
