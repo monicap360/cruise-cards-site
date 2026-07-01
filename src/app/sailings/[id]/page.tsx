@@ -7,6 +7,7 @@ import CruiseInclusions from "@/components/CruiseInclusions";
 import CruiseOffers from "@/components/CruiseOffers";
 import DestinationCard from "@/components/DestinationCard";
 import { portsFromItinerary, destinationFor, cruiseItineraryTitle } from "@/lib/destinations";
+import { brochuresFor } from "@/lib/brochures";
 import { destinations as destPages } from "@/app/destinations/destination-data";
 import {
   getSailingBlock,
@@ -437,6 +438,42 @@ export default async function SailingOptionsPage({
           {"// What's Included in Your Cruise"}
         </div>
         <CruiseInclusions />
+      </section>
+
+      {/* Brochures, deck plans & guides */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="label-mono text-[11px] uppercase text-sky-400/80 mb-2">
+          {"// Brochures, Deck Plans & Guides"}
+        </div>
+        <h2 className="text-2xl font-extrabold uppercase tracking-[-0.01em] text-white mb-6">
+          Plan Your {block.ship} Cruise
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {brochuresFor(block.cruiseLine, block.ship, id).map((b) => (
+            <a
+              key={b.label + b.href}
+              href={b.href}
+              {...(b.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="group flex items-center gap-3 rounded-xl border border-white/10 bg-[#0b1020] px-4 py-3.5 hover:border-sky-400/40 transition-colors"
+            >
+              <span className="text-xl shrink-0">{b.icon}</span>
+              <span className="flex-1 min-w-0 text-white font-semibold text-sm leading-tight">
+                {b.label}
+              </span>
+              <span className="text-white/30 group-hover:text-sky-400 transition-colors shrink-0">
+                {b.external ? "↗" : "→"}
+              </span>
+            </a>
+          ))}
+        </div>
+        <p className="text-white/35 text-xs mt-4">
+          Official cruise-line pages open in a new tab. Want a printed brochure or a
+          custom quote sheet?{" "}
+          <Link href={`/contact?ship=${shipParam}&date=${block.sailingDate}`} className="text-sky-400 hover:text-sky-300">
+            Ask your specialist
+          </Link>
+          .
+        </p>
       </section>
     </div>
   );
