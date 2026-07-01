@@ -17,7 +17,7 @@ export default function AgentProfile({ agent }: { agent: Agent }) {
             <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/70">Your Cruise Director of Sales</div>
             <div className="font-extrabold text-white text-xl">{agent.name}</div>
             <div className="text-sky-300/90 text-sm">{agent.tagline}</div>
-            <div className="mt-2"><AgentStatusBadge slug={agent.slug} /></div>
+            <div className="mt-2"><AgentStatusBadge slug={agent.slug} offDays={agent.offDays} /></div>
           </div>
         </div>
 

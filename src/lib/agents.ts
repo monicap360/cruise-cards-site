@@ -9,6 +9,7 @@ export type Agent = {
   bio: string;
   specialties: string[];
   schedule: { day: string; hours: string }[];
+  offDays: number[]; // 0=Sun … 6=Sat — status auto-shows "Off today" on these days
   bookingUrl: string;
   phone: string;
   email: string;
@@ -31,12 +32,12 @@ export const AGENTS: Agent[] = [
       "Accessibility & special needs",
     ],
     schedule: [
-      { day: "Mon – Wed", hours: "9:00 AM – 5:00 PM CT" },
-      { day: "Thursday", hours: "Off" },
-      { day: "Friday", hours: "9:00 AM – 5:00 PM CT" },
+      { day: "Mon – Wed", hours: "7:30 AM – 7:00 PM CT" },
+      { day: "Thu – Fri", hours: "Off" },
       { day: "Saturday", hours: "By appointment" },
       { day: "Sunday", hours: "Closed" },
     ],
+    offDays: [4, 5], // Thursday & Friday
     bookingUrl: "/book-a-call",
     phone: "(409) 632-2106",
     email: "cruisesfromgalveston.texas@gmail.com",
