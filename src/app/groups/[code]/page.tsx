@@ -15,6 +15,7 @@ import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
+import TrustBadges from "@/components/TrustBadges";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -182,6 +183,15 @@ export default async function GroupPortalPage({
             </div>
           );
         })()}
+
+        {/* You're in good hands — trust & reassurance */}
+        <div className="rounded-2xl border border-sky-400/20 bg-sky-500/[0.04] p-5 sm:p-6">
+          <div className="label-mono text-[11px] uppercase tracking-wider text-sky-400/80 mb-1">{"// You're in good hands"}</div>
+          <p className="text-white/70 text-sm mb-4 max-w-2xl">
+            Your cruise is booked <strong className="text-white">directly with the cruise line</strong> and your reservation is confirmed — your booking and your money are protected no matter what you read online. Here&rsquo;s why you can sail with confidence:
+          </p>
+          <TrustBadges />
+        </div>
 
         {/* Group notices */}
         {GROUP_ANNOUNCEMENTS.length > 0 && (
