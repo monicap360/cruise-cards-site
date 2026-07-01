@@ -2,7 +2,7 @@
 // false to remove it (e.g. once the phone lines are restored).
 
 export const SITE_NOTICE = {
-  enabled: true,
+  enabled: false,
   message: "📞 Our phone lines are temporarily down while we finish upgrading our phone system — we apologize for the inconvenience!",
   email: "cruisesfromgalveston.texas@gmail.com",
   ctaLabel: "Book / message online",
