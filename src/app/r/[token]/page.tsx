@@ -8,6 +8,10 @@ import {
 } from "@/lib/individual-bookings";
 import { getPayments, type Payment } from "@/lib/payments";
 import { appGuideFor, appSearch } from "@/lib/cruise-apps";
+import { PAYMENT_METHODS, PAY_APPT_HREF } from "@/lib/payment-methods";
+import { uploadGuestFile } from "@/lib/documents";
+import { appendReservationNote } from "@/lib/individual-bookings";
+import Link from "next/link";
 
 const money = (n: number) => "$" + (n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtDate = (d: string) => (d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : "—");
@@ -24,6 +28,28 @@ export default function ReservationPortal() {
   const [authed, setAuthed] = useState(false);
   const [pax, setPax] = useState<Passenger[]>([]);
   const [saved, setSaved] = useState(false);
+  const [copiedKey, setCopiedKey] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState("");
+
+  async function copyVal(key: string, value: string) {
+    try { await navigator.clipboard.writeText(value); } catch { /* ignore */ }
+    setCopiedKey(key); setTimeout(() => setCopiedKey(""), 1500);
+  }
+  async function onReceipt(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !booking) return;
+    setUploading(true); setUploadMsg("");
+    const res = await uploadGuestFile(file);
+    if ("url" in res) {
+      await appendReservationNote(booking.token, `[receipt] ${booking.guestName}: ${res.name} — ${res.url}`);
+      setUploadMsg("✓ Receipt received — thank you! We'll confirm once it's reviewed.");
+    } else {
+      setUploadMsg("Upload failed — please email the receipt to cruisesfromgalveston.texas@gmail.com.");
+    }
+    setUploading(false);
+    e.target.value = "";
+  }
 
   useEffect(() => {
     (async () => {
@@ -152,6 +178,49 @@ export default function ReservationPortal() {
             </div>
           )}
           <p className="text-white/35 text-[11px] mt-3">Questions about your invoice? Call us at (409) 632-2106.</p>
+        </div>
+
+        {/* How to pay */}
+        <div className={card}>
+          <div className="label-mono text-[10px] uppercase text-sky-400/70 mb-1">How to Pay</div>
+          <p className="text-white/50 text-sm mb-4">Choose whichever is easiest — then upload your receipt below so we can post it to your balance.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {PAYMENT_METHODS.map((m) => (
+              <div key={m.key} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{m.icon}</span>
+                  <span className="font-bold text-white">{m.name}</span>
+                </div>
+                {m.value && (
+                  <button onClick={() => copyVal(m.key, m.value!)} title="Tap to copy"
+                    className="mt-2 inline-flex items-center gap-2 bg-sky-500/10 border border-sky-400/25 rounded-lg px-3 py-1.5 text-sky-200 font-mono text-sm hover:bg-sky-500/20">
+                    {m.value}
+                    <span className="text-[10px] uppercase tracking-wider text-sky-300/70">{copiedKey === m.key ? "copied ✓" : "copy"}</span>
+                  </button>
+                )}
+                <p className="text-white/50 text-xs mt-2">{m.detail}</p>
+                {m.apptButton && (
+                  <Link href={PAY_APPT_HREF} className="mt-2 inline-block bg-white text-black hover:bg-white/90 font-semibold uppercase tracking-wider text-[11px] px-4 py-2 rounded-full">
+                    📅 Book in-person appointment
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Upload receipt */}
+          <div className="mt-4 rounded-xl border border-dashed border-sky-400/30 bg-sky-500/[0.05] p-4 text-center">
+            <div className="text-white font-semibold text-sm mb-1">📤 Upload your payment receipt</div>
+            <p className="text-white/50 text-xs mb-3">Screenshot or photo of your Zelle / Cash App / Venmo / check confirmation.</p>
+            <label className="inline-block bg-sky-600 hover:bg-sky-500 text-white font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-full cursor-pointer">
+              {uploading ? "Uploading…" : "Choose file"}
+              <input type="file" accept="image/*,application/pdf" className="hidden" onChange={onReceipt} disabled={uploading} />
+            </label>
+            {uploadMsg && <div className="text-sm mt-3 text-green-300">{uploadMsg}</div>}
+          </div>
+          <p className="text-white/40 text-[11px] mt-3">
+            These options keep card-processing fees down so we can pass the savings on to you. Prefer a card? Just ask — we&rsquo;re happy to help.
+          </p>
         </div>
 
         {/* App + check-in instructions */}

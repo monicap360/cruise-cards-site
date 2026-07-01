@@ -81,6 +81,15 @@ export async function updatePassengers(token: string, passengers: Passenger[]): 
   return !error;
 }
 
+// Guest uploads a payment receipt → append a note so the front desk sees it.
+export async function appendReservationNote(token: string, line: string): Promise<boolean> {
+  const { data } = await supabase.from("individual_bookings").select("notes").eq("token", token).single();
+  const prev = (data?.notes as string) || "";
+  const next = prev ? `${prev}\n${line}` : line;
+  const { error } = await supabase.from("individual_bookings").update({ notes: next }).eq("token", token);
+  return !error;
+}
+
 export async function deleteIndividualBooking(id: string): Promise<void> {
   await supabase.from("individual_bookings").delete().eq("id", id);
 }
