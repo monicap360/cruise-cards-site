@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import GoLiveChecklist from "@/components/GoLiveChecklist";
+import AgentStatusSetter from "@/components/AgentStatusSetter";
 import {
   type Booking,
   getBookings,
@@ -163,8 +164,9 @@ export default function AdminPage() {
         </div>
       </section>
 
-      {/* Go-Live checklist */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      {/* My status + Go-Live checklist */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-4">
+        <AgentStatusSetter />
         <GoLiveChecklist />
       </div>
 

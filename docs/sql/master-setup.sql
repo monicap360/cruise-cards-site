@@ -85,6 +85,10 @@ create table if not exists payments (
   id text primary key, member_id text, amount numeric default 0, method text, note text,
   tenant_id text not null default 'cfg', created_at timestamptz default now());
 
+create table if not exists agent_status (
+  slug text primary key, status text default 'available', message text,
+  tenant_id text not null default 'cfg', updated_at timestamptz default now());
+
 -- new columns on existing tables
 alter table reservations  add column if not exists arrival_tasks jsonb default '{}'::jsonb;
 alter table group_members add column if not exists admin_notes text;
@@ -97,7 +101,7 @@ declare t text;
 begin
   foreach t in array array[
     'tenants','memberships','tickets','ticket_messages','vault','cabin_care','cabin_beds',
-    'orders','individual_bookings','group_messages','hotel_rfps','payments'
+    'orders','individual_bookings','group_messages','hotel_rfps','payments','agent_status'
   ] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists "allow all %s" on public.%I', t, t);
