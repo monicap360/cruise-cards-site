@@ -19,3 +19,9 @@ Images sourced from Wikimedia Commons.
 - **harvest-caye.jpg** — Harvest Caye, Belize (aerial) · CC BY-SA 4.0 · Lucas EDVK · Wikimedia Commons
 - **great-stirrup-cay.jpg** — Great Stirrup Cay lighthouse · Public domain · Wikimedia Commons
 - **alaska.jpg** — Margerie Glacier, Glacier Bay National Park, Alaska · Public domain · Wikimedia Commons · https://commons.wikimedia.org/wiki/File:Margerie_Glacier.jpg
+- **seattle.jpg** — Space Needle, Seattle · Wikimedia Commons
+- **juneau.jpg** — Juneau, Alaska · Wikimedia Commons
+- **skagway.jpg** — Red Onion Saloon, Skagway, Alaska · Wikimedia Commons
+- **ketchikan.jpg** — Downtown Ketchikan, Alaska · Wikimedia Commons
+- **tracy-arm.jpg** — Endicott Arm / Dawes Glacier, Alaska · Wikimedia Commons
+- **victoria-bc.jpg** — Fairmont Empress, Victoria, British Columbia · Wikimedia Commons

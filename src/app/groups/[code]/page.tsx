@@ -562,15 +562,18 @@ export default async function GroupPortalPage({
                   <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-3">Ship Itinerary</div>
                   <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/10">
                     {groupCruise.itineraryDays.map((d) => (
-                      <div key={d.day} className="flex items-center gap-4 px-4 py-2.5">
-                        <div className="flex flex-col items-center w-10 shrink-0">
+                      <div key={d.day} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5">
+                        <div className="flex flex-col items-center w-9 shrink-0">
                           <span className="label-mono text-[8px] uppercase text-white/40">Day</span>
                           <span className="text-lg font-extrabold text-white leading-none">{d.day}</span>
                         </div>
-                        <div className="text-white/45 text-xs w-20 shrink-0">{d.date}</div>
+                        {d.photo && (
+                          <Photo src={d.photo} alt={d.port} overlay={false} className="w-20 h-14 rounded-lg shrink-0" />
+                        )}
+                        <div className="text-white/45 text-xs w-16 sm:w-20 shrink-0">{d.date}</div>
                         <div className="flex-1 min-w-0">
                           <span className="text-white font-semibold text-sm">{d.port}</span>
-                          {d.note && <span className="text-white/45 text-xs ml-2">{d.note}</span>}
+                          {d.note && <span className="text-white/45 text-xs sm:ml-2 block sm:inline">{d.note}</span>}
                         </div>
                       </div>
                     ))}

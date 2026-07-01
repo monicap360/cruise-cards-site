@@ -13,7 +13,7 @@ export type GroupCruise = {
   stateroom?: string;
   cabinDetail?: string; // e.g. "Obstructed View Window · Cat 4K (Interior)"
   paidInFull?: boolean;
-  itineraryDays?: { day: number; date: string; port: string; note?: string }[];
+  itineraryDays?: { day: number; date: string; port: string; note?: string; photo?: string }[];
   staterooms?: { number: string; guests: string; detail?: string }[];
 };
 
@@ -33,14 +33,14 @@ export const GROUP_CRUISE: Record<string, GroupCruise> = {
     // Typical Carnival Miracle 7-day Alaska (Seattle round-trip). Confirm exact
     // ports & times on your cruise documents.
     itineraryDays: [
-      { day: 1, date: "Thu, Jul 30", port: "Seattle, WA", note: "Depart" },
-      { day: 2, date: "Fri, Jul 31", port: "Cruising the Inside Passage", note: "Scenic sea day" },
-      { day: 3, date: "Sat, Aug 1", port: "Juneau, AK" },
-      { day: 4, date: "Sun, Aug 2", port: "Skagway, AK" },
-      { day: 5, date: "Mon, Aug 3", port: "Tracy Arm / Endicott Arm — Dawes Glacier", note: "Scenic glacier cruising" },
-      { day: 6, date: "Tue, Aug 4", port: "Ketchikan, AK" },
-      { day: 7, date: "Wed, Aug 5", port: "Victoria, BC (Canada)" },
-      { day: 8, date: "Thu, Aug 6", port: "Seattle, WA", note: "Return" },
+      { day: 1, date: "Thu, Jul 30", port: "Seattle, WA", note: "Depart", photo: "/destinations/seattle.jpg" },
+      { day: 2, date: "Fri, Jul 31", port: "Cruising the Inside Passage", note: "Scenic sea day", photo: "/destinations/alaska.jpg" },
+      { day: 3, date: "Sat, Aug 1", port: "Juneau, AK", photo: "/destinations/juneau.jpg" },
+      { day: 4, date: "Sun, Aug 2", port: "Skagway, AK", photo: "/destinations/skagway.jpg" },
+      { day: 5, date: "Mon, Aug 3", port: "Tracy Arm / Endicott Arm — Dawes Glacier", note: "Scenic glacier cruising", photo: "/destinations/tracy-arm.jpg" },
+      { day: 6, date: "Tue, Aug 4", port: "Ketchikan, AK", photo: "/destinations/ketchikan.jpg" },
+      { day: 7, date: "Wed, Aug 5", port: "Victoria, BC (Canada)", photo: "/destinations/victoria-bc.jpg" },
+      { day: 8, date: "Thu, Aug 6", port: "Seattle, WA", note: "Return", photo: "/destinations/seattle.jpg" },
     ],
   },
 };
