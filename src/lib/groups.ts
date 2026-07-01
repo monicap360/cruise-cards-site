@@ -40,6 +40,7 @@ export type Group = {
   contractName: string; // original file name
   notes: string;
   setupStatus: string; // "building" | "finalized" — has staff finished loading this group?
+  directorName: string; // the group's assigned Cruise Director of Sales
   createdAt?: string;
 };
 
@@ -113,6 +114,7 @@ function toGroup(r: Record<string, unknown>): Group {
     contractName: (r.contract_name as string) ?? "",
     notes: (r.notes as string) ?? "",
     setupStatus: (r.setup_status as string) ?? "building",
+    directorName: (r.director_name as string) ?? "",
     createdAt: (r.created_at as string) ?? "",
   };
 }

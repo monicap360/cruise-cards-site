@@ -89,6 +89,7 @@ create table if not exists payments (
 alter table reservations  add column if not exists arrival_tasks jsonb default '{}'::jsonb;
 alter table group_members add column if not exists admin_notes text;
 alter table groups        add column if not exists setup_status text default 'building';
+alter table groups        add column if not exists director_name text;
 
 -- ── C) Row-level security (allow-all for now) ───────────────────────────────
 do $$

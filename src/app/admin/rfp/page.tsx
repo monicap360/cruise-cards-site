@@ -75,6 +75,7 @@ export default function AdminRfpPage() {
       contractName: "",
       notes: `From RFP ${item.id}. Host fee $${item.feePerRoom}/room.`,
       setupStatus: "building",
+      directorName: "",
     };
     await saveGroup(g);
     await saveRFP({ ...item, status: "accepted", groupCode: code });

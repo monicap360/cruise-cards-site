@@ -39,7 +39,7 @@ function blankGroup(): Group {
     id: newGroupId(), code: newGroupCode(), name: "", leaderName: "", leaderEmail: "",
     leaderPhone: "", ship: "", cruiseLine: "", sailingDate: "", returnDate: "", nights: 0,
     depositDueDate: "", finalPaymentDate: "", blockSize: 0, releaseDate: "",
-    groupRate: 0, contract: "", contractUrl: "", contractName: "", notes: "", setupStatus: "building",
+    groupRate: 0, contract: "", contractUrl: "", contractName: "", notes: "", setupStatus: "building", directorName: "",
   };
 }
 function blankMember(groupId: string): GroupMember {
@@ -153,6 +153,9 @@ export default function AdminGroupsPage() {
     const next = grp.setupStatus === "finalized" ? "building" : "finalized";
     setGroups((gs) => gs.map((x) => (x.id === grp.id ? { ...x, setupStatus: next } : x)));
     await supabase.from("groups").update({ setup_status: next }).eq("id", grp.id);
+  }
+  async function setDirector(grpId: string, name: string) {
+    await supabase.from("groups").update({ director_name: name }).eq("id", grpId);
   }
 
   const setGroupF = (p: Partial<Group>) => setG((s) => ({ ...s, ...p }));
@@ -316,6 +319,10 @@ export default function AdminGroupsPage() {
                         </div>
                       );
                     })()}
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[10px] label-mono uppercase tracking-wider text-white/40">Director of Sales:</span>
+                      <input value={grp.directorName} onChange={(e) => setGroups((gs) => gs.map((x) => (x.id === grp.id ? { ...x, directorName: e.target.value } : x)))} onBlur={(e) => setDirector(grp.id, e.currentTarget.value)} placeholder="assign…" className="bg-white/5 border border-white/15 rounded-lg px-2 py-1 text-xs text-white placeholder-white/30 focus:outline-none focus:border-sky-400/60 w-40" />
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Link href={`/groups/${grp.code}`} target="_blank" className="text-xs font-bold bg-white text-black hover:bg-white/90 px-3 py-1.5 rounded-full">Open portal ↗</Link>
