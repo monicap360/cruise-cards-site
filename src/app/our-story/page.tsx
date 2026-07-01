@@ -10,8 +10,9 @@ export const metadata = {
     "The real story behind Cruises from Galveston — a CLIA-accredited, Galveston-based agency and Cruise Experience Center, personally run by Monica Pena.",
 };
 
-// Set NEXT_PUBLIC_PRESS_URL to the Galveston County Daily News article link.
-const PRESS_URL = process.env.NEXT_PUBLIC_PRESS_URL || "https://www.galvnews.com";
+const PRESS_URL =
+  process.env.NEXT_PUBLIC_PRESS_URL ||
+  "https://www.yahoo.com/lifestyle/articles/harrowing-cruise-experiences-could-avoided-231511000.html";
 
 export default function OurStoryPage() {
   const monica = agentBySlug("monica");
@@ -57,8 +58,10 @@ export default function OurStoryPage() {
       <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-6 text-center">
           <div className="label-mono text-[10px] uppercase tracking-widest text-sky-400/70 mb-2">📰 As featured in</div>
-          <div className="text-2xl font-extrabold text-white">The Galveston County Daily News</div>
-          <p className="text-white/55 text-sm mt-2">Our founder was featured in Galveston's hometown newspaper — a proud milestone for a local business built on trust.</p>
+          <div className="text-2xl font-extrabold text-white">The Houston Chronicle</div>
+          <p className="text-white/55 text-sm mt-2">
+            Monica was interviewed as a cruise expert in &ldquo;Harrowing cruise experiences could be avoided with this one thing&rdquo; (Chron, 2025) — on why <strong className="text-white/80">travel protection</strong> matters so much for cruisers.
+          </p>
           <a href={PRESS_URL} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-sky-300 hover:text-sky-200 text-sm font-bold">Read the feature →</a>
         </div>
       </section>
