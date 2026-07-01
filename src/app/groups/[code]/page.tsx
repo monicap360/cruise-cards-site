@@ -24,6 +24,18 @@ import { fmt$, fmtDate } from "@/lib/sea-pay";
 
 export const dynamic = "force-dynamic";
 
+// The group PIN is the sail date as MMDD. Derive it robustly from whatever the
+// sail date looks like in the DB (ISO "2026-08-15", ISO+time, or US "8/15/2026")
+// so a stray time component or slash format never breaks the PIN.
+function mmddFromDate(dateStr: string): string {
+  if (!dateStr) return "";
+  const iso = dateStr.match(/(\d{4})-(\d{1,2})-(\d{1,2})/); // YYYY-MM-DD (optionally with time)
+  if (iso) return iso[2].padStart(2, "0") + iso[3].padStart(2, "0");
+  const us = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/); // MM/DD/YYYY
+  if (us) return us[1].padStart(2, "0") + us[2].padStart(2, "0");
+  return "";
+}
+
 // Cabin categories a group member can pick from. Image lives at
 // /public/cabins/<img>.jpg (Photo falls back to a gradient if missing).
 const CABIN_OPTIONS = [
@@ -68,7 +80,7 @@ export default async function GroupPortalPage({
   const { group, members, rooms } = result;
 
   // PIN gate — protect roster / DOB / payment info. PIN = sail date MMDD.
-  const groupPin = (group.sailingDate || "").split("-").slice(1).join("");
+  const groupPin = mmddFromDate(group.sailingDate || "");
   if (!groupPin || (pin || "").trim() !== groupPin) {
     return <GroupGate groupName={group.name} />;
   }
