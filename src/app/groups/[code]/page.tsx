@@ -375,41 +375,33 @@ export default async function GroupPortalPage({
                     </span>
                     <span className="text-white/60 text-xs font-bold">{leg.date}</span>
                   </div>
-                  {leg.segments.length > 0 ? (
-                    <div className="space-y-3">
-                      {leg.segments.map((s, i) => (
-                        <div key={i}>
-                          {i > 0 && (
-                            <div className="text-white/30 text-[10px] uppercase tracking-wider text-center mb-2">
-                              ↕ Connect in {s.from}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-3">
-                            <div className="text-center w-14 shrink-0">
-                              <div className="font-extrabold text-white leading-none">{s.from}</div>
-                              <div className="text-white/50 text-xs mt-1">{s.departTime}</div>
-                            </div>
-                            <div className="flex-1 flex flex-col items-center">
-                              <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/70">✈ {s.flightNo}</span>
-                              <div className="w-full flex items-center gap-1 mt-0.5">
-                                <div className="h-px flex-1 bg-white/15" />
-                                <div className="h-px flex-1 bg-white/15" />
-                              </div>
-                            </div>
-                            <div className="text-center w-16 shrink-0">
-                              <div className="font-extrabold text-white leading-none">{s.to}</div>
-                              <div className="text-white/50 text-xs mt-1">{s.arriveTime}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                  <div className="flex items-center gap-3">
+                    <div className="text-center w-16 shrink-0">
+                      <div className="font-extrabold text-white text-lg leading-none">{leg.from}</div>
+                      <div className="text-white/50 text-xs mt-1">{leg.departTime}</div>
                     </div>
-                  ) : (
-                    <div className="text-white/60 text-sm">{leg.summary}</div>
+                    <div className="flex-1 flex flex-col items-center">
+                      <span className="label-mono text-[9px] uppercase tracking-wider text-white/40">{leg.duration}</span>
+                      <div className="w-full flex items-center gap-1 my-0.5">
+                        <div className="h-px flex-1 bg-white/15" />
+                        <span className="text-sky-400/70 text-xs">✈</span>
+                        <div className="h-px flex-1 bg-white/15" />
+                      </div>
+                      <span className="label-mono text-[9px] uppercase tracking-wider text-white/40">{leg.stop}</span>
+                    </div>
+                    <div className="text-center w-16 shrink-0">
+                      <div className="font-extrabold text-white text-lg leading-none">{leg.to}</div>
+                      <div className="text-white/50 text-xs mt-1">{leg.arriveTime}</div>
+                    </div>
+                  </div>
+                  {leg.arriveNote && (
+                    <div className="text-amber-300/80 text-xs mt-2 text-center">⚠ {leg.arriveNote}</div>
                   )}
-                  {leg.note && (
-                    <div className="text-amber-300/80 text-xs mt-3 pt-3 border-t border-white/10">⚠ {leg.note}</div>
-                  )}
+                  <div className="mt-3 pt-3 border-t border-white/10 space-y-1">
+                    {leg.flights.map((f) => (
+                      <div key={f} className="label-mono text-[10px] uppercase tracking-wider text-white/55">✈ {f}</div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
