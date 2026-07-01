@@ -98,11 +98,16 @@ export default async function GroupPortalPage({
   const groupPerks = perksForGroup(group.code);
   const groupCruise = cruiseForGroup(group.code);
 
-  // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
-  // otherwise Western Caribbean → Cozumel).
-  const destHay = `${group.name} ${group.notes || ""}`.toLowerCase();
-  const destSlug = /bahama|nassau|eastern/.test(destHay) ? "nassau" : "cozumel";
+  // Destination hero photo — chosen from the itinerary (Alaska → glacier,
+  // Bahamas → Nassau, otherwise Western Caribbean → Cozumel).
+  const destHay = `${group.name} ${group.notes || ""} ${groupCruise?.itinerary || ""} ${groupCruise?.embarkPort || ""}`.toLowerCase();
+  const isAlaska = /alaska|glacier|inside passage|seattle/.test(destHay);
+  const destSlug = isAlaska ? "alaska" : /bahama|nassau|eastern/.test(destHay) ? "nassau" : "cozumel";
   const shipPhotoSlug = group.ship.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  // For Alaska sailings the Galveston terminal photo is wrong — lead with the glacier.
+  const heroCandidates = isAlaska
+    ? [`/destinations/alaska.jpg`, `/ships/${shipPhotoSlug}.jpg`]
+    : [`/ships/${shipPhotoSlug}.jpg`, "/galveston-cruise-terminal.jpg", `/destinations/${destSlug}.jpg`];
 
   const stat = (v: string | number, l: string) => (
     <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
@@ -118,8 +123,8 @@ export default async function GroupPortalPage({
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-white/10 min-h-[340px] flex items-end">
         <HeroImage
-          candidates={[`/ships/${shipPhotoSlug}.jpg`, "/galveston-cruise-terminal.jpg", `/destinations/${destSlug}.jpg`]}
-          alt={`${group.ship} at the Galveston cruise terminal`}
+          candidates={heroCandidates}
+          alt={isAlaska ? `${group.ship} — Alaska Inside Passage` : `${group.ship} at the Galveston cruise terminal`}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-[#05070d]/30" />
@@ -295,6 +300,29 @@ export default async function GroupPortalPage({
                   </div>
                 )}
               </div>
+
+              {/* Day-by-day ship itinerary */}
+              {groupCruise.itineraryDays && groupCruise.itineraryDays.length > 0 && (
+                <div className="mt-5 pt-5 border-t border-white/10">
+                  <div className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 mb-3">Ship Itinerary</div>
+                  <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/10">
+                    {groupCruise.itineraryDays.map((d) => (
+                      <div key={d.day} className="flex items-center gap-4 px-4 py-2.5">
+                        <div className="flex flex-col items-center w-10 shrink-0">
+                          <span className="label-mono text-[8px] uppercase text-white/40">Day</span>
+                          <span className="text-lg font-extrabold text-white leading-none">{d.day}</span>
+                        </div>
+                        <div className="text-white/45 text-xs w-20 shrink-0">{d.date}</div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-white font-semibold text-sm">{d.port}</span>
+                          {d.note && <span className="text-white/45 text-xs ml-2">{d.note}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-white/35 text-[11px] mt-2">Ports &amp; times follow the current sailing plan — confirm on your cruise documents.</p>
+                </div>
+              )}
             </div>
           </div>
         )}
