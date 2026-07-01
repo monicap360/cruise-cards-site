@@ -13,6 +13,7 @@ import BedConfig from "@/components/BedConfig";
 import SailCountdown from "@/components/SailCountdown";
 import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
+import { flightsForGroup } from "@/lib/group-flights";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -91,6 +92,7 @@ export default async function GroupPortalPage({
   const depositCount = members.filter(
     (m) => m.paidInFull || m.depositPaid > 0
   ).length;
+  const groupFlights = flightsForGroup(group.code);
 
   // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
   // otherwise Western Caribbean → Cozumel).
@@ -249,6 +251,49 @@ export default async function GroupPortalPage({
           {stat(`${depositCount}/${members.length}`, "Paid")}
           {stat(members.length - depositCount, "Pending")}
         </div>
+
+        {/* Flight schedule */}
+        {groupFlights.length > 0 && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Flight Schedule"}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {groupFlights.map((f) => (
+                <div key={f.label} className="rounded-2xl border border-white/10 bg-[#0b1020] p-5">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="label-mono text-[10px] uppercase tracking-wider text-sky-300/80">
+                      {f.label === "Outbound" ? "🛫 Outbound" : "🛬 Return"}
+                    </span>
+                    <span className="text-white/50 text-xs font-semibold">{f.airline}</span>
+                  </div>
+                  <div className="text-white font-bold">{f.date}</div>
+                  <div className="flex items-end gap-3 mt-2">
+                    <div>
+                      <div className="text-2xl font-extrabold text-white leading-none">{f.depart}</div>
+                      <div className="label-mono text-[9px] uppercase text-white/40 mt-1">Depart</div>
+                    </div>
+                    <div className="flex-1 flex items-center gap-2 pb-2">
+                      <div className="h-px flex-1 bg-white/15" />
+                      <span className="text-sky-400/70 text-sm">✈</span>
+                      <div className="h-px flex-1 bg-white/15" />
+                    </div>
+                    {f.arrive && (
+                      <div className="text-right">
+                        <div className="text-2xl font-extrabold text-white leading-none">{f.arrive}</div>
+                        <div className="label-mono text-[9px] uppercase text-white/40 mt-1">Arrive</div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-white/50 text-xs mt-3 pt-3 border-t border-white/10">{f.stops}</div>
+                </div>
+              ))}
+            </div>
+            <p className="text-white/35 text-xs mt-3">
+              Group air is a guide — always confirm times on your Southwest confirmation, as airlines can adjust schedules.
+            </p>
+          </div>
+        )}
 
         {/* Block status */}
         {group.blockSize > 0 &&
