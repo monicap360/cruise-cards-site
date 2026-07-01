@@ -13,6 +13,8 @@ import BedConfig from "@/components/BedConfig";
 import SailCountdown from "@/components/SailCountdown";
 import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
+import AgentProfile from "@/components/AgentProfile";
+import { agentByName } from "@/lib/agents";
 import CabinThread from "@/components/CabinThread";
 import { getRfpsForGroup } from "@/lib/hotel-rfp";
 import GroupTickets from "@/components/GroupTickets";
@@ -165,18 +167,21 @@ export default async function GroupPortalPage({
         </div>
 
         {/* Your Cruise Director of Sales */}
-        {group.directorName && (
-          <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-5 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-sky-500/20 border border-sky-400/30 flex items-center justify-center font-extrabold text-sky-200 text-lg shrink-0">
-              {group.directorName.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
+        {group.directorName && (() => {
+          const agent = agentByName(group.directorName);
+          return agent ? <AgentProfile agent={agent} /> : (
+            <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-sky-500/20 border border-sky-400/30 flex items-center justify-center font-extrabold text-sky-200 text-lg shrink-0">
+                {group.directorName.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}
+              </div>
+              <div>
+                <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/70">Your Cruise Director of Sales</div>
+                <div className="font-extrabold text-white text-lg">{group.directorName}</div>
+                <div className="text-white/55 text-sm">Your dedicated specialist for this group — questions or changes? Leave a note on your room below and it comes straight to me.</div>
+              </div>
             </div>
-            <div>
-              <div className="label-mono text-[10px] uppercase tracking-wider text-sky-400/70">Your Cruise Director of Sales</div>
-              <div className="font-extrabold text-white text-lg">{group.directorName}</div>
-              <div className="text-white/55 text-sm">Your dedicated specialist for this group — questions or changes? Leave a note on your room below and it comes straight to me.</div>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Group notices */}
         {GROUP_ANNOUNCEMENTS.length > 0 && (
