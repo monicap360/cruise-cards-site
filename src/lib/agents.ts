@@ -34,8 +34,7 @@ export const AGENTS: Agent[] = [
     schedule: [
       { day: "Mon – Wed", hours: "7:30 AM – 7:00 PM CT" },
       { day: "Thu – Fri", hours: "Off" },
-      { day: "Saturday", hours: "By appointment" },
-      { day: "Sunday", hours: "7:30 AM – 2:30 PM CT" },
+      { day: "Sat – Sun", hours: "7:30 AM – 2:30 PM CT" },
     ],
     offDays: [4, 5], // Thursday & Friday
     bookingUrl: "/book-a-call",
