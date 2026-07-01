@@ -285,6 +285,12 @@ export default async function GroupPortalPage({
                 )}
               </div>
             </div>
+            {flightInfo.statusNote && (
+              <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-4 py-3">
+                <span className="text-lg leading-none">✈️</span>
+                <p className="text-white/75 text-sm leading-relaxed"><strong className="text-amber-200">Flights update:</strong> {flightInfo.statusNote.replace(/^Flights update:\s*/, "")}</p>
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {flightInfo.legs.map((leg) => (
                 <div key={leg.label} className="rounded-2xl border border-white/10 bg-[#0b1020] p-5">
