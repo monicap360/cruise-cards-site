@@ -21,13 +21,15 @@ export type GroupFlightInfo = {
   passengers?: number;
   legs: FlightLeg[];
   priceDisclaimer?: string;
+  paidInFull?: boolean;
 };
 
 export const GROUP_FLIGHTS: Record<string, GroupFlightInfo> = {
   "gabby-group": {
     airline: "Southwest",
-    confirmation: "401417",
+    confirmation: "CGEGLG",
     passengers: 7,
+    paidInFull: true,
     priceDisclaimer:
       "The total group price includes all government-imposed taxes and fees, including the September 11th Security Fee, and applicable international taxes and fees, effective as of the date of the Group Travel Agreement.",
     legs: [

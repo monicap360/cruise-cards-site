@@ -278,6 +278,11 @@ export default async function GroupPortalPage({
                 {flightInfo.passengers ? (
                   <span className="text-white/45">{flightInfo.passengers} passengers</span>
                 ) : null}
+                {flightInfo.paidInFull && (
+                  <span className="bg-green-500/15 border border-green-400/30 text-green-300 rounded-full px-3 py-1 font-bold uppercase tracking-wider text-[10px]">
+                    ✓ Flights paid in full
+                  </span>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
