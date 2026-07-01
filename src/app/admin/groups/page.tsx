@@ -340,6 +340,11 @@ export default function AdminGroupsPage() {
 
                 {openId === grp.id && (
                   <div className="border-t border-white/10 p-4 bg-white/5">
+                    {/* Quick nav — back to dashboard / close */}
+                    <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                      <Link href="/admin" className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full">← Admin Dashboard</Link>
+                      <button onClick={() => setOpenId(null)} className="text-xs font-bold uppercase tracking-wider text-white/50 hover:text-white">Close group ✕</button>
+                    </div>
                     {/* Group tabs */}
                     <div className="flex gap-1 mb-4 border-b border-white/10 flex-wrap">
                       {([["manage", "Members & Rooms"], ["reservations", "Reservations"], ["signups", "Signups"], ["orders", "Orders"]] as const).map(([k, lbl]) => (

@@ -114,6 +114,10 @@ alter table individual_bookings add column if not exists gross_amount numeric de
 alter table individual_bookings add column if not exists net_amount numeric default 0;
 alter table individual_bookings add column if not exists loyalty_program text;
 alter table individual_bookings add column if not exists loyalty_number text;
+-- Reservation portal: cruise line, passengers (name/DOB/VIFP), shareable token
+alter table individual_bookings add column if not exists cruise_line text;
+alter table individual_bookings add column if not exists passengers jsonb default '[]'::jsonb;
+alter table individual_bookings add column if not exists token text;
 
 -- ── C) Row-level security (allow-all for now) ───────────────────────────────
 do $$
