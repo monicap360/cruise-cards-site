@@ -192,9 +192,30 @@ export default async function SailingOptionsPage({
           returnDate={block.returnDate}
           nights={block.nights}
           itinerary={block.itinerary}
-          fromPrice={(() => {
-            const p = block.cabins.map((c) => c.price).filter((n) => n > 0);
-            return p.length ? Math.min(...p) : undefined;
+          fromPrice={fromPrice > 0 ? fromPrice : undefined}
+          {...(() => {
+            const dest = ports[0] ? destinationFor(ports[0]) : null;
+            // Cheapest cabin type on this sailing → shown on the ticket photo.
+            const cheapest = block.cabins
+              .filter((c) => c.price > 0)
+              .sort((a, b) => a.price - b.price)[0];
+            const cabType = cheapest?.type;
+            const info = cabType
+              ? CATEGORY_INFO[cabType as CabinCategory] ?? CATEGORY_INFO.Interior
+              : undefined;
+            const top = offers[0];
+            return {
+              destName: dest?.name,
+              destSlug: dest?.slug,
+              destGradient: dest?.gradient,
+              cabinType: cabType ? (/suite/i.test(cabType) ? cabType : `${cabType} Cabin`) : undefined,
+              cabinSlug: cabType ? cabType.toLowerCase().replace(/[^a-z0-9]+/g, "-") : undefined,
+              cabinGradient: info?.gradient,
+              shipSlug: block.ship.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+              special: top
+                ? { icon: top.icon, badge: top.badge, title: top.title, description: top.description }
+                : undefined,
+            };
           })()}
         />
       </section>

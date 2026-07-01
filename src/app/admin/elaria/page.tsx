@@ -12,6 +12,14 @@ import ReputationPlan from "@/components/ReputationPlan";
 
 type Bill = { id: string; name: string; amount: number; due: string; recurring: boolean };
 type Todo = { id: string; text: string; priority: "high" | "med" | "low"; done: boolean };
+type Entity = { id: string; name: string; ein: string; kind: string; state: string; formed: string; notes: string };
+
+// Pre-seeded businesses (fill in the EINs). Device-local, like all of Elaria.
+const SEED_ENTITIES: Entity[] = [
+  { id: "ent-cfg", name: "Cruises from Galveston", ein: "", kind: "", state: "TX", formed: "", notes: "" },
+  { id: "ent-ych", name: "Your Car Host LLC", ein: "", kind: "LLC", state: "TX", formed: "", notes: "" },
+];
+const maskEin = (ein: string) => { const d = ein.replace(/\D/g, ""); return d.length >= 4 ? "••-•••" + d.slice(-4) : "••-•••••••"; };
 
 const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const nid = () => Math.random().toString(36).slice(2, 10);
@@ -49,6 +57,8 @@ export default function ElariaPage() {
   const [notes, setNotes] = useState("");
   const [savedAt, setSavedAt] = useState("");
   const [done, setDone] = useState<Record<string, boolean>>({});
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [showEin, setShowEin] = useState<Record<string, boolean>>({});
 
   const [bName, setBName] = useState(""); const [bAmt, setBAmt] = useState(""); const [bDue, setBDue] = useState(""); const [bRec, setBRec] = useState(true);
   const [tText, setTText] = useState(""); const [tPri, setTPri] = useState<"high" | "med" | "low">("med");
@@ -58,7 +68,13 @@ export default function ElariaPage() {
     try { setBills(JSON.parse(localStorage.getItem("elaria-bills") || "[]")); } catch { /* ignore */ }
     try { setTodos(JSON.parse(localStorage.getItem("elaria-todos") || "[]")); } catch { /* ignore */ }
     try { setDone(JSON.parse(localStorage.getItem("elaria-checklist") || "{}")); } catch { /* ignore */ }
+    try { const raw = localStorage.getItem("elaria-entities"); setEntities(raw ? JSON.parse(raw) : SEED_ENTITIES); } catch { setEntities(SEED_ENTITIES); }
   }, []);
+
+  const saveEntities = (e: Entity[]) => { setEntities(e); localStorage.setItem("elaria-entities", JSON.stringify(e)); };
+  const updateEntity = (id: string, patch: Partial<Entity>) => saveEntities(entities.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+  const addEntity = () => saveEntities([...entities, { id: nid(), name: "", ein: "", kind: "", state: "TX", formed: "", notes: "" }]);
+  const delEntity = (id: string) => saveEntities(entities.filter((e) => e.id !== id));
 
   const saveBills = (b: Bill[]) => { setBills(b); localStorage.setItem("elaria-bills", JSON.stringify(b)); };
   const saveTodos = (t: Todo[]) => { setTodos(t); localStorage.setItem("elaria-todos", JSON.stringify(t)); };
@@ -251,6 +267,54 @@ export default function ElariaPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Business entities — EINs & filings (device-local) */}
+        <div className="mt-10">
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
+            <div className="label-mono text-[11px] uppercase tracking-[0.2em] text-sky-300/70">// Business Entities</div>
+            <div className="tech-rule flex-1 min-w-[40px] opacity-60" />
+            <button onClick={addEntity} className="label-mono text-[10px] uppercase tracking-widest text-sky-300/70 hover:text-white">+ Add business</button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {entities.map((e) => (
+              <div key={e.id} className="bg-[#060b18]/70 backdrop-blur-sm neon-edge rounded-2xl p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <input value={e.name} onChange={(ev) => updateEntity(e.id, { name: ev.target.value })} placeholder="Business legal name" className="flex-1 bg-transparent text-white font-bold text-base focus:outline-none border-b border-transparent focus:border-sky-400/40 pb-0.5" />
+                  <button onClick={() => delEntity(e.id)} className="text-red-300/60 hover:text-red-200 text-[10px] uppercase tracking-wider label-mono shrink-0">Remove</button>
+                </div>
+                <label className="block mb-3">
+                  <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/50">EIN · Federal Tax ID</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      value={showEin[e.id] ? e.ein : e.ein ? maskEin(e.ein) : ""}
+                      onChange={(ev) => updateEntity(e.id, { ein: ev.target.value })}
+                      readOnly={!showEin[e.id]}
+                      placeholder="XX-XXXXXXX"
+                      className={input + " font-mono"}
+                    />
+                    <button onClick={() => setShowEin((s) => ({ ...s, [e.id]: !s[e.id] }))} className="label-mono text-[10px] uppercase tracking-wider text-sky-300/70 hover:text-white shrink-0 w-12 text-right">{showEin[e.id] ? "Hide" : "Show"}</button>
+                  </div>
+                </label>
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  <label className="block">
+                    <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/50">Type</span>
+                    <input value={e.kind} onChange={(ev) => updateEntity(e.id, { kind: ev.target.value })} placeholder="LLC" className={input + " mt-1"} />
+                  </label>
+                  <label className="block">
+                    <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/50">State</span>
+                    <input value={e.state} onChange={(ev) => updateEntity(e.id, { state: ev.target.value })} placeholder="TX" className={input + " mt-1"} />
+                  </label>
+                  <label className="block">
+                    <span className="label-mono text-[9px] uppercase tracking-wider text-sky-300/50">Formed</span>
+                    <input value={e.formed} onChange={(ev) => updateEntity(e.id, { formed: ev.target.value })} type="date" className={input + " mt-1"} />
+                  </label>
+                </div>
+                <textarea value={e.notes} onChange={(ev) => updateEntity(e.id, { notes: ev.target.value })} rows={2} placeholder="Registered agent, SOS file #, business address, bank, DBA, sales-tax permit…" className={input + " resize-none"} />
+              </div>
+            ))}
+          </div>
+          <p className="text-sky-300/25 text-[10px] mt-2 label-mono">▮ stored on this device only. Keep an encrypted backup in the <Link href="/admin/vault" className="text-sky-400/70 hover:text-sky-300">Vault</Link> too.</p>
         </div>
 
         {/* Keys & Setup checklist */}

@@ -1,8 +1,17 @@
+import Photo from "@/components/Photo";
 import { fmt$, fmtDateDow, durationWord } from "@/lib/sea-pay";
+
+export type TicketSpecial = {
+  icon?: string;
+  badge?: string;
+  title: string;
+  description?: string;
+};
 
 /**
  * Futuristic cruise ticket / boarding pass (dark HUD style). Purely
- * presentational so it can render in a server component.
+ * presentational so it can render in a server component. The photo band + the
+ * special fill the ticket's dead space (the left panel next to the price stub).
  */
 export default function CruiseTicket({
   ship,
@@ -14,6 +23,14 @@ export default function CruiseTicket({
   fromPrice,
   fromPort = "Galveston",
   deposit = 50,
+  destName,
+  destSlug,
+  destGradient,
+  cabinType,
+  cabinSlug,
+  cabinGradient,
+  shipSlug,
+  special,
 }: {
   ship: string;
   cruiseLine: string;
@@ -24,6 +41,15 @@ export default function CruiseTicket({
   fromPrice?: number;
   fromPort?: string;
   deposit?: number;
+  // Destination + cabin photos and the featured special (fill the dead space).
+  destName?: string;
+  destSlug?: string;
+  destGradient?: string;
+  cabinType?: string;
+  cabinSlug?: string;
+  cabinGradient?: string;
+  shipSlug?: string;
+  special?: TicketSpecial;
 }) {
   const dur = durationWord(cruiseLine);
   const ports = itinerary
@@ -107,6 +133,79 @@ export default function CruiseTicket({
             closed-loop sailing from {fromPort}
           </span>
         </div>
+
+        {/* Photo band — destination + cabin (fills the dead space) */}
+        {(destSlug || cabinSlug) && (
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {destSlug && (
+              <div className="relative h-28 rounded-xl overflow-hidden border border-white/10">
+                <Photo
+                  src={`/destinations/${destSlug}.jpg`}
+                  alt={destName ?? "Your destination"}
+                  gradient={destGradient}
+                  overlay={false}
+                  className="absolute inset-0"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/90 via-[#05070d]/20 to-transparent" />
+                <div className="absolute bottom-2 left-3 right-3">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-sky-300">
+                    Your destination
+                  </div>
+                  <div className="text-white font-extrabold uppercase tracking-tight text-sm leading-tight">
+                    {destName}
+                  </div>
+                </div>
+              </div>
+            )}
+            {cabinSlug && (
+              <div className="relative h-28 rounded-xl overflow-hidden border border-white/10">
+                <Photo
+                  src={`/cabins/${cabinSlug}.jpg`}
+                  fallbackSrc={shipSlug ? `/ships/${shipSlug}.jpg` : undefined}
+                  alt={cabinType ?? "Your cabin"}
+                  gradient={cabinGradient}
+                  overlay={false}
+                  className="absolute inset-0"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05070d]/90 via-[#05070d]/20 to-transparent" />
+                <div className="absolute bottom-2 left-3 right-3">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-sky-300">
+                    From this cabin
+                  </div>
+                  <div className="text-white font-extrabold uppercase tracking-tight text-sm leading-tight">
+                    {cabinType}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Featured special */}
+        {special && (
+          <div className="mt-3 flex items-start gap-3 rounded-xl border border-sky-400/30 bg-sky-500/10 p-3.5">
+            <span className="text-xl leading-none flex-shrink-0">
+              {special.icon ?? "🎁"}
+            </span>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                {special.badge && (
+                  <span className="label-mono text-[9px] uppercase tracking-wider text-sky-200 bg-sky-400/20 px-2 py-0.5 rounded-full">
+                    {special.badge}
+                  </span>
+                )}
+                <span className="text-white font-bold text-sm">
+                  {special.title}
+                </span>
+              </div>
+              {special.description && (
+                <p className="text-white/60 text-xs mt-1 leading-snug">
+                  {special.description}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Perforated stub */}
