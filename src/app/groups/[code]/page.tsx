@@ -14,6 +14,7 @@ import SailCountdown from "@/components/SailCountdown";
 import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
 import { groupFlightInfo } from "@/lib/group-flights";
+import { perksForGroup } from "@/lib/group-perks";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -93,6 +94,7 @@ export default async function GroupPortalPage({
     (m) => m.paidInFull || m.depositPaid > 0
   ).length;
   const flightInfo = groupFlightInfo(group.code);
+  const groupPerks = perksForGroup(group.code);
 
   // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
   // otherwise Western Caribbean → Cozumel).
@@ -251,6 +253,26 @@ export default async function GroupPortalPage({
           {stat(`${depositCount}/${members.length}`, "Paid")}
           {stat(members.length - depositCount, "Pending")}
         </div>
+
+        {/* Included for your group */}
+        {groupPerks.length > 0 && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Included For Your Group"}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {groupPerks.map((p) => (
+                <div key={p.title} className="flex items-start gap-4 rounded-2xl border border-green-400/25 bg-green-500/[0.06] p-5">
+                  <span className="text-3xl shrink-0">{p.icon}</span>
+                  <div>
+                    <div className="text-white font-bold">✓ {p.title}</div>
+                    <p className="text-white/60 text-sm mt-1 leading-relaxed">{p.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Flight schedule */}
         {flightInfo && flightInfo.legs.length > 0 && (
