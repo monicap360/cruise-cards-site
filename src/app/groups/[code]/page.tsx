@@ -15,6 +15,7 @@ import EmbarkGuide from "@/components/EmbarkGuide";
 import { embarkForGroup } from "@/lib/embark-guides";
 import { groupFlightInfo } from "@/lib/group-flights";
 import { perksForGroup } from "@/lib/group-perks";
+import { cruiseForGroup } from "@/lib/group-cruise";
 import AgentProfile from "@/components/AgentProfile";
 import { agentByName } from "@/lib/agents";
 import TrustBadges from "@/components/TrustBadges";
@@ -95,6 +96,7 @@ export default async function GroupPortalPage({
   ).length;
   const flightInfo = groupFlightInfo(group.code);
   const groupPerks = perksForGroup(group.code);
+  const groupCruise = cruiseForGroup(group.code);
 
   // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
   // otherwise Western Caribbean → Cozumel).
@@ -253,6 +255,49 @@ export default async function GroupPortalPage({
           {stat(`${depositCount}/${members.length}`, "Paid")}
           {stat(members.length - depositCount, "Pending")}
         </div>
+
+        {/* Cruise details */}
+        {groupCruise && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Cruise Details"}
+            </div>
+            <div className="rounded-2xl border border-sky-400/25 bg-[#0b1020] p-6">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="text-2xl font-extrabold uppercase tracking-tight text-white leading-tight">
+                    {groupCruise.nights}-Day {groupCruise.itinerary}
+                  </div>
+                  <div className="text-sky-300 text-sm font-semibold mt-1">{groupCruise.ship} · {groupCruise.line}</div>
+                  <div className="text-white/60 text-sm mt-0.5">{groupCruise.sailDate} → {groupCruise.returnDate} · from {groupCruise.embarkPort}</div>
+                </div>
+                {groupCruise.paidInFull && (
+                  <span className="bg-green-500/15 text-green-300 border border-green-400/30 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+                    ✓ All rooms paid in full
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+                <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                  <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Group booking #</div>
+                  <div className="font-mono font-bold text-white mt-1">{groupCruise.bookingNumber}</div>
+                </div>
+                {groupCruise.stateroom && (
+                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
+                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Stateroom</div>
+                    <div className="font-bold text-white mt-1">#{groupCruise.stateroom}</div>
+                  </div>
+                )}
+                {groupCruise.cabinDetail && (
+                  <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3 col-span-2">
+                    <div className="label-mono text-[9px] uppercase tracking-wider text-white/40">Cabin</div>
+                    <div className="text-white/85 text-sm mt-1">{groupCruise.cabinDetail}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Included for your group */}
         {groupPerks.length > 0 && (

@@ -10,6 +10,11 @@ export const GROUP_PERKS: Record<string, GroupPerk[]> = {
       title: "Prepaid gratuities — entire group",
       detail: "Crew appreciation (tips) is prepaid for every guest in the group — nothing to settle onboard.",
     },
+    {
+      icon: "💳",
+      title: "$300 onboard credit",
+      detail: "$300 USD All-Departments onboard credit — spend it on dining, drinks, excursions, the spa, or the shops.",
+    },
   ],
 };
 
