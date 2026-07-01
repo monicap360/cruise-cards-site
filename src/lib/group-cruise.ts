@@ -14,6 +14,7 @@ export type GroupCruise = {
   cabinDetail?: string; // e.g. "Obstructed View Window · Cat 4K (Interior)"
   paidInFull?: boolean;
   itineraryDays?: { day: number; date: string; port: string; note?: string }[];
+  staterooms?: { number: string; guests: string; detail?: string }[];
 };
 
 export const GROUP_CRUISE: Record<string, GroupCruise> = {
@@ -26,7 +27,7 @@ export const GROUP_CRUISE: Record<string, GroupCruise> = {
     embarkPort: "Seattle",
     sailDate: "Thu, Jul 30, 2026",
     returnDate: "Thu, Aug 6, 2026",
-    stateroom: "4132",
+    stateroom: "4132 & 4220",
     cabinDetail: "Obstructed View Window · Cat 4K (Interior)",
     paidInFull: true,
     // Typical Carnival Miracle 7-day Alaska (Seattle round-trip). Confirm exact

@@ -18,6 +18,7 @@ import { perksForGroup } from "@/lib/group-perks";
 import { cruiseForGroup } from "@/lib/group-cruise";
 import { hotelForGroup } from "@/lib/group-hotel";
 import { balancesForGroup } from "@/lib/group-balances";
+import { passengersForGroup } from "@/lib/group-passengers";
 import GroupContactForm from "@/components/GroupContactForm";
 import { PAY_ZELLE, PAY_CASHAPP, PAY_VENMO } from "@/lib/payment-methods";
 import AgentProfile from "@/components/AgentProfile";
@@ -103,6 +104,7 @@ export default async function GroupPortalPage({
   const groupCruise = cruiseForGroup(group.code);
   const groupHotel = hotelForGroup(group.code);
   const groupBalances = balancesForGroup(group.code);
+  const groupPassengers = passengersForGroup(group.code);
   const money = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   // Destination hero photo — chosen from the itinerary (Alaska → glacier,
@@ -577,6 +579,46 @@ export default async function GroupPortalPage({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Guest manifest */}
+        {groupPassengers.length > 0 && (
+          <div>
+            <div className="label-mono text-base uppercase text-sky-400/80 font-bold mb-4">
+              {"// Guest Manifest"}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[#0b1020] overflow-hidden">
+              <table className="w-full text-sm min-w-[520px]">
+                <thead>
+                  <tr className="bg-white/5 text-white/50 label-mono text-[10px] uppercase tracking-wider">
+                    <th className="text-left font-bold px-4 py-3">Guest</th>
+                    <th className="text-left font-bold px-3 py-3">Date of birth</th>
+                    <th className="text-left font-bold px-3 py-3">VIFP #</th>
+                    <th className="text-center font-bold px-4 py-3">Stateroom</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groupPassengers.map((p) => (
+                    <tr key={p.name} className="border-t border-white/10">
+                      <td className="px-4 py-3 font-bold text-white capitalize">{p.name}</td>
+                      <td className="px-3 py-3 text-white/70">{p.dob || "—"}</td>
+                      <td className="px-3 py-3">
+                        {p.vifp ? (
+                          <span className="font-mono text-sky-200">{p.vifp}</span>
+                        ) : (
+                          <span className="label-mono text-[9px] uppercase tracking-wider text-amber-300/80 bg-amber-400/10 border border-amber-400/25 rounded-full px-2 py-0.5">Needed</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-center text-white/80 font-mono">#{p.stateroom}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-white/40 text-[11px] mt-2">
+              Don&rsquo;t have your Carnival <strong className="text-white/70">VIFP number</strong> on file? Add it in the form above or text it to us — it links your past-guest perks.
+            </p>
           </div>
         )}
 

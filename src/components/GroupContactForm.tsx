@@ -11,6 +11,7 @@ export default function GroupContactForm({ groupCode }: { groupCode: string }) {
   const [dob, setDob] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [vifp, setVifp] = useState("");
   const [agree, setAgree] = useState(false);
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -26,7 +27,7 @@ export default function GroupContactForm({ groupCode }: { groupCode: string }) {
       group_code: groupCode,
       sender: "guest",
       body:
-        `📇 CONTACT + NAME/DOB CONFIRMED — ${name.trim()} · DOB ${dob} · ${phone.trim() || "no phone"} · ${email.trim() || "no email"} ` +
+        `📇 CONTACT + NAME/DOB CONFIRMED — ${name.trim()} · DOB ${dob} · ${phone.trim() || "no phone"} · ${email.trim() || "no email"} · VIFP ${vifp.trim() || "none"} ` +
         `· ✅ "${name.trim()}" confirmed legal name & DOB are correct and match legal documents, and accepts the $150 name-change fee if a change is needed (past final payment). Recorded ${stamp}`,
     });
     setBusy(false);
@@ -60,6 +61,8 @@ export default function GroupContactForm({ groupCode }: { groupCode: string }) {
               <input className={input + " mt-1"} type="tel" placeholder="(409) 555-0123" value={phone} onChange={(e) => setPhone(e.target.value)} /></label>
             <label className="block"><span className="label-mono text-[9px] uppercase tracking-wider text-white/50">Email</span>
               <input className={input + " mt-1"} type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
+            <label className="block sm:col-span-2"><span className="label-mono text-[9px] uppercase tracking-wider text-white/50">Carnival VIFP # (optional — links your past-guest perks)</span>
+              <input className={input + " mt-1 font-mono"} placeholder="VIFP number" value={vifp} onChange={(e) => setVifp(e.target.value)} /></label>
           </div>
           <label className="flex items-start gap-3 mt-4 cursor-pointer">
             <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="accent-sky-500 w-5 h-5 shrink-0 mt-0.5" />
