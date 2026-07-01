@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Photo from "@/components/Photo";
 import RoomingListForm from "@/components/RoomingListForm";
-import { getGroupByCode, memberBalance, isRoomReleased } from "@/lib/groups";
+import { getGroupByCode, isRoomReleased } from "@/lib/groups";
 import { SHOP_ITEMS, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/shop";
 import ParkRideScheduler from "@/components/ParkRideScheduler";
 import CruisePackingList from "@/components/CruisePackingList";
@@ -79,9 +79,6 @@ export default async function GroupPortalPage({
   const depositCount = members.filter(
     (m) => m.paidInFull || m.depositPaid > 0
   ).length;
-  const fullCount = members.filter((m) => m.paidInFull).length;
-  const outstanding = members.reduce((s, m) => s + memberBalance(m), 0);
-  const depositsReceived = members.reduce((s, m) => s + (m.depositPaid || 0), 0);
 
   // Destination hero photo — chosen from the itinerary (Bahamas → Nassau,
   // otherwise Western Caribbean → Cozumel).
@@ -237,8 +234,8 @@ export default async function GroupPortalPage({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stat(members.length, "Cabins booked")}
           {stat(totalGuests, "Total guests")}
-          {stat(fmt$(depositsReceived), `Deposits received (${depositCount}/${members.length})`)}
-          {stat(`${fullCount}/${members.length}`, "Paid in full")}
+          {stat(`${depositCount}/${members.length}`, "Paid")}
+          {stat(members.length - depositCount, "Pending")}
         </div>
 
         {/* Block status */}
@@ -540,13 +537,12 @@ export default async function GroupPortalPage({
                           <div className="flex flex-wrap items-center gap-2 mt-2.5 text-xs">
                             {occ.confirmationNumber && <span className="text-white/45">Conf #{occ.confirmationNumber}</span>}
                             <span className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                              occ.paidInFull ? "bg-green-500/15 text-green-300 border-green-400/25"
-                              : occ.depositPaid > 0 ? "bg-sky-500/15 text-sky-300 border-sky-400/25"
-                              : "bg-amber-500/15 text-amber-300 border-amber-400/25"}`}>
-                              {occ.paidInFull ? "Paid in full" : occ.depositPaid > 0 ? "Deposit received" : "Invoice sent"}
+                              occ.paidInFull || occ.depositPaid > 0
+                                ? "bg-green-500/15 text-green-300 border-green-400/25"
+                                : "bg-amber-500/15 text-amber-300 border-amber-400/25"}`}>
+                              {occ.paidInFull || occ.depositPaid > 0 ? "✓ Paid" : "Pending"}
                             </span>
-                            <Link href={`/group-invoice/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">📄 Invoice</Link>
-                            {occ.depositPaid > 0 && <Link href={`/group-receipt/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">🧾 Receipt</Link>}
+                            {(occ.paidInFull || occ.depositPaid > 0) && <Link href={`/group-receipt/${occ.id}`} target="_blank" className="text-sky-400 hover:text-sky-300 font-semibold">🧾 Receipt</Link>}
                           </div>
                         )}
                         {!open && occ && <CabinThread memberId={occ.id} groupCode={group.code} sender="guest" />}
@@ -630,22 +626,19 @@ export default async function GroupPortalPage({
                   <th className="text-left font-bold px-3 py-3">Cabin</th>
                   <th className="text-center font-bold px-3 py-3">Guests</th>
                   <th className="text-left font-bold px-3 py-3">Confirmation</th>
-                  <th className="text-center font-bold px-3 py-3">Deposit</th>
-                  <th className="text-center font-bold px-3 py-3">Paid in full</th>
-                  <th className="text-right font-bold px-4 py-3">Balance</th>
+                  <th className="text-center font-bold px-4 py-3">Payment</th>
                 </tr>
               </thead>
               <tbody>
                 {members.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-white/45">
+                    <td colSpan={5} className="px-4 py-8 text-center text-white/45">
                       Cabins will appear here as members book. Check back soon.
                     </td>
                   </tr>
                 ) : (
                   members.map((m) => {
-                    const bal = memberBalance(m);
-                    const reqDeposit = 100 * (m.guests || 2); // $100 per guest
+                    const paid = m.paidInFull || m.depositPaid > 0;
                     return (
                       <tr key={m.id} className="border-t border-white/10">
                         <td className="px-4 py-3">
@@ -667,44 +660,16 @@ export default async function GroupPortalPage({
                         <td className="px-3 py-3 text-white/60 font-mono text-xs">
                           {m.confirmationNumber || "—"}
                         </td>
-                        <td className="px-3 py-3 text-center">
-                          {m.paidInFull || m.depositPaid > 0 ? (
-                            <span className="text-green-300 font-semibold">{fmt$(m.depositPaid)}</span>
-                          ) : (
-                            <span className="text-white/55">
-                              {fmt$(reqDeposit)} <span className="text-white/35 text-[10px] uppercase">due</span>
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          {m.paidInFull ? (
-                            <span className="inline-block bg-green-500/15 text-green-300 text-[10px] font-bold uppercase rounded-full px-2 py-0.5">
-                              Paid
-                            </span>
-                          ) : (
-                            <span className="text-white/25">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-right font-bold text-white">
-                          {bal > 0 ? fmt$(bal) : "—"}
+                        <td className="px-4 py-3 text-center">
+                          <span className={`inline-block text-[10px] font-bold uppercase rounded-full px-2.5 py-0.5 ${paid ? "bg-green-500/15 text-green-300" : "bg-amber-500/15 text-amber-300"}`}>
+                            {paid ? "✓ Paid" : "Pending"}
+                          </span>
                         </td>
                       </tr>
                     );
                   })
                 )}
               </tbody>
-              {members.length > 0 && (
-                <tfoot>
-                  <tr className="border-t border-white/15 bg-white/[0.03]">
-                    <td colSpan={6} className="px-4 py-3 text-right text-white/55 label-mono text-[11px] uppercase">
-                      Outstanding balance
-                    </td>
-                    <td className="px-4 py-3 text-right font-extrabold text-holo">
-                      {fmt$(outstanding)}
-                    </td>
-                  </tr>
-                </tfoot>
-              )}
             </table>
           </div>
         </div>
